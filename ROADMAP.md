@@ -66,6 +66,10 @@ The roadmap will be updated as development progresses to reflect new priorities,
 - [x] Create resource tracking system
 - [x] Implement turn-based progression
 - [x] Design and implement saving/loading
+  - [x] Manual save/load functionality
+  - [x] Auto-save system
+  - [x] Save data management
+  - [x] EventBus communication architecture
 - [x] Add basic UI for state display
 
 ### Research Tree Visualization (4 weeks)

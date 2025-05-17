@@ -33,8 +33,9 @@ SuperInt++ consists of several interconnected systems:
 - **Research System** - Tree-based tech progression with dependencies and strategic choices
 - **Resource System** - Management of Computing, Data, Influence, and Funding
 - **Deployment System** - Application of AI capabilities in various domains
-- **Event System** - Random and triggered events that impact gameplay
+- **Game Events** - Random and triggered in-game occurrences that impact gameplay
 - **Alignment System** - Tracking relationships and value adherence
+- **EventBus System** - Core infrastructure for inter-component communication
 
 ## Documentation Structure
 
@@ -97,7 +98,7 @@ The game will be available at http://localhost:8080
 SuperInt++ uses a modular architecture with unidirectional data flow:
 
 - **Game Engine** - Central system that manages the game loop and updates
-- **Event Bus** - Facilitates communication between systems
+- **EventBus System** - Facilitates communication between components
 - **Game State** - Immutable state tree tracking all game data
 - **State Manager** - Controls state updates via actions and reducers
 - **Systems** - Process game logic (research, resources, events, time)
@@ -120,6 +121,8 @@ See [ROADMAP.md](ROADMAP.md) for detailed development plans.
 - Resource tracking fundamentals
 - Turn-based progression mechanics
 - Basic UI component architecture
+- Comprehensive save/load functionality
+- EventBus communication system
 
 ## Contributing
 

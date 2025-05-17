@@ -13,8 +13,9 @@ The game consists of several interconnected systems:
 1. **Research System** - Tech tree for AI capability development
 2. **Resource System** - Management of Computing, Data, Influence, and Funding
 3. **Deployment System** - Applied AI systems with effects and risks
-4. **Event System** - Triggered occurrences that require player decisions
+4. **Game Events** - In-game occurrences that require player decisions
 5. **Alignment System** - Relationships and value adherence tracking
+6. **EventBus System** - Infrastructure for component communication
 
 ## Documentation Structure
 
@@ -66,11 +67,25 @@ See ROADMAP.md for detailed priorities. Current focus:
 
 The codebase maintains separation between core systems:
 - **Core**: Game logic (GameEngine, GameState, etc.)
+- **EventBus System**: Communication layer between components
 - **UI**: DOM-based UI components and managers (UIManager, UIComponents)
 - **Systems**: Game system implementations (ResourceSystem, ResearchSystem)
 - **Types**: Entity definitions and interfaces
 - **Data**: Game data and definitions
 - **Utils**: Utility functions and helpers
+
+### Critical Implementation Patterns
+
+1. **Single EventBus Instance** - Always use the GameEngine's EventBus instance throughout the application. Multiple EventBus instances will break event communication.
+
+2. **Event Flow Patterns**:
+   - Command events (`action:*`) - UI to Game Core (requests for state changes)
+   - State change events (`game:*`) - Game Core to UI (notifications of completed changes)
+   - System events (`turn:*`, `phase:*`) - Between Game Systems (coordination)
+
+3. **State Change Notifications** - When replacing state directly (e.g., when loading a saved game), ensure all listeners are notified properly through `notifyListeners()`.
+
+4. **Event Documentation** - Always document new event types in `/docs/event_communication_design.md` to maintain the registry of events.
 
 ## Research System Implementation
 
