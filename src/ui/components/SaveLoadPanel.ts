@@ -23,14 +23,28 @@ class SaveLoadPanel extends UIComponent {
    */
   constructor(options: SaveLoadPanelOptions) {
     super('div', 'save-load-panel');
+    // We need to set eventBus here to ensure it's available from the start
     this.eventBus = options.eventBus;
-    
-    // Subscribe to save related events
-    this.eventBus.subscribe('game:saved', this.refreshSavesList.bind(this));
-    this.eventBus.subscribe('game:loaded', this.handleGameLoaded.bind(this));
+    console.log('SaveLoadPanel constructor: EventBus is', this.eventBus ? 'available' : 'NOT AVAILABLE');
     
     // Get existing saves from localStorage
     this.refreshSavesList();
+  }
+  
+  /**
+   * Called after component is mounted
+   * Set up event subscriptions
+   */
+  protected afterMount(): void {
+    // Subscribe to save related events
+    console.log('SaveLoadPanel.afterMount: EventBus is', this.eventBus ? 'available' : 'NOT AVAILABLE');
+    if (this.eventBus) {
+      console.log('SaveLoadPanel: Subscribing to game:saved and game:loaded events');
+      this.eventBus.subscribe('game:saved', this.refreshSavesList.bind(this));
+      this.eventBus.subscribe('game:loaded', this.handleGameLoaded.bind(this));
+    } else {
+      console.error('SaveLoadPanel: No eventBus available for subscribing');
+    }
   }
   
   /**
@@ -40,14 +54,21 @@ class SaveLoadPanel extends UIComponent {
     this.saves = [];
     
     try {
+      console.log('SaveLoadPanel: Refreshing saves list...');
+      console.log(`SaveLoadPanel: localStorage contains ${localStorage.length} items`);
+      
       // Get all keys from localStorage that start with si_save_
       for (let i = 0; i < localStorage.length; i++) {
         const key = localStorage.key(i);
+        console.log(`SaveLoadPanel: Checking localStorage key: ${key}`);
+        
         if (key && key.startsWith('si_save_')) {
           const saveData = localStorage.getItem(key);
           if (saveData) {
             const parsed = JSON.parse(saveData);
             const saveName = key.replace('si_save_', '');
+            console.log(`SaveLoadPanel: Found save: ${saveName}, timestamp: ${new Date(parsed.timestamp).toLocaleString()}`);
+            
             this.saves.push({
               name: saveName,
               timestamp: parsed.timestamp
@@ -58,6 +79,7 @@ class SaveLoadPanel extends UIComponent {
       
       // Sort saves by timestamp (newest first)
       this.saves.sort((a, b) => b.timestamp - a.timestamp);
+      console.log(`SaveLoadPanel: Found ${this.saves.length} total saves`);
       
       // Re-render to show updated saves list
       this.render();
@@ -235,6 +257,7 @@ class SaveLoadPanel extends UIComponent {
    * Show the save dialog
    */
   private handleShowSaveDialog = (): void => {
+    console.log('SaveLoadPanel.handleShowSaveDialog: EventBus is', this.eventBus ? 'available' : 'NOT AVAILABLE');
     // Replace the current template with the save dialog
     this.element.innerHTML = this.createSaveDialogTemplate();
     this.bindEvents();
@@ -267,11 +290,16 @@ class SaveLoadPanel extends UIComponent {
    * Load a saved game
    */
   private handleLoadSave = (event: Event): void => {
+    console.log('SaveLoadPanel.handleLoadSave: EventBus is', this.eventBus ? 'available' : 'NOT AVAILABLE');
     const button = event.target as HTMLButtonElement;
     const saveName = button.getAttribute('data-save');
     
     if (saveName && this.eventBus) {
+      console.log(`SaveLoadPanel: Loading save "${saveName}"`);
       this.eventBus.emit('action:load', { name: saveName });
+      console.log(`SaveLoadPanel: Emitted action:load event for "${saveName}"`);
+    } else if (!this.eventBus) {
+      console.error('SaveLoadPanel: No eventBus available for emitting action:load event');
     }
   };
   
@@ -284,6 +312,7 @@ class SaveLoadPanel extends UIComponent {
     
     if (saveName) {
       try {
+        console.log(`SaveLoadPanel: Deleting save "${saveName}"`);
         localStorage.removeItem(`si_save_${saveName}`);
         this.refreshSavesList();
       } catch (error) {
@@ -296,19 +325,26 @@ class SaveLoadPanel extends UIComponent {
    * Save the current game
    */
   private handleSaveGame = (): void => {
+    console.log('SaveLoadPanel.handleSaveGame: EventBus is', this.eventBus ? 'available' : 'NOT AVAILABLE');
     if (this.eventBus) {
       const saveName = this.saveNameInput || 'Game Save';
+      console.log(`SaveLoadPanel: Saving game as "${saveName}"`);
       this.eventBus.emit('action:save', { name: saveName });
+      console.log(`SaveLoadPanel: Emitted action:save event for "${saveName}"`);
       this.handleHideDialog();
+    } else {
+      console.error('SaveLoadPanel: No eventBus available for emitting action:save event');
     }
-  }
+  };
   
   /**
    * Handle auto-save toggle
    */
   private handleAutoSaveToggle = (event: Event): void => {
+    console.log('SaveLoadPanel.handleAutoSaveToggle: EventBus is', this.eventBus ? 'available' : 'NOT AVAILABLE');
     const checkbox = event.target as HTMLInputElement;
     if (this.eventBus) {
+      console.log(`SaveLoadPanel: Setting auto-save to ${checkbox.checked}`);
       this.eventBus.emit('action:queue', {
         action: {
           type: 'UPDATE_SETTINGS',
@@ -318,7 +354,10 @@ class SaveLoadPanel extends UIComponent {
         }
       });
       
-      console.log(`Auto-save ${checkbox.checked ? 'enabled' : 'disabled'}`);
+      console.log(`SaveLoadPanel: Emitted action:queue for UPDATE_SETTINGS with autoSave=${checkbox.checked}`);
+      console.log(`SaveLoadPanel: Auto-save ${checkbox.checked ? 'enabled' : 'disabled'}`);
+    } else {
+      console.error('SaveLoadPanel: No eventBus available for emitting action:queue event');
     }
   };
 }

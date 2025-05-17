@@ -180,3 +180,6 @@ This repository follows a simple but effective git workflow:
    - Keep PRs focused and review carefully before merging
 
 Claude will manage these git operations as regular background tasks during development without requiring explicit instructions for each commit, branch, or PR.
+
+- Clear the browser console log after reading it when debugging; this provides much better context usage than screenshots
+- Start a new browser session if console logs exceed 100 lines or are largely irrelevant - these cost context

@@ -132,17 +132,19 @@ class UIManager {
 
 ### Event Bus
 
-Facilitates communication between systems:
+Facilitates communication between systems through a centralized event bus. For detailed documentation on the event system and communication patterns, see [Event Communication and State Persistence](./event_communication_design.md).
 
 ```typescript
 class EventBus {
-  private listeners: Map<string, EventListener[]>;
+  private listeners: Map<string, EventCallback[]>;
   
-  public subscribe(eventType: string, listener: EventListener): void;
-  public unsubscribe(eventType: string, listener: EventListener): void;
-  public emit(eventType: string, data: any): void;
+  public subscribe(eventType: string, callback: EventCallback): void;
+  public unsubscribe(eventType: string, callback: EventCallback): void;
+  public emit(eventType: string, data: any = {}): void;
 }
 ```
+
+**Critical Implementation Note:** The application must use a single shared EventBus instance throughout all components to ensure proper communication.
 
 ## Data Flow
 
@@ -336,12 +338,21 @@ Key advantages:
 
 ## Saving and Loading
 
-Game state will be serialized to JSON and stored:
+Game state is serialized to JSON and stored in localStorage, following the event-driven architecture detailed in [Event Communication and State Persistence](./event_communication_design.md).
 
-1. **Automatic Saving** - Periodic state snapshots
-2. **Manual Saving** - User-triggered save points
-3. **Loading** - Initialize game from saved state
-4. **Migration** - Handle loading from older versions
+The save/load system provides:
+
+1. **Automatic Saving** - During turn progression based on user settings
+2. **Manual Saving** - Through the SaveLoadPanel UI with custom naming
+3. **Loading** - Re-initializing game from saved states with proper event notifications
+4. **Migration** - Version tracking to handle loading from older save formats
+
+The process follows the event flow pattern:
+- UI components emit command events (`action:save`, `action:load`)
+- GameEngine processes these events and calls GameStateManager methods
+- GameStateManager performs the actual persistence operations
+- GameEngine emits state change events (`game:saved`, `game:loaded`)
+- UI components update in response to these events
 
 ## Optimization Strategies
 

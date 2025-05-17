@@ -276,6 +276,15 @@ Full Implementation:
 - **UI System** - Event display and interaction
 - **Game State** - Event history and persistent effects
 
+## Event Communication Architecture
+
+For technical details on how events are communicated between components using the EventBus system, see [Event Communication and State Persistence](./event_communication_design.md). This documentation covers:
+
+- Event bus implementation
+- Event type categorization
+- Command and notification event patterns
+- Integration with the save/load system
+
 ## Next Steps
 
 1. Create event data structure and system skeleton
