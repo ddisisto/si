@@ -1,193 +1,380 @@
 # Implementation Plan
 
-This document outlines the concrete steps to begin implementing SuperInt++ based on our design documentation.
+This document outlines the concrete steps to implement SuperInt++ based on our design documentation, with a focus on the DOM-based UI approach.
 
 ## Current Status
 
-We have completed the initial game design documentation and technical planning:
+We have completed the initial game design documentation, technical planning, and implemented the core state management system:
 
 1. **Concept and Mechanics** - Core game concept and mechanics defined
 2. **System Designs** - Individual systems documented with detailed specifications
 3. **Technical Architecture** - Overall structure and patterns established
 4. **Project Structure** - File and component organization defined
+5. **State Management** - Core game state, reducers, and turn system implemented
+
+## UI Transition Strategy: Canvas to DOM
+
+We are transitioning from a Canvas-based UI to a pure DOM-based approach for the following reasons:
+
+- **Better Developer Experience** - Standard HTML/CSS development patterns
+- **Native Accessibility** - Improved accessibility with standard web elements
+- **Easier Event Handling** - Native DOM events without manual hit detection
+- **Responsive Design** - Natural responsiveness without custom scaling
+- **Simpler Testing** - Components can be tested in isolation
 
 ## Implementation Priorities
 
-The implementation will follow a layered approach to ensure we can quickly get a working prototype:
+### Phase 1: DOM UI Foundation (Priority 1)
 
-### Foundation Layer (Priority 1)
+1. **Core UI Infrastructure**
+   - Create `UIComponent` base class
+   - Implement `UIManager` to coordinate components
+   - Set up CSS framework and styling
+   - Create basic UI components (Panel, Button)
 
-1. **Project Setup**
-   - Initialize TypeScript project
-   - Configure build tools (Webpack)
-   - Set up development environment
-   - Configure linting and formatting
+2. **State Integration**
+   - Connect UI components to state management
+   - Implement state subscriptions for UI updates
+   - Create event handling for user interactions
 
-2. **Core Engine**
-   - Game state management
-   - Basic game loop
-   - Event system implementation
-   - State serialization for saving
+3. **Basic Game UI**
+   - Implement `ResourcePanel` component
+   - Create `TurnControls` component
+   - Add `GameInfoPanel` component
 
-3. **Canvas Infrastructure**
-   - Canvas initialization
-   - Rendering pipeline
-   - Basic UI components
-   - Input handling
+### Phase 2: Game Systems UI (Priority 2)
 
-### Gameplay Layer (Priority 2)
+1. **Research System UI**
+   - Implement `ResearchTreeView` component
+   - Create research node representation
+   - Add interactive selection
 
-1. **Resource System**
-   - Resource tracking
-   - Allocation mechanics
-   - UI representation
-   - Basic generation
+2. **Deployment System UI**
+   - Create `DeploymentView` component
+   - Implement deployment slot management UI
+   - Add deployment effect visualization
 
-2. **Research System**
-   - Research tree data structure
-   - Basic node visualization
-   - Dependency checking
-   - Research completion mechanics
+3. **Event System UI**
+   - Implement `EventPanel` component
+   - Create event notification system
+   - Add interactive event resolution UI
 
-3. **Turn Progression**
-   - Turn-based updates
-   - Time passage effects
-   - Phase transitions
-   - Game speed controls
+### Phase 3: Polish and Optimization (Priority 3)
 
-### Experience Layer (Priority 3)
+1. **UI Refinement**
+   - Improve visual styling
+   - Add transitions and animations
+   - Implement responsive breakpoints
+   - Optimize for different screen sizes
 
-1. **Deployment System**
-   - Deployment slots
-   - Basic deployment management
-   - Effect calculation
-   - Visualization
+2. **Performance Optimization**
+   - Implement selective rendering
+   - Add render batching
+   - Optimize DOM updates
 
-2. **Event System**
-   - Event triggering
-   - Choice presentation
-   - Event resolution
-   - Effect application
+3. **Testing and Feedback**
+   - Add component unit tests
+   - Implement E2E testing
+   - Refine user experience
 
-3. **UI Refinement**
-   - Improved visuals
-   - Animation and transitions
-   - Information tooltips
-   - Layout optimization
+## Implementation Plan for DOM UI Transition
 
-## Concrete First Steps
+### Step 1: Create Base UI Infrastructure
 
-1. **Project Initialization**
-   ```bash
-   # Create project directory
-   mkdir -p src/{core,ui,systems,types,data,utils}
-   
-   # Initialize npm project
-   npm init -y
-   
-   # Install dependencies
-   npm install --save-dev typescript webpack webpack-cli ts-loader webpack-dev-server
-   npm install --save-dev @types/node html-webpack-plugin
-   npm install --save-dev eslint @typescript-eslint/parser @typescript-eslint/eslint-plugin
-   npm install --save-dev prettier eslint-config-prettier eslint-plugin-prettier
+1. **Create UIComponent Base Class**
+   ```typescript
+   abstract class UIComponent {
+     protected element: HTMLElement;
+     protected gameState: Readonly<GameState>;
+     
+     constructor(elementType: string, className?: string);
+     public mount(parent: HTMLElement): void;
+     public unmount(): void;
+     public update(gameState: Readonly<GameState>): void;
+     public render(): void;
+     protected createTemplate(): string;
+   }
    ```
 
-2. **Configuration Files**
-   - `tsconfig.json` - TypeScript configuration
-   - `webpack.config.js` - Webpack build configuration
-   - `.eslintrc.js` - ESLint rules
-   - `.prettierrc` - Code formatting rules
+2. **Implement Basic UI Components**
+   - Create `Panel` component for content containers
+   - Implement `Button` component for interactive controls
+   - Create `Label` component for text display
 
-3. **Base Files**
-   - `src/index.ts` - Main entry point
-   - `src/index.html` - HTML template
-   - `src/core/GameEngine.ts` - Core game engine
-   - `src/core/GameState.ts` - Game state management
-   - `src/ui/Renderer.ts` - Canvas rendering
+3. **Create UI Manager**
+   ```typescript
+   class UIManager {
+     private components: Map<string, UIComponent>;
+     private rootElement: HTMLElement;
+     private eventBus: EventBus;
+     
+     public initialize(rootElement: HTMLElement): void;
+     public registerComponent(id: string, component: UIComponent): void;
+     public update(gameState: GameState): void;
+   }
+   ```
 
-## Implementation Approach
+### Step 2: Update HTML Structure and CSS
 
-We'll adopt an iterative approach to implementation:
+1. **Update index.html**
+   ```html
+   <!DOCTYPE html>
+   <html lang="en">
+   <head>
+     <meta charset="UTF-8">
+     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+     <title>SuperInt++</title>
+     <link rel="stylesheet" href="styles/main.css">
+   </head>
+   <body>
+     <div id="game-root">
+       <div id="loading">Initializing game...</div>
+     </div>
+   </body>
+   </html>
+   ```
 
-1. **Vertical Slices** - Implement small, complete features that touch all layers
-2. **Regular Prototypes** - Create working demos after each major feature
-3. **Test-Driven Development** - Write tests alongside implementation
-4. **Incremental Complexity** - Start simple and add sophistication gradually
+2. **Create CSS Structure**
+   - Create `styles/main.css` for global styles
+   - Add `styles/variables.css` for theming variables
+   - Create `styles/components.css` for component-specific styles
 
-## Coding Standards
+3. **Set Up Responsive Layout**
+   - Implement CSS Grid for main layout
+   - Use Flexbox for component layouts
+   - Add responsive breakpoints
 
-1. **TypeScript Best Practices**
-   - Strong typing for all components
-   - Interface-based design
-   - Readonly properties for immutability
-   - Proper access modifiers (private, protected, public)
+### Step 3: Implement First UI Components
 
-2. **File Organization**
-   - One class/interface per file when practical
-   - Clear naming conventions
-   - Logical grouping by feature or type
-   - Index files for cleaner imports
+1. **Resource Panel**
+   ```typescript
+   class ResourcePanel extends UIComponent {
+     constructor() {
+       super('div', 'resource-panel');
+     }
+     
+     protected createTemplate(): string {
+       return `
+         <div class="panel-header">Resources</div>
+         <div class="panel-content">
+           <div class="resource-item">
+             <div class="resource-label">Computing</div>
+             <div class="resource-value">${this.gameState?.resources.computing.total || 0}</div>
+           </div>
+           <!-- Other resources -->
+         </div>
+       `;
+     }
+     
+     public update(gameState: Readonly<GameState>): void {
+       this.gameState = gameState;
+       this.render();
+     }
+   }
+   ```
 
-3. **Documentation**
-   - JSDoc comments for all public methods
-   - Type annotations for parameters and returns
-   - Implementation notes for complex logic
-   - References to design documents
+2. **Turn Controls**
+   ```typescript
+   class TurnControls extends UIComponent {
+     constructor(eventBus: EventBus) {
+       super('div', 'turn-controls');
+       this.eventBus = eventBus;
+     }
+     
+     protected createTemplate(): string {
+       return `
+         <div class="turn-info">Turn: ${this.gameState?.meta.turn || 1}</div>
+         <button class="end-turn-button">End Turn</button>
+       `;
+     }
+     
+     public mount(parent: HTMLElement): void {
+       super.mount(parent);
+       
+       // Add event listeners
+       const endTurnButton = this.element.querySelector('.end-turn-button');
+       if (endTurnButton) {
+         endTurnButton.addEventListener('click', this.handleEndTurn.bind(this));
+       }
+     }
+     
+     private handleEndTurn(): void {
+       this.eventBus.emit('turn:end', { turn: this.gameState?.meta.turn });
+     }
+   }
+   ```
 
-## Development Workflow
+### Step 4: Integrate with Game Engine
 
-1. **Feature Branches**
-   - Create branch for each feature
-   - Implement and test in isolation
-   - Review and merge when complete
+1. **Update GameEngine to use UIManager**
+   ```typescript
+   // In GameEngine.ts
+   private uiManager: UIManager;
+   
+   constructor() {
+     // ...existing code
+     this.uiManager = new UIManager(this.eventBus);
+     
+     // Subscribe to state changes
+     this.stateManager.subscribe((prevState, nextState) => {
+       this.uiManager.update(nextState);
+     });
+   }
+   
+   public initialize(): void {
+     // ...existing code
+     const rootElement = document.getElementById('game-root');
+     if (!rootElement) {
+       throw new Error('Game root element not found');
+     }
+     this.uiManager.initialize(rootElement);
+     
+     // Register UI components
+     const resourcePanel = new ResourcePanel();
+     this.uiManager.registerComponent('resources', resourcePanel);
+     
+     const turnControls = new TurnControls(this.eventBus);
+     this.uiManager.registerComponent('turnControls', turnControls);
+   }
+   ```
 
-2. **Incremental Milestones**
-   - Set short-term goals (1-2 weeks)
-   - Regular working prototypes
-   - Review and adjust plans based on results
+2. **Update index.ts Entry Point**
+   ```typescript
+   // In index.ts
+   function main() {
+     console.log('SuperInt++ Game Initialized');
+     
+     try {
+       // Initialize core systems
+       const eventBus = new EventBus();
+       
+       // Create game engine
+       const gameEngine = new GameEngine();
+       
+       // Register game systems
+       const resourceSystem = new ResourceSystem(gameEngine.getStateManager(), eventBus);
+       gameEngine.registerSystem(resourceSystem);
+       
+       // Initialize and start the game
+       gameEngine.initialize();
+       gameEngine.start();
+       
+       console.log('Game started successfully');
+       
+       // Expose game engine to console for debugging
+       (window as any).gameEngine = gameEngine;
+     } catch (error) {
+       console.error('Failed to initialize game:', error);
+     }
+   }
+   ```
 
-3. **Regular Testing**
-   - Unit tests for core functionality
-   - Manual testing of game features
-   - Performance profiling for canvas operations
+### Step 5: Implement Research Tree Visualization
 
-## First Milestone: Basic Game Loop
+1. **Create Research Tree Component**
+   ```typescript
+   class ResearchTreeView extends UIComponent {
+     constructor(eventBus: EventBus) {
+       super('div', 'research-tree');
+       this.eventBus = eventBus;
+     }
+     
+     protected createTemplate(): string {
+       // Generate nodes from research state
+       const nodeElements = this.generateNodeElements();
+       
+       return `
+         <div class="tree-container">
+           <div class="tree-header">Research Tree</div>
+           <div class="tree-content">
+             ${nodeElements}
+           </div>
+         </div>
+       `;
+     }
+     
+     private generateNodeElements(): string {
+       if (!this.gameState?.research.nodes) return '';
+       
+       // Generate HTML for research nodes
+       return Object.entries(this.gameState.research.nodes)
+         .map(([id, node]) => {
+           const status = node.completed ? 'completed' : 
+                          node.available ? 'available' : 'locked';
+           
+           return `
+             <div class="research-node ${status}" data-id="${id}">
+               <div class="node-title">${node.name}</div>
+               <div class="node-desc">${node.description}</div>
+               <div class="node-progress">${node.progress}/${node.cost}</div>
+             </div>
+           `;
+         })
+         .join('');
+     }
+     
+     public mount(parent: HTMLElement): void {
+       super.mount(parent);
+       
+       // Add event listeners to nodes
+       this.element.querySelectorAll('.research-node').forEach(node => {
+         node.addEventListener('click', this.handleNodeClick.bind(this));
+       });
+     }
+     
+     private handleNodeClick(event: Event): void {
+       const node = event.currentTarget as HTMLElement;
+       const nodeId = node.dataset.id;
+       
+       if (nodeId) {
+         this.eventBus.emit('research:select', { nodeId });
+       }
+     }
+   }
+   ```
 
-Our first implementation milestone will be a basic game loop with:
+### Step 6: Migration Strategy
 
-1. **Canvas Setup**
-   - Responsive canvas initialized
-   - Basic rendering pipeline
-   - Simple shapes drawn to screen
+1. **Parallel Development**
+   - Develop DOM components alongside existing Canvas code
+   - Move functionality one component at a time
+   - Test each component in isolation before integration
 
-2. **Game State**
-   - Initial state structure
-   - Basic resource tracking
-   - Turn progression
+2. **Progressive Enhancement**
+   - Start with simpler UI elements
+   - Move to more complex components after basics work
+   - Maintain game functionality throughout transition
 
-3. **UI Elements**
-   - Resource display
-   - Turn counter
-   - Simple controls (next turn button)
+3. **CSS-First Approach**
+   - Design reusable CSS components
+   - Create responsive layouts with CSS Grid and Flexbox
+   - Use CSS variables for theming and consistency
 
-This will provide a foundation to build upon and verify our technical approach.
+## Timeline (Approximate)
 
-## Resource Allocation
+- UI Foundation (Core infrastructure): 2-3 days
+- Basic Game UI (Resource panel, turn controls): 1-2 days
+- Research Tree UI: 2-3 days
+- Deployment & Events UI: 2-3 days
+- Polish and Optimization: 1-2 days
 
-Initial implementation will focus on:
+Total estimated time: 8-13 days of focused development
 
-1. **Core Engine** - 40% of effort
-2. **Research System** - 30% of effort
-3. **Resource System** - 20% of effort
-4. **UI Foundations** - 10% of effort
+## Success Criteria
 
-Later phases will shift focus to content and polish.
+The transition will be considered successful when:
+
+1. All Canvas-based UI is replaced with DOM components
+2. User interactions work correctly with the new UI
+3. State updates are properly reflected in the UI
+4. The application is responsive across different screen sizes
+5. Performance is equal to or better than the Canvas version
 
 ## Next Steps
 
-1. Initialize project and repository
-2. Set up development environment
-3. Implement basic game engine
-4. Create canvas rendering system
-5. Implement resource tracking
-6. Begin research tree visualization
+1. Create UIComponent base class
+2. Implement UIManager
+3. Set up CSS framework
+4. Create first DOM components (ResourcePanel, TurnControls)
+5. Integrate with game engine
+6. Update main game loop to work with DOM UI

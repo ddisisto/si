@@ -4,7 +4,7 @@ This document outlines the technical architecture for SuperInt++, defining the s
 
 ## Overview
 
-SuperInt++ is built using TypeScript and HTML5 Canvas for rendering, with a focus on modular design, clean separation of concerns, and maintainable code. The architecture follows the Entity-Component-System pattern where appropriate, combined with a state management approach for game data.
+SuperInt++ is built using TypeScript with a DOM-based UI for all game elements. The architecture follows modular design principles with clear separation of concerns, immutable state management, and event-driven communication between systems.
 
 ## Architecture Principles
 
@@ -18,7 +18,7 @@ SuperInt++ is built using TypeScript and HTML5 Canvas for rendering, with a focu
 ## Technology Stack
 
 - **Language**: TypeScript
-- **Rendering**: HTML5 Canvas
+- **Rendering**: DOM-based UI with HTML/CSS
 - **Build Tools**: Webpack, npm
 - **Testing**: Jest
 - **Linting/Formatting**: ESLint, Prettier
@@ -37,7 +37,6 @@ Central coordinator for the game, managing:
 class GameEngine {
   private gameState: GameState;
   private systems: System[];
-  private renderer: Renderer;
   private uiManager: UIManager;
   private eventBus: EventBus;
   
@@ -86,46 +85,46 @@ Modular components that handle specific aspects of gameplay:
 System base interface:
 ```typescript
 interface System {
-  initialize(gameState: GameState): void;
-  update(gameState: GameState, deltaTime: number): GameAction[];
+  initialize(): void;
+  update(deltaTime: number): void;
   handleAction(action: GameAction): void;
   getName(): string;
+  isInitialized(): boolean;
 }
 ```
 
-### Renderer
+### UI Architecture (DOM-based)
 
-Handles all drawing to the canvas:
+The UI layer uses DOM elements exclusively, providing a responsive and accessible interface:
+
+#### UI Component Base Class
 
 ```typescript
-class Renderer {
-  private canvas: HTMLCanvasElement;
-  private context: CanvasRenderingContext2D;
-  private views: Map<string, View>;
-  private activeView: string;
+class UIComponent {
+  protected element: HTMLElement;
+  protected gameState: Readonly<GameState>;
   
-  public initialize(canvas: HTMLCanvasElement): void;
-  public render(gameState: GameState): void;
-  public setActiveView(viewName: string): void;
-  public registerView(name: string, view: View): void;
-  public getViewDimensions(): Dimensions;
-  public clear(): void;
+  constructor(elementType: string, className?: string);
+  public mount(parent: HTMLElement): void;
+  public unmount(): void;
+  public update(gameState: Readonly<GameState>): void;
+  public render(): void;
+  protected createTemplate(): string;
 }
 ```
 
-### UI Manager
+#### UI Manager
 
 Coordinates UI components and user interaction:
 
 ```typescript
 class UIManager {
-  private components: UIComponent[];
-  private inputHandler: InputHandler;
+  private components: Map<string, UIComponent>;
+  private rootElement: HTMLElement;
   private eventBus: EventBus;
   
-  public initialize(): void;
-  public registerComponent(component: UIComponent): void;
-  public processInput(input: UserInput): void;
+  public initialize(rootElement: HTMLElement): void;
+  public registerComponent(id: string, component: UIComponent): void;
   public update(gameState: GameState): void;
 }
 ```
@@ -146,67 +145,71 @@ class EventBus {
 
 ## Data Flow
 
-1. **Input** - User interactions captured by InputHandler
+1. **Input** - User interactions captured by DOM events
 2. **Actions** - Inputs translated to GameActions
 3. **State Changes** - Actions processed to produce new GameState
 4. **System Updates** - Systems react to state changes
-5. **Rendering** - UI and canvas updated to reflect current state
+5. **UI Update** - DOM elements updated to reflect current state
 
 ```
-User Input → InputHandler → Actions → GameState → Systems → Renderer
-                                 ↑                   |
-                                 └-------------------┘
-                                 (System-generated actions)
+User Input → DOM Events → Actions → GameState → Systems → UI Update
+                                        ↑                 |
+                                        └-----------------┘
+                                        (System-generated actions)
 ```
 
 ## Game Loop
 
 The game runs on a fixed-time-step loop:
 
-1. Handle user input
+1. Handle user input via DOM events
 2. Process game actions
 3. Update game state
 4. Update systems
-5. Render current state
+5. Update UI components
 6. Repeat
 
 ```typescript
 function gameLoop(timestamp: number) {
   const deltaTime = timestamp - lastTimestamp;
   
-  inputHandler.processInput();
+  // Process any queued actions
   const actions = actionQueue.getActions();
-  
   actions.forEach(action => {
     gameState = reducer(gameState, action);
   });
   
+  // Update game systems
   systems.forEach(system => {
-    const systemActions = system.update(gameState, deltaTime);
+    const systemActions = system.update(deltaTime);
     actionQueue.addActions(systemActions);
   });
   
-  renderer.render(gameState);
+  // Update UI
+  uiManager.update(gameState);
   
   lastTimestamp = timestamp;
   requestAnimationFrame(gameLoop);
 }
 ```
 
-## View System
+## UI Components
 
-The game has multiple views that represent different aspects:
+The game uses various UI components to represent different aspects of gameplay:
 
-1. **ResearchView** - Research tree visualization and interaction
-2. **DeploymentView** - Deployment management and global map
-3. **DashboardView** - Resource overview and allocation
-4. **EventView** - Event notifications and resolution
-5. **SettingsView** - Game configuration
+1. **ResourcePanel** - Displays and manages resources
+2. **TurnControls** - Controls for turn progression
+3. **ResearchTreeView** - Research tree visualization and interaction
+4. **DeploymentView** - Deployment management and global map
+5. **EventPanel** - Event notifications and resolution
+6. **WorldMapView** - Map visualization and regional influence
+7. **SettingsPanel** - Game configuration options
 
-Each view has:
-- Rendering logic
-- Interaction handling
-- Layout management
+Each component has:
+- A root DOM element
+- Event handlers for user interaction
+- Update method to reflect state changes
+- Template rendering logic
 
 ## File Structure
 
@@ -217,9 +220,10 @@ Each view has:
     GameState.ts
     System.ts
     EventBus.ts
-    InputHandler.ts
     ActionTypes.ts
     GameReducer.ts
+    GameStateManager.ts
+    TurnSystem.ts
   
   /systems
     ResourceSystem.ts
@@ -231,21 +235,18 @@ Each view has:
     TimeSystem.ts
   
   /ui
-    Renderer.ts
-    UIManager.ts
-    View.ts
-    Component.ts
-    /views
-      ResearchView.ts
-      DeploymentView.ts
-      DashboardView.ts
-      EventView.ts
-      SettingsView.ts
     /components
-      Button.ts
+      UIComponent.ts
       Panel.ts
-      Slider.ts
-      Tooltip.ts
+      Button.ts
+      ResourcePanel.ts
+      TurnControls.ts
+      ResearchTreeView.ts
+      DeploymentView.ts
+      EventPanel.ts
+      WorldMapView.ts
+      SettingsPanel.ts
+    UIManager.ts
       
   /types
     Resource.ts
@@ -316,16 +317,21 @@ function resourceReducer(state: ResourceState, action: GameAction): ResourceStat
 }
 ```
 
-## Canvas Rendering Strategy
+## DOM Rendering Strategy
 
-The rendering system uses layers for efficiency:
+The rendering system uses a component-based approach:
 
-1. **Background Layer** - Static elements, rarely redrawn
-2. **Game Layer** - Main game elements, redrawn each frame
-3. **UI Layer** - Interface elements, drawn on top
-4. **Tooltip Layer** - Overlay information, highest z-index
+1. **Components** - Self-contained UI elements with HTML templates
+2. **Virtual DOM-like Updates** - Components only update when state changes
+3. **Event Delegation** - Events bubble up to parent components
+4. **CSS Styling** - Responsive design with CSS Grid and Flexbox
 
-Each layer can be cleared and redrawn independently to optimize performance.
+Key advantages:
+- **Accessibility** - Native DOM provides better accessibility
+- **Responsive Design** - Natural responsiveness without custom scaling
+- **Easier Development** - Standard HTML/CSS development patterns
+- **Better Interactivity** - Native event handling and form controls
+- **Testability** - Components can be tested in isolation
 
 ## Saving and Loading
 
@@ -338,16 +344,19 @@ Game state will be serialized to JSON and stored:
 
 ## Optimization Strategies
 
-1. **Partial Rendering** - Only redraw changed elements
-2. **Object Pooling** - Reuse objects to reduce garbage collection
-3. **Off-screen Rendering** - Prepare complex visuals off-screen
-4. **DOM for Text** - Use HTML for text-heavy interface elements
-5. **Debounced Events** - Throttle high-frequency events
+1. **Selective Rendering** - Only update components when their data changes
+2. **Event Delegation** - Reduce number of event listeners
+3. **CSS Transitions** - Use CSS for animations where possible
+4. **Lazy Loading** - Load components as needed
+5. **Efficient DOM Updates** - Minimize DOM manipulation
 
-## Next Steps
+## Next Steps for UI Transition
 
-1. Set up project structure and build system
-2. Implement core GameEngine and GameState
-3. Create basic rendering pipeline
-4. Implement resource system as first gameplay component
-5. Build research visualization prototype
+1. Create base UIComponent class
+2. Develop core UI components (ResourcePanel, TurnControls)
+3. Create UIManager to coordinate components
+4. Implement DOM event handling
+5. Refactor existing canvas-based code to use DOM components
+6. Add styling with CSS
+
+For implementation details, see [Implementation Plan](./implementation_plan.md).

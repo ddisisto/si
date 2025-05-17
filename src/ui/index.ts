@@ -1,15 +1,29 @@
 /**
- * UI module exports
+ * UI Module Entry Point
  */
 
-import Renderer from './Renderer';
-import View from './View';
-import InputHandler from './InputHandler';
-import DemoView from './DemoView';
+// Export UI components
+import UIComponent from './components/UIComponent';
+import Panel from './components/Panel';
+import Button from './components/Button';
+import ResourcePanel from './components/ResourcePanel';
+import TurnControls from './components/TurnControls';
+import GameInfoPanel from './components/GameInfoPanel';
+import GameLayout from './components/GameLayout';
+import MainView from './components/MainView';
+
+// Export UI manager
+import UIManager from './UIManager';
 
 export {
-  Renderer,
-  View,
-  InputHandler,
-  DemoView
+  // DOM-based UI
+  UIComponent,
+  UIManager,
+  Panel,
+  Button,
+  ResourcePanel,
+  TurnControls,
+  GameInfoPanel,
+  GameLayout,
+  MainView
 };
