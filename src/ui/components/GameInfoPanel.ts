@@ -3,7 +3,6 @@
  */
 
 import UIComponent from './UIComponent';
-import { GameState } from '../../core/GameState';
 
 /**
  * Panel for displaying general game information

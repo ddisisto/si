@@ -13,8 +13,6 @@ interface GameLayoutOptions {
  * Main layout component that structures the game UI into sections
  */
 class GameLayout extends UIComponent {
-  private eventBus: EventBus;
-  
   // References to container elements for mounting child components
   private headerElement: HTMLElement | null = null;
   private sidebarElement: HTMLElement | null = null;

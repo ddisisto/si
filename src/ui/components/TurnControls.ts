@@ -9,8 +9,6 @@ import { EventBus } from '../../core';
  * Component for controlling turn progression
  */
 class TurnControls extends UIComponent {
-  private eventBus: EventBus;
-  
   /**
    * Create new turn controls
    * @param eventBus Event bus for emitting turn events
@@ -67,7 +65,7 @@ class TurnControls extends UIComponent {
   private handleEndTurn = (): void => {
     console.log('End Turn button clicked');
     
-    if (this.gameState) {
+    if (this.gameState && this.eventBus) {
       // Emit end turn event
       this.eventBus.emit('turn:end', { 
         turn: this.gameState.meta.turn 

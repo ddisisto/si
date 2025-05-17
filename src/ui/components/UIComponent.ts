@@ -3,6 +3,7 @@
  */
 
 import { GameState } from '../../core/GameState';
+import { EventBus } from '../../core';
 
 /**
  * Abstract base class for UI components
@@ -12,7 +13,7 @@ import { GameState } from '../../core/GameState';
 abstract class UIComponent {
   protected element: HTMLElement;
   protected gameState: Readonly<GameState> | null = null;
-  protected eventBus: any; // Will be properly typed later
+  protected eventBus: EventBus | null = null;
   
   /**
    * Create a new UI component
@@ -102,7 +103,7 @@ abstract class UIComponent {
    * Set event bus for component communication
    * @param eventBus Event bus instance
    */
-  public setEventBus(eventBus: any): void {
+  public setEventBus(eventBus: EventBus): void {
     this.eventBus = eventBus;
   }
 }
