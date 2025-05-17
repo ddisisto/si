@@ -118,27 +118,20 @@ class MainView extends UIComponent {
    * Mount the research tree component
    */
   private mountResearchTree(): void {
-    console.log('MainView: mountResearchTree() called');
-    
     if (this.researchTreeView) {
-      console.log('MainView: researchTreeView instance exists');
       const container = this.element.querySelector('#research-tree-container');
       
       if (container) {
-        console.log('MainView: Found research-tree-container, mounting researchTreeView');
         this.researchTreeView.mount(container as HTMLElement);
         
         if (this.gameState) {
-          console.log('MainView: Updating researchTreeView with gameState');
           this.researchTreeView.update(this.gameState);
-        } else {
-          console.log('MainView: No gameState available to update researchTreeView');
         }
       } else {
-        console.error('MainView: Could not find research-tree-container element');
+        console.error('Could not find research-tree-container element');
       }
     } else {
-      console.error('MainView: researchTreeView is not initialized');
+      console.error('ResearchTreeView is not initialized');
     }
   }
   
@@ -146,15 +139,11 @@ class MainView extends UIComponent {
    * Update all child components with new state
    */
   public update(gameState: Readonly<any>): void {
-    console.log('MainView: update() called with gameState');
     super.update(gameState);
     
     // Update research tree if mounted
     if (this.showResearchTree && this.researchTreeView) {
-      console.log('MainView: Updating researchTreeView because showResearchTree is true');
       this.researchTreeView.update(gameState);
-    } else {
-      console.log(`MainView: Not updating researchTreeView - showResearchTree: ${this.showResearchTree}, researchTreeView exists: ${!!this.researchTreeView}`);
     }
   }
 }

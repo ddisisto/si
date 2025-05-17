@@ -83,11 +83,11 @@ The roadmap will be updated as development progresses to reflect new priorities,
   - [x] Implement ResearchNode component
   - [x] Design basic node styling
   - [x] Create node status indicators
-- [ ] Create connection visualization
-  - [ ] Implement SVG connection lines
-  - [ ] Create directional arrows
-  - [ ] Handle different connection types
-  - [ ] Add connection styling based on status
+- [x] Create connection visualization
+  - [x] Implement SVG connection lines
+  - [x] Create directional arrows
+  - [x] Handle different connection types
+  - [x] Add connection styling based on status
 - [x] Add interaction handling
   - [x] Implement hover effects
   - [x] Create click selection
@@ -95,9 +95,9 @@ The roadmap will be updated as development progresses to reflect new priorities,
   - [x] Add research action UI
   - [x] Fix event binding for research nodes
   - [x] Implement navigation between main view and research tree
-- [ ] Implement visualization controls
-  - [ ] Add zooming functionality
-  - [ ] Create panning controls
+- [x] Implement visualization controls
+  - [x] Add zooming functionality
+  - [x] Create panning controls
   - [ ] Implement category filters
   - [ ] Create focus/navigation controls
 

@@ -29,6 +29,8 @@ class ResearchTreeView extends UIComponent {
   private dragStartY: number = 0;
   private viewportTranslateX: number = 0;
   private viewportTranslateY: number = 0;
+  // Store node positions for connection drawing and highlighting
+  private nodePositions: Record<string, { x: number, y: number, width: number, height: number }> = {};
   
   /**
    * Create a new research tree view
@@ -53,13 +55,11 @@ class ResearchTreeView extends UIComponent {
    */
   protected createTemplate(): string {
     if (!this.gameState) {
-      console.log('ResearchTreeView: No game state available');
       return `<div class="research-loading">Loading research data...</div>`;
     }
     
     const { research } = this.gameState;
     const nodeCount = Object.keys(research.nodes).length;
-    console.log(`ResearchTreeView: Found ${nodeCount} research nodes`);
     
     if (nodeCount === 0) {
       return `<div class="research-empty">No research nodes available.</div>`;
@@ -88,7 +88,7 @@ class ResearchTreeView extends UIComponent {
     `;
     
     // Process nodes first to store their positions
-    const nodePositions: Record<string, { x: number, y: number, width: number, height: number }> = {};
+    this.nodePositions = {};
     
     Object.values(research.nodes).forEach(node => {
       // Calculate position based on node.position or default
@@ -99,7 +99,7 @@ class ResearchTreeView extends UIComponent {
       const yPos = position.y * 140 + 100; // 140px height + 100px margin
       
       // Store the position for connection drawing
-      nodePositions[node.id] = {
+      this.nodePositions[node.id] = {
         x: xPos,
         y: yPos,
         width: 200, // Fixed width of research node
@@ -114,7 +114,7 @@ class ResearchTreeView extends UIComponent {
       }
       
       // Get this node's position
-      const nodePos = nodePositions[node.id];
+      const nodePos = this.nodePositions[node.id];
       if (!nodePos) return;
       
       // Starting point for the line (left center of this node)
@@ -123,7 +123,7 @@ class ResearchTreeView extends UIComponent {
       
       // Draw line to each prerequisite
       node.prerequisites.forEach(prereqId => {
-        const prereqPos = nodePositions[prereqId];
+        const prereqPos = this.nodePositions[prereqId];
         if (!prereqPos) return;
         
         // Ending point for the line (right center of prerequisite node)
@@ -320,28 +320,20 @@ class ResearchTreeView extends UIComponent {
    * Override the render method to ensure events are always bound
    */
   public render(): void {
-    console.log('ResearchTreeView: render() called');
-    
     // Skip rendering if element is not available
     if (!this.element) {
-      console.log('ResearchTreeView: Cannot render, no element available');
       return;
     }
     
-    console.log('ResearchTreeView: Creating template and updating element content');
     // Update the element's content
     const template = this.createTemplate();
     this.element.innerHTML = template;
     
-    console.log(`ResearchTreeView: innerHTML set, element has ${this.element.children.length} children`);
-    
     // Always re-attach event handlers after rendering
     this.bindEvents();
     
-    // Debug: what's actually in the DOM?
-    console.log('ResearchTreeView: Checking for research nodes in DOM after render:');
-    const nodesInDom = this.element.querySelectorAll('.research-node');
-    console.log(`ResearchTreeView: Found ${nodesInDom.length} research nodes in DOM after render`);
+    // Apply zoom and pan transformations
+    this.applyZoomAndPan();
   }
   
   
@@ -350,15 +342,10 @@ class ResearchTreeView extends UIComponent {
    */
   
   protected bindEvents(): void {
-    console.log('ResearchTreeView: Binding events');
-    
     // Add click event to research nodes
     const nodeElements = this.element.querySelectorAll('.research-node');
-    console.log(`ResearchTreeView: Found ${nodeElements.length} node elements to bind events to`);
     
-    nodeElements.forEach((node, index) => {
-      const nodeId = node.getAttribute('data-id');
-      console.log(`ResearchTreeView: Binding click event to node #${index}: ${nodeId}`);
+    nodeElements.forEach(node => {
       node.addEventListener('click', this.boundHandleNodeClick);
     });
     
@@ -490,8 +477,43 @@ class ResearchTreeView extends UIComponent {
         });
       }
       
-      this.render();
+      // Update node selection visuals without full re-render to preserve viewport position
+      this.updateNodeSelectionVisuals();
     }
+  }
+  
+  /**
+   * Update visual selection state of nodes without full re-render
+   */
+  private updateNodeSelectionVisuals(): void {
+    // First remove selected class from all nodes
+    const nodeElements = this.element.querySelectorAll('.research-node');
+    nodeElements.forEach(node => {
+      node.classList.remove('selected');
+    });
+    
+    // Add selected class to the currently selected node
+    if (this.selectedNodeId) {
+      const selectedNode = this.element.querySelector(`.research-node[data-id="${this.selectedNodeId}"]`);
+      if (selectedNode) {
+        selectedNode.classList.add('selected');
+      }
+    }
+    
+    // Update connection highlight state
+    this.updateConnectionHighlights();
+  }
+  
+  /**
+   * Update connection highlights based on selected node
+   */
+  private updateConnectionHighlights(): void {
+    // For simplicity, we'll just update connection classes during render based on selectedNodeId
+    // This is a temporary approach that will be replaced with proper SVG connections
+    
+    // We'd need to do more complex matching of SVG paths to properly highlight connections,
+    // but since this is just a temporary solution before we implement proper connection visualization
+    // as noted in the ROADMAP, we'll leave this as a placeholder
   }
   
   /**
