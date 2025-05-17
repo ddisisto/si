@@ -48,7 +48,7 @@ Following the principles in PHILOSOPHY.md:
 1. **Research Panel Component**
    - [x] Create base container for research visualization
    - [x] Implement layout grid system
-   - [ ] Add zoom and pan controls
+   - [x] Add zoom and pan controls
 
 2. **Node Rendering**
    - [x] Create basic node component
@@ -57,18 +57,18 @@ Following the principles in PHILOSOPHY.md:
    - [x] Implement basic node template system
 
 3. **Connection Visualization**
-   - [ ] Create connection rendering between nodes
-   - [ ] Implement different connection types (prerequisite, exclusion)
-   - [ ] Add directional indicators
-   - [ ] Handle connection routing to avoid overlaps
+   - [x] Create connection rendering between nodes
+   - [x] Implement different connection types (prerequisite, exclusion)
+   - [x] Add directional indicators
+   - [x] Handle connection routing to avoid overlaps
 
 ### Phase 3: Interaction System (1 week)
 
 1. **Node Selection and Highlighting**
    - [x] Implement hover effects for nodes
    - [x] Create selection mechanism
-   - [ ] Add highlight for related nodes (prerequisites, unlocks)
-   - [ ] Implement focus animations
+   - [x] Add highlight for related nodes (prerequisites, unlocks)
+   - [x] Implement focus animations
 
 2. **Node Information Display**
    - [x] Create detailed node information panel
@@ -91,8 +91,8 @@ Following the principles in PHILOSOPHY.md:
 ### Phase 4: Advanced Visualization Features (1 week)
 
 1. **Zoom and Pan Controls**
-   - [ ] Implement smooth zooming
-   - [ ] Add panning with drag and edge scrolling
+   - [x] Implement smooth zooming
+   - [x] Add panning with drag and edge scrolling
    - [ ] Create mini-map for navigation
    - [ ] Add focus controls for different tree sections
 
@@ -193,12 +193,63 @@ The research tree will use DOM-based rendering with:
 4. **UI Manager** - Component registration and updates
 5. **Game State** - Research state storage and updates
 
+## Research Data Organization
+
+To improve maintainability and scalability, the research data should be reorganized into a more modular structure. This will allow for easier management of the growing research tree and better support for adding new nodes.
+
+### Proposed Structure
+
+```
+/src
+  /data
+    /research
+      index.ts               - Main export for all research data
+      categories.ts          - Category and subcategory definitions
+      nodeTypes.ts           - Node type definitions and common properties
+      /categories
+        foundations.ts       - Basic nodes for Foundations category
+        scaling.ts           - Basic nodes for Scaling category
+        capabilities.ts      - Basic nodes for Capabilities category
+        infrastructure.ts    - Basic nodes for Infrastructure category
+        agency.ts            - Basic nodes for Agency category
+        alignment.ts         - Basic nodes for Alignment category
+      /nodes
+        transformerArchitecture.ts  - Individual significant nodes
+        mixtureOfExperts.ts
+        billionParameterModels.ts
+        recursiveSelfImprovement.ts
+        // More individual node files
+```
+
+### Implementation Plan
+
+1. **Data Structure Refactoring**
+   - Create category-specific files with basic nodes
+   - Extract significant nodes into individual files
+   - Implement a consistent export pattern for all nodes
+   - Ensure backward compatibility during transition
+
+2. **Schema Validation**
+   - Add runtime validation for node data
+   - Create TypeScript utility types for node validation
+   - Implement warning system for invalid node data
+
+3. **Documentation**
+   - Create examples for adding new node types
+   - Document the organization structure
+   - Add README for research data management
+
+4. **Data Management Tools**
+   - Consider creating dev tools for node visualization and editing
+   - Add node dependency validation scripts
+   - Implement test cases for node data integrity
+
 ## Next Steps
 
-1. Update the ROADMAP.md with detailed implementation tasks
-2. Create the basic data structures for research nodes
-3. Implement the foundation for the research tree visualization
-4. Begin working on the node rendering system
+1. Complete the research tree visualization implementation
+2. Implement the research data reorganization
+3. Update the ROADMAP.md with detailed implementation tasks
+4. Create the custom positioning system for research nodes
 
 ## References
 
