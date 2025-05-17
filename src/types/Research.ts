@@ -69,6 +69,13 @@ export enum ResearchStatus {
   COMPLETED = 'completed'  // Research finished
 }
 
+// Data requirement for research
+export interface DataRequirement {
+  dataTypeId: string;
+  minQuantity: number;
+  minQuality?: number;
+}
+
 // Base research node interface
 export interface ResearchNode {
   id: string;
@@ -81,7 +88,8 @@ export interface ResearchNode {
   exclusions: string[];
   computeCost: number;
   influenceCost: Record<string, number>;
-  dataCost: string[];
+  dataCost: string[] | DataRequirement[];
+  deploymentRequirements?: string[]; // Specific deployments needed (mid-late game)
   effects: Record<string, any>;
   risk: {
     probability: number; // 0.0 to 1.0
@@ -100,6 +108,21 @@ export interface ResearchNodeState extends ResearchNode {
   computeAllocated: number;
   startTurn?: number;
   completionTurn?: number;
+  deploymentBoosts?: Record<string, number>; // Boosts from active deployments (deploymentId -> percentage)
+  effectiveComputeRate?: number; // Compute after all boosts applied
+}
+
+// Data type definition
+export interface DataType {
+  id: string;
+  name: string;
+  tier: 'public' | 'specialized' | 'proprietary' | 'synthetic';
+  domain: string;
+  modality: string;
+  quality: number;
+  quantity: number;
+  source?: string; // Where this data came from (usually a deployment)
+  turnAcquired?: number;
 }
 
 // Research state in the game state tree
@@ -109,6 +132,8 @@ export interface ResearchState {
   totalCompute: number;
   allocatedCompute: number;
   completedNodes: string[];
+  dataTypes: Record<string, DataType>; // Available data types for research
+  researchBudget: number; // Percentage of total compute allocated to research
 }
 
 // Research events

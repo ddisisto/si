@@ -119,18 +119,25 @@ The roadmap will be updated as development progresses to reflect new priorities,
 - [ ] Add prerequisites checking
 - [ ] Implement resource costs
 - [ ] Create research notifications
+- [ ] Add data type requirements for research nodes
+- [ ] Implement research boost mechanics from deployments
 
 ### Resource System Refinement (2 weeks)
 - [ ] Implement resource generation
 - [ ] Create resource allocation UI
 - [ ] Add resource caps and limitations
 - [ ] Implement resource effects from research
+- [ ] Add data types as a tracked resource
+- [ ] Create data quality and quantity tracking
 
-### Deployment System (3 weeks)
+### Deployment System (4 weeks)
 - [ ] Create deployment slot management
 - [ ] Implement deployment effects on resources
 - [ ] Add deployment visualization
 - [ ] Create deployment management UI
+- [ ] Implement data generation from deployments
+- [ ] Add research category boost effects
+- [ ] Create deployment-research feedback visualization
 
 ### Basic Event System (3 weeks)
 - [ ] Implement event triggering framework
