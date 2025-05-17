@@ -33,10 +33,24 @@ class GameEngine {
 
     // Update game state based on deltaTime
     // This will be expanded as we implement the game systems
+    this.updateGameState(deltaTime);
     
     // Request next frame if game is still running
     if (this.gameLoop !== null) {
       this.gameLoop = requestAnimationFrame(this.update.bind(this));
+    }
+  }
+  
+  /**
+   * Update game state with the elapsed time
+   * This is a placeholder that will be expanded as systems are implemented
+   * @param deltaTime Time since last frame in milliseconds
+   */
+  private updateGameState(deltaTime: number): void {
+    // Currently just logging the frame time during development
+    if (deltaTime > 100) {
+      // Log unusually large frame times (might indicate performance issues)
+      console.warn(`Long frame time: ${deltaTime.toFixed(2)}ms`);
     }
   }
 }

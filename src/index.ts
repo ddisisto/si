@@ -15,7 +15,10 @@ function main() {
     // Initialize core systems
     const eventBus = new EventBus();
     const renderer = new Renderer();
-    const inputHandler = new InputHandler(renderer.getDimensions().canvas, eventBus);
+    
+    // Initialize input handler with canvas from renderer
+    new InputHandler(renderer.getDimensions().canvas, eventBus);
+    
     const gameEngine = new GameEngine();
     
     // Set up event handlers
