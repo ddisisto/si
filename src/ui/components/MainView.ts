@@ -67,9 +67,8 @@ class MainView extends UIComponent {
   protected createTemplate(): string {
     // Show research tree if enabled
     if (this.showResearchTree) {
-      return `
-        <div id="research-tree-container"></div>
-      `;
+      // The ResearchTreeView component will be mounted directly to this container
+      return ``;
     }
     
     // Otherwise show the welcome/intro panel
@@ -135,16 +134,11 @@ class MainView extends UIComponent {
    */
   private mountResearchTree(): void {
     if (this.researchTreeView) {
-      const container = this.element.querySelector('#research-tree-container');
-      
-      if (container) {
-        this.researchTreeView.mount(container as HTMLElement);
+      // Mount directly to this.element instead of an inner container
+      this.researchTreeView.mount(this.element);
         
-        if (this.gameState) {
-          this.researchTreeView.update(this.gameState);
-        }
-      } else {
-        console.error('Could not find research-tree-container element');
+      if (this.gameState) {
+        this.researchTreeView.update(this.gameState);
       }
     } else {
       console.error('ResearchTreeView is not initialized');

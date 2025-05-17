@@ -163,9 +163,8 @@ class ResearchTreeView extends UIComponent {
           </div>
         </div>
       </div>
-      <div class="research-tree-container">
-        <div class="research-tree-view-port">
-          <svg class="research-connections" width="100%" height="100%">
+      <div class="research-tree-view-port">
+        <svg class="research-connections" width="100%" height="100%">
     `;
     
     // Process nodes first to store their positions
@@ -332,7 +331,6 @@ class ResearchTreeView extends UIComponent {
     html += `
           </div>
         </div>
-      </div>
     `;
     
     return html;
@@ -650,6 +648,38 @@ class ResearchTreeView extends UIComponent {
         }
       }
     });
+    
+    // Add or remove click outside listener based on whether any dropdown is open
+    if (this.openDropdowns.size > 0) {
+      document.addEventListener('click', this.handleClickOutsideDropdowns.bind(this));
+    } else {
+      document.removeEventListener('click', this.handleClickOutsideDropdowns.bind(this));
+    }
+  }
+  
+  /**
+   * Handle clicks outside the dropdown to close it
+   */
+  private handleClickOutsideDropdowns(event: Event): void {
+    // Only process if we have any open dropdowns
+    if (this.openDropdowns.size === 0) return;
+    
+    // Get all dropdown elements
+    const dropdownElements = this.element.querySelectorAll('.dropdown-container');
+    let clickedInside = false;
+    
+    // Check if click was inside any dropdown
+    dropdownElements.forEach(dropdown => {
+      if (dropdown.contains(event.target as Node)) {
+        clickedInside = true;
+      }
+    });
+    
+    // If clicked outside all dropdowns, close them all
+    if (!clickedInside) {
+      this.openDropdowns.clear();
+      this.updateDropdownVisibility();
+    }
   }
   
   /**
@@ -920,8 +950,12 @@ class ResearchTreeView extends UIComponent {
       option.removeEventListener('click', this.boundHandleSelectFilterOption);
     });
     
-    // Remove document click listener
+    // Remove document click listeners
     document.removeEventListener('click', this.handleClickOutside.bind(this));
+    document.removeEventListener('click', this.handleClickOutsideDropdowns.bind(this));
+    
+    // Clear any open dropdowns
+    this.openDropdowns.clear();
     
     // Remove wheel event listener
     const viewPort = this.element.querySelector('.research-tree-view-port');
