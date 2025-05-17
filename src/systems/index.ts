@@ -3,7 +3,9 @@
  */
 
 import ResourceSystem from './ResourceSystem';
+import ResearchSystem from './ResearchSystem';
 
 export {
-  ResourceSystem
+  ResourceSystem,
+  ResearchSystem
 };

@@ -9,6 +9,7 @@ import { GameAction } from './GameStateManager';
 import { gameReducer } from './GameReducer';
 import { createInitialState, GameState } from './GameState';
 import TurnSystem from './TurnSystem';
+import { ResourceSystem, ResearchSystem } from '../systems';
 
 class GameEngine {
   private gameLoop: number | null = null;
@@ -33,6 +34,14 @@ class GameEngine {
     // Create turn system (which will create TimeSystem internally)
     this.turnSystem = new TurnSystem(this.stateManager, this.eventBus);
     this.systems.push(this.turnSystem);
+    
+    // Create resource system
+    const resourceSystem = new ResourceSystem(this.stateManager, this.eventBus);
+    this.systems.push(resourceSystem);
+    
+    // Create research system
+    const researchSystem = new ResearchSystem(this.stateManager, this.eventBus);
+    this.systems.push(researchSystem);
     
     // Subscribe to events that need to queue actions
     this.eventBus.subscribe('action:queue', (data: any) => {
