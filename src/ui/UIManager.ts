@@ -82,6 +82,13 @@ class UIManager {
    * @param gameState Current game state
    */
   public update(gameState: Readonly<GameState>): void {
+    const prevTurn = this.gameState?.meta.turn;
+    const newTurn = gameState.meta.turn;
+    
+    if (prevTurn !== newTurn) {
+      console.log(`UIManager: Updating components with new state, turn changed from ${prevTurn} to ${newTurn}`);
+    }
+    
     this.gameState = gameState;
     
     // Update all registered components

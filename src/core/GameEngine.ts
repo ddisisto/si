@@ -52,9 +52,13 @@ class GameEngine {
     
     this.eventBus.subscribe('action:load', (data: any) => {
       console.log(`GameEngine: Received action:load event with name: "${data.name}"`);
+      console.log(`GameEngine: Current turn before load: ${this.stateManager.getState().meta.turn}`);
+      
       const success = this.loadGame(data.name);
+      
       if (success) {
-        console.log(`GameEngine: Load succeeded, emitting game:loaded event for "${data.name}"`);
+        console.log(`GameEngine: Load succeeded, new turn: ${this.stateManager.getState().meta.turn}`);
+        console.log(`GameEngine: Emitting game:loaded event for "${data.name}"`);
         this.eventBus.emit('game:loaded', { name: data.name });
       } else {
         console.error(`GameEngine: Failed to load game "${data.name}"`);

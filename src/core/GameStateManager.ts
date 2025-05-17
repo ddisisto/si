@@ -200,11 +200,20 @@ class GameStateManager {
           - Turn: ${parsedData.meta?.turn}
         `);
         
+        // Keep track of the previous state
+        const prevState = this.state;
+        
         // Replace state
         this.state = parsedData.gameState;
         console.log(`GameStateManager: State successfully replaced`);
         
-        // Notify about complete state replacement
+        // Notify listeners about the state change
+        this.notifyListeners(prevState, this.state, { 
+            type: 'STATE_LOADED', 
+            payload: { name } 
+        });
+        
+        // Notify about complete state replacement via event bus
         this.eventBus.emit('stateLoaded', { name });
         console.log(`GameStateManager: Game loaded from "${name}"`);
         return true;
