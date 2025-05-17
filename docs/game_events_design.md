@@ -278,7 +278,7 @@ Full Implementation:
 
 ## Event Communication Architecture
 
-For technical details on how events are communicated between components using the EventBus system, see [Event Communication and State Persistence](./event_communication_design.md). This documentation covers:
+For technical details on how events are communicated between components using the EventBus system, see [EventBus System Design](./eventbus_design.md). This documentation covers:
 
 - Event bus implementation
 - Event type categorization

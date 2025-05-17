@@ -49,7 +49,7 @@ SuperInt++ consists of several interconnected systems:
   - state_management_design.md - State management approach
   - resource_system_design.md - Resource system mechanics
   - research_tree_design.md - Research progression system
-  - event_system_design.md - Event system design
+  - game_events_design.md - Game events system design
   - deployment_system_design.md - Deployment system mechanics
   - alignment_system_design.md - Alignment system design
 

@@ -29,7 +29,7 @@ The roadmap will be updated as development progresses to reflect new priorities,
   - [ ] Define resource generation rates
   - [ ] Balance resource costs for research/deployment
   - [ ] Define resource caps and scaling
-- [x] Event system design (docs/event_system_design.md)
+- [x] Game events design (docs/game_events_design.md)
   - [x] Create event categories and types
   - [x] Design event triggers and conditions
   - [ ] Write event text and choices

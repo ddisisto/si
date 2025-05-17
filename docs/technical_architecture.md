@@ -132,7 +132,7 @@ class UIManager {
 
 ### Event Bus
 
-Facilitates communication between systems through a centralized event bus. For detailed documentation on the event system and communication patterns, see [Event Communication and State Persistence](./event_communication_design.md).
+Facilitates communication between systems through a centralized event bus. For detailed documentation on the event system and communication patterns, see [EventBus System Design](./eventbus_design.md).
 
 ```typescript
 class EventBus {
@@ -338,7 +338,7 @@ Key advantages:
 
 ## Saving and Loading
 
-Game state is serialized to JSON and stored in localStorage, following the event-driven architecture detailed in [Event Communication and State Persistence](./event_communication_design.md).
+Game state is serialized to JSON and stored in localStorage, following the event-driven architecture detailed in [EventBus System Design](./eventbus_design.md).
 
 The save/load system provides:
 

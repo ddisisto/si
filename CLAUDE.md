@@ -28,7 +28,7 @@ The game consists of several interconnected systems:
   - state_management_design.md - Data flow and state structure
   - research_tree_design.md - Research progression system
   - resource_system_design.md - Resource mechanics
-  - event_system_design.md - Event triggers and resolution
+  - game_events_design.md - Event triggers and resolution
   - deployment_system_design.md - AI system deployment
   - alignment_system_design.md - Value tracking and consequences
 
@@ -85,7 +85,7 @@ The codebase maintains separation between core systems:
 
 3. **State Change Notifications** - When replacing state directly (e.g., when loading a saved game), ensure all listeners are notified properly through `notifyListeners()`.
 
-4. **Event Documentation** - Always document new event types in `/docs/event_communication_design.md` to maintain the registry of events.
+4. **Event Documentation** - Always document new event types in `/docs/eventbus_design.md` to maintain the registry of events.
 
 ## Research System Implementation
 

@@ -14,7 +14,7 @@ This document provides an overview of all documentation for the SuperInt++ proje
 
 - [Research Tree Design](research_tree_design.md) - Research progression system
 - [Resource System Design](resource_system_design.md) - Resource management mechanics
-- [Event System Design](event_system_design.md) - Game events and player choices
+- [Game Events Design](game_events_design.md) - Game events and player choices
 - [Deployment System Design](deployment_system_design.md) - AI application mechanics
 - [Alignment System Design](alignment_system_design.md) - Value and relationship tracking
 

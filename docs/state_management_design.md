@@ -376,7 +376,7 @@ function getAvailableComputing(state: GameState): number {
 
 ## Persistence and Serialization
 
-The state system supports saving and loading game state through the GameStateManager. See [Event Communication and State Persistence](./event_communication_design.md) for comprehensive documentation on the save/load system and its integration with the event architecture.
+The state system supports saving and loading game state through the GameStateManager. See [EventBus System Design](./eventbus_design.md) for comprehensive documentation on the save/load system and its integration with the event architecture.
 
 Key responsibilities of the state management system for persistence:
 
