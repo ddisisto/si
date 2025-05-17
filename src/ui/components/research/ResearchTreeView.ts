@@ -667,18 +667,35 @@ class ResearchTreeView extends UIComponent {
     // Get all dropdown elements
     const dropdownElements = this.element.querySelectorAll('.dropdown-container');
     let clickedInside = false;
+    let clickedOnSelected = false;
+    let clickedFilterType = '';
     
     // Check if click was inside any dropdown
     dropdownElements.forEach(dropdown => {
       if (dropdown.contains(event.target as Node)) {
         clickedInside = true;
+        
+        // Check if clicking on the dropdown header (to toggle it)
+        const selected = dropdown.querySelector('.dropdown-selected');
+        if (selected && selected.contains(event.target as Node)) {
+          clickedOnSelected = true;
+          clickedFilterType = (selected as HTMLElement).dataset.filterType || '';
+        }
       }
     });
     
     // If clicked outside all dropdowns, close them all
     if (!clickedInside) {
-      this.openDropdowns.clear();
-      this.updateDropdownVisibility();
+      // Short delay to allow click events to process
+      setTimeout(() => {
+        this.openDropdowns.clear();
+        this.updateDropdownVisibility();
+      }, 50);
+    }
+    // If clicked on a dropdown header, keep that one open and close others
+    else if (clickedOnSelected && clickedFilterType) {
+      // Keep the handling in the toggle method
+      // This is handled by handleToggleDropdown
     }
   }
   
