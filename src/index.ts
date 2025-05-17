@@ -69,7 +69,7 @@ function main() {
     const initialState = gameEngine.getState();
     
     // Subscribe UI manager to state changes
-    eventBus.subscribe('stateChanged', (data: any) => {
+    eventBus.subscribe('stateChanged', () => {
       uiManager.update(gameEngine.getState());
     });
     
