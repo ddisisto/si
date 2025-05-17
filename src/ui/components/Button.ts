@@ -99,7 +99,7 @@ class Button extends UIComponent {
     if (this.onClick && !this.disabled) {
       this.onClick(event);
     }
-  }
+  };
 }
 
 export default Button;
