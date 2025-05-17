@@ -73,17 +73,43 @@ The roadmap will be updated as development progresses to reflect new priorities,
 - [x] Add basic UI for state display
 
 ### Research Tree Visualization (4 weeks)
+- [ ] Create research tree foundation
+  - [ ] Define research node data structures
+  - [ ] Create sample research data
+  - [ ] Implement state integration for research
+  - [ ] Create research action types
 - [ ] Implement node rendering system
+  - [ ] Create ResearchTreeView component
+  - [ ] Implement ResearchNode component
+  - [ ] Design basic node styling
+  - [ ] Create node status indicators
 - [ ] Create connection visualization
-- [ ] Add interaction handling (hover, click)
-- [ ] Implement zooming and panning
-- [ ] Add node status indicators
+  - [ ] Implement SVG connection lines
+  - [ ] Create directional arrows
+  - [ ] Handle different connection types
+  - [ ] Add connection styling based on status
+- [ ] Add interaction handling
+  - [ ] Implement hover effects
+  - [ ] Create click selection
+  - [ ] Build node information panel
+  - [ ] Add research action UI
+- [ ] Implement visualization controls
+  - [ ] Add zooming functionality
+  - [ ] Create panning controls
+  - [ ] Implement category filters
+  - [ ] Create focus/navigation controls
 
 ### Custom Research Node Positioning (2 weeks)
-- [ ] Create positioning mode toggle
-- [ ] Implement drag-and-drop functionality
-- [ ] Add position saving and loading
-- [ ] Implement snap-to-grid option
+- [ ] Create positioning system
+  - [ ] Design position data structure
+  - [ ] Implement position saving in state
+  - [ ] Create default layout algorithm
+  - [ ] Add node coordinate system
+- [ ] Build positioning UI
+  - [ ] Create positioning mode toggle
+  - [ ] Implement drag-and-drop functionality
+  - [ ] Add position saving and loading
+  - [ ] Implement snap-to-grid option
 
 ## Phase 2: Core Gameplay Systems
 
