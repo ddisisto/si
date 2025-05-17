@@ -30,7 +30,7 @@ class GameEngine {
       this.eventBus
     );
     
-    // Create turn system
+    // Create turn system (which will create TimeSystem internally)
     this.turnSystem = new TurnSystem(this.stateManager, this.eventBus);
     this.systems.push(this.turnSystem);
     

@@ -9,21 +9,30 @@ import { BaseSystem } from './System';
 import { GamePhase } from '../types/core/GameState';
 import GameStateManager from './GameStateManager';
 import EventBus from './EventBus';
+import TimeSystem from './TimeSystem';
 
 /**
  * TurnSystem implements the turn-based progression described in state_management_design.md
+ * Enhanced with dynamic time progression from PLAN.md
  */
 class TurnSystem extends BaseSystem {
   private stateManager: GameStateManager;
   private eventBus: EventBus;
+  private timeSystem: TimeSystem;
   
   constructor(stateManager: GameStateManager, eventBus: EventBus) {
     super('TurnSystem');
     this.stateManager = stateManager;
     this.eventBus = eventBus;
+    
+    // Create time system that will handle temporal progression
+    this.timeSystem = new TimeSystem(stateManager, eventBus);
   }
   
   public initialize(): void {
+    // Initialize time system
+    this.timeSystem.initialize();
+    
     // Subscribe to relevant events
     this.eventBus.subscribe('turn:end', this.endTurn.bind(this));
     
@@ -31,8 +40,11 @@ class TurnSystem extends BaseSystem {
     this.setInitialized();
   }
   
-  public update(_deltaTime: number): void {
-    // This system doesn't need per-frame updates
+  public update(deltaTime: number): void {
+    // Update time system
+    this.timeSystem.update(deltaTime);
+    
+    // This system doesn't need per-frame updates beyond that
     // Turn progression is event-driven
   }
   
@@ -40,9 +52,17 @@ class TurnSystem extends BaseSystem {
    * Start a new turn
    */
   public startTurn(): void {
-    console.log(`TurnSystem: Starting turn ${this.getCurrentTurn()}`);
+    const currentTurn = this.getCurrentTurn();
+    const gameDate = this.timeSystem.formatGameDate();
+    console.log(`TurnSystem: Starting turn ${currentTurn} (${gameDate})`);
+    
     this.setPhase('START');
-    this.eventBus.emit('turn:start', { turn: this.getCurrentTurn() });
+    this.eventBus.emit('turn:start', { 
+      turn: currentTurn,
+      gameTime: this.stateManager.getState().meta.gameTime,
+      formattedDate: gameDate
+    });
+    
     this.processTurnStart();
   }
   
@@ -50,16 +70,20 @@ class TurnSystem extends BaseSystem {
    * End the current turn
    */
   public endTurn(data: any = {}): void {
-    console.log(`TurnSystem: Ending turn ${this.getCurrentTurn()}`, data);
+    const currentTurn = this.getCurrentTurn();
+    console.log(`TurnSystem: Ending turn ${currentTurn}`, data);
     
     this.setPhase('END');
-    this.eventBus.emit('turn:ending', { turn: this.getCurrentTurn() });
+    this.eventBus.emit('turn:ending', { 
+      turn: currentTurn,
+      gameTime: this.stateManager.getState().meta.gameTime 
+    });
     
     this.resolveTurnActions();
     this.processTurnEnd();
     
     // Advance to next turn
-    console.log(`TurnSystem: Advancing to turn ${this.getCurrentTurn() + 1}`);
+    console.log(`TurnSystem: Advancing to turn ${currentTurn + 1}`);
     this.stateManager.dispatch({ 
       type: 'ADVANCE_TURN', 
       payload: {} 
@@ -67,7 +91,12 @@ class TurnSystem extends BaseSystem {
     
     // Start new turn
     this.startTurn();
-    console.log(`TurnSystem: Started turn ${this.getCurrentTurn()}`);
+    
+    // Log new turn info
+    const newTurn = this.getCurrentTurn();
+    const timeScale = this.timeSystem.getTimeScaleDescription();
+    const gameDate = this.timeSystem.formatGameDate();
+    console.log(`TurnSystem: Started turn ${newTurn} (${gameDate}, ${timeScale} turns)`);
   }
   
   /**
@@ -75,6 +104,13 @@ class TurnSystem extends BaseSystem {
    */
   public getCurrentTurn(): number {
     return this.stateManager.getState().meta.turn;
+  }
+  
+  /**
+   * Get the time system
+   */
+  public getTimeSystem(): TimeSystem {
+    return this.timeSystem;
   }
   
   /**
@@ -96,7 +132,10 @@ class TurnSystem extends BaseSystem {
     // Generate resources at turn start
     this.stateManager.dispatch({ 
       type: 'GENERATE_RESOURCES', 
-      payload: {} 
+      payload: { 
+        turn: this.getCurrentTurn(),
+        gameTime: this.stateManager.getState().meta.gameTime
+      } 
     });
     
     // Check for events
@@ -104,7 +143,10 @@ class TurnSystem extends BaseSystem {
     
     // Move to action phase
     this.setPhase('ACTION');
-    this.eventBus.emit('phase:action', {});
+    this.eventBus.emit('phase:action', {
+      timeScale: this.timeSystem.getTimeScaleDescription(),
+      formattedDate: this.timeSystem.formatGameDate()
+    });
   }
   
   /**
@@ -118,13 +160,19 @@ class TurnSystem extends BaseSystem {
     // Process research progress
     this.stateManager.dispatch({ 
       type: 'UPDATE_RESEARCH_PROGRESS', 
-      payload: {} 
+      payload: { 
+        turn: this.getCurrentTurn(),
+        gameTime: this.stateManager.getState().meta.gameTime
+      } 
     });
     
     // Apply deployment effects
     this.stateManager.dispatch({ 
       type: 'APPLY_DEPLOYMENT_EFFECTS', 
-      payload: {} 
+      payload: { 
+        turn: this.getCurrentTurn(),
+        gameTime: this.stateManager.getState().meta.gameTime
+      } 
     });
   }
   
@@ -135,13 +183,19 @@ class TurnSystem extends BaseSystem {
     // Update competitor actions
     this.stateManager.dispatch({ 
       type: 'UPDATE_COMPETITORS', 
-      payload: {} 
+      payload: { 
+        turn: this.getCurrentTurn(),
+        gameTime: this.stateManager.getState().meta.gameTime
+      } 
     });
     
     // Save turn history
     this.stateManager.dispatch({ 
       type: 'SAVE_TURN_HISTORY', 
-      payload: { turn: this.getCurrentTurn() } 
+      payload: { 
+        turn: this.getCurrentTurn(),
+        gameTime: this.stateManager.getState().meta.gameTime
+      } 
     });
     
     // Auto-save if enabled
@@ -149,7 +203,11 @@ class TurnSystem extends BaseSystem {
       this.stateManager.saveState('autosave');
     }
     
-    this.eventBus.emit('turn:ended', { turn: this.getCurrentTurn() });
+    this.eventBus.emit('turn:ended', { 
+      turn: this.getCurrentTurn(),
+      gameTime: this.stateManager.getState().meta.gameTime,
+      formattedDate: this.timeSystem.formatGameDate()
+    });
   }
   
   /**
@@ -158,7 +216,10 @@ class TurnSystem extends BaseSystem {
   private checkForEvents(): void {
     // In the future, this will check for event conditions
     // For now, we'll just emit an event for other systems to handle
-    this.eventBus.emit('events:check', { turn: this.getCurrentTurn() });
+    this.eventBus.emit('events:check', { 
+      turn: this.getCurrentTurn(),
+      gameTime: this.stateManager.getState().meta.gameTime
+    });
   }
 }
 

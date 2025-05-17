@@ -44,9 +44,19 @@ function createInitialMetaState(): GameMetaState {
   return {
     turn: 1,
     phase: 'START',
+    gameTime: {
+      year: 2025,
+      quarter: 1,
+      month: 1,
+      day: 1,
+      timeScale: 90, // Start with quarterly turns (approximately 90 days)
+      compressionFactor: 1.0, // No compression at start
+      daysPassed: 0
+    },
     organization: 'ACADEMIC',
     startDate: new Date(),
-    lastSaved: null
+    lastSaved: null,
+    turnHistory: []
   };
 }
 

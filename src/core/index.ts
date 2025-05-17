@@ -8,6 +8,7 @@ import { System, BaseSystem } from './System';
 import GameStateManager from './GameStateManager';
 import { GameAction } from './GameStateManager';
 import TurnSystem from './TurnSystem';
+import TimeSystem from './TimeSystem';
 import { gameReducer } from './GameReducer';
 import { GameState, createInitialState } from './GameState';
 
@@ -19,6 +20,7 @@ export {
   GameStateManager,
   GameAction,
   TurnSystem,
+  TimeSystem,
   gameReducer,
   GameState,
   createInitialState

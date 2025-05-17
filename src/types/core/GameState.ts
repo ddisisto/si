@@ -14,14 +14,46 @@ export type OrganizationType = 'ACADEMIC' | 'STARTUP' | 'BIG_TECH' | 'GOVERNMENT
 export type Difficulty = 'EASY' | 'NORMAL' | 'HARD' | 'EXPERT';
 
 /**
+ * Game time representation
+ * Uses continuous values rather than discrete categories
+ */
+export interface GameTime {
+  year: number;           // Current in-game year
+  quarter: number;        // Current quarter (1-4)
+  month: number;          // Current month (1-12)
+  day: number;            // Current day (1-31)
+  
+  // Time acceleration factors
+  timeScale: number;      // Current time scale (days per turn, starts at ~90 for quarterly)
+  compressionFactor: number; // How much time is compressing (1.0 = no compression)
+  
+  // For tracking overall progression
+  daysPassed: number;     // Total days passed in game time
+}
+
+/**
+ * Turn history entry for tracking progression
+ */
+export interface TurnHistoryEntry {
+  turn: number;           // Turn number
+  timeScale: number;      // Time scale for this turn
+  daysAdvanced: number;   // How much time advanced (in days)
+  gameTime: GameTime;     // Snapshot of game time
+  researchProgress: number; // Research progress factor at this point
+  timestamp: number;      // Real-world timestamp
+}
+
+/**
  * Game Meta State - Game-wide information
  */
 export interface GameMetaState {
   turn: number;                   // Current game turn
   phase: GamePhase;               // Current game phase
+  gameTime: GameTime;             // Current game time information
   organization: OrganizationType; // Player's organization
   startDate: Date;                // When the game was started
   lastSaved: Date | null;         // Last save timestamp
+  turnHistory?: TurnHistoryEntry[]; // Record of turn progression
 }
 
 /**

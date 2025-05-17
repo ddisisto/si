@@ -9,6 +9,9 @@ import { EventBus } from '../../core';
  * Component for controlling turn progression
  */
 class TurnControls extends UIComponent {
+  private formattedDate: string = '';
+  private timeScale: string = 'Quarterly';
+
   /**
    * Create new turn controls
    * @param eventBus Event bus for emitting turn events
@@ -16,6 +19,11 @@ class TurnControls extends UIComponent {
   constructor(eventBus: EventBus) {
     super('div', 'turn-controls');
     this.eventBus = eventBus;
+    
+    // Subscribe to time and phase events
+    this.eventBus.subscribe('turn:start', this.updateTimeDisplay.bind(this));
+    this.eventBus.subscribe('phase:action', this.updateTimeDisplay.bind(this));
+    this.eventBus.subscribe('time:compression:changed', this.updateTimeDisplay.bind(this));
   }
   
   /**
@@ -23,11 +31,36 @@ class TurnControls extends UIComponent {
    */
   protected createTemplate(): string {
     const turn = this.gameState?.meta.turn || 1;
-    const phase = this.gameState?.meta.phase || 'RESEARCH';
+    const phase = this.gameState?.meta.phase || 'ACTION';
+    
+    // Format game date
+    const gameTime = this.gameState?.meta.gameTime;
+    let dateDisplay = '';
+    
+    if (gameTime) {
+      const year = gameTime.year;
+      const quarter = gameTime.quarter;
+      const month = gameTime.month;
+      const day = gameTime.day;
+      
+      if (this.timeScale === 'Quarterly') {
+        dateDisplay = `Q${quarter} ${year}`;
+      } else if (this.timeScale === 'Monthly') {
+        dateDisplay = `${this.getMonthName(month)} ${year}`;
+      } else {
+        dateDisplay = `${this.getMonthName(month)} ${day}, ${year}`;
+      }
+      
+      // Use cached formatted date if available
+      if (this.formattedDate) {
+        dateDisplay = this.formattedDate;
+      }
+    }
     
     return `
       <div class="turn-info">
         <div class="turn-number">Turn ${turn}</div>
+        <div class="turn-date">${dateDisplay} <span class="time-scale">(${this.timeScale})</span></div>
         <div class="turn-phase">${this.formatPhase(phase)}</div>
       </div>
       <div class="turn-buttons">
@@ -54,6 +87,22 @@ class TurnControls extends UIComponent {
   }
   
   /**
+   * Update time display information
+   */
+  private updateTimeDisplay(data: any): void {
+    if (data.formattedDate) {
+      this.formattedDate = data.formattedDate;
+    }
+    
+    if (data.timeScale) {
+      this.timeScale = data.timeScale;
+    }
+    
+    // Re-render the component
+    this.render();
+  }
+  
+  /**
    * Format phase name for display
    * @param phase Phase identifier
    */
@@ -66,13 +115,28 @@ class TurnControls extends UIComponent {
   }
   
   /**
+   * Convert month number to name
+   */
+  private getMonthName(month: number): string {
+    const monthNames = [
+      "January", "February", "March", 
+      "April", "May", "June", 
+      "July", "August", "September", 
+      "October", "November", "December"
+    ];
+    
+    return monthNames[month - 1] || "January";
+  }
+  
+  /**
    * Handle end turn button click
    */
   private handleEndTurn = (): void => {
     if (this.gameState && this.eventBus) {
       // Emit end turn event
       this.eventBus.emit('turn:end', { 
-        turn: this.gameState.meta.turn 
+        turn: this.gameState.meta.turn,
+        gameTime: this.gameState.meta.gameTime
       });
     }
   }

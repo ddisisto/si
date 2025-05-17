@@ -58,6 +58,34 @@ function metaReducer(state: GameMetaState, action: GameAction): GameMetaState {
         phase: action.payload.phase
       };
       
+    case 'UPDATE_GAME_TIME':
+      return {
+        ...state,
+        gameTime: {
+          ...state.gameTime,
+          ...action.payload.gameTime
+        }
+      };
+      
+    case 'UPDATE_TIME_COMPRESSION':
+      return {
+        ...state,
+        gameTime: {
+          ...state.gameTime,
+          compressionFactor: action.payload.compressionFactor,
+          timeScale: action.payload.timeScale
+        }
+      };
+      
+    case 'ADD_TURN_HISTORY':
+      return {
+        ...state,
+        turnHistory: [
+          ...(state.turnHistory || []).slice(-9), // Keep last 10 entries
+          action.payload.historyEntry
+        ]
+      };
+      
     default:
       return state;
   }
