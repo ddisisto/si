@@ -139,7 +139,7 @@ class TurnControls extends UIComponent {
         gameTime: this.gameState.meta.gameTime
       });
     }
-  }
+  };
 }
 
 export default TurnControls;

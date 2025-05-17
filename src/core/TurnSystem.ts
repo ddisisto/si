@@ -129,6 +129,15 @@ class TurnSystem extends BaseSystem {
    * Process start-of-turn activities
    */
   private processTurnStart(): void {
+    // Auto-save at the beginning of the turn if enabled (after turn state has been updated)
+    // This ensures that when loading, we'll be at the same turn number the player was at
+    if (this.stateManager.getState().settings.autoSave) {
+      console.log(`TurnSystem: Auto-save is enabled, saving game to "autosave" slot at start of turn ${this.getCurrentTurn()}`);
+      this.stateManager.saveState('autosave');
+    } else {
+      console.log(`TurnSystem: Auto-save is disabled, skipping auto-save at turn start`);
+    }
+    
     // Generate resources at turn start
     this.stateManager.dispatch({ 
       type: 'GENERATE_RESOURCES', 
@@ -198,10 +207,7 @@ class TurnSystem extends BaseSystem {
       } 
     });
     
-    // Auto-save if enabled
-    if (this.stateManager.getState().settings.autoSave) {
-      this.stateManager.saveState('autosave');
-    }
+    // Note: Auto-save now happens at the START of the turn, not the end
     
     this.eventBus.emit('turn:ended', { 
       turn: this.getCurrentTurn(),

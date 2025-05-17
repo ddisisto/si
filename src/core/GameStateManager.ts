@@ -120,13 +120,46 @@ class GameStateManager {
    */
   public saveState(name: string = 'default'): void {
     try {
+      console.log(`GameStateManager: Saving game as "${name}"`);
+      
+      const gameTime = this.state.meta.gameTime;
+      const turn = this.state.meta.turn;
+      
       const saveData = {
         version: '1.0.0',
         gameState: this.state,
-        timestamp: Date.now()
+        timestamp: Date.now(),
+        meta: {
+          turn,
+          year: gameTime.year,
+          quarter: gameTime.quarter,
+          month: gameTime.month,
+          day: gameTime.day
+        }
       };
       
-      localStorage.setItem(`si_save_${name}`, JSON.stringify(saveData));
+      // Log save data details before saving
+      console.log(`GameStateManager: Save data details:
+        - Turn: ${turn}
+        - Date: ${gameTime.year} Q${gameTime.quarter} (${gameTime.month}/${gameTime.day})
+        - Timestamp: ${new Date(saveData.timestamp).toLocaleString()}
+        - Key: si_save_${name}
+      `);
+      
+      // Convert to JSON and check size
+      const jsonData = JSON.stringify(saveData);
+      console.log(`GameStateManager: Save data size: ${(jsonData.length / 1024).toFixed(2)} KB`);
+      
+      // Actually save to localStorage
+      localStorage.setItem(`si_save_${name}`, jsonData);
+      
+      // Check if it was actually saved
+      const savedItem = localStorage.getItem(`si_save_${name}`);
+      if (savedItem) {
+        console.log(`GameStateManager: Successfully verified save in localStorage`);
+      } else {
+        console.warn(`GameStateManager: Failed to verify save in localStorage`);
+      }
       
       // Update last saved timestamp
       this.dispatch({
@@ -136,9 +169,9 @@ class GameStateManager {
         }
       });
       
-      console.log(`Game saved as "${name}"`);
+      console.log(`GameStateManager: Game saved as "${name}"`);
     } catch (error) {
-      console.error('Failed to save game:', error);
+      console.error('GameStateManager: Failed to save game:', error);
     }
   }
   
@@ -147,21 +180,49 @@ class GameStateManager {
    */
   public loadState(name: string = 'default'): boolean {
     try {
+      console.log(`GameStateManager: Attempting to load game "${name}"`);
+      
+      // Check localStorage for the save
       const saveData = localStorage.getItem(`si_save_${name}`);
       if (!saveData) {
-        console.warn(`No save found with name "${name}"`);
+        console.warn(`GameStateManager: No save found with name "${name}"`);
         return false;
       }
       
-      const parsedData = JSON.parse(saveData);
-      this.state = parsedData.gameState;
+      console.log(`GameStateManager: Found save data, size: ${(saveData.length / 1024).toFixed(2)} KB`);
       
-      // Notify about complete state replacement
-      this.eventBus.emit('stateLoaded', { name });
-      console.log(`Game loaded from "${name}"`);
-      return true;
+      // Parse the data
+      try {
+        const parsedData = JSON.parse(saveData);
+        console.log(`GameStateManager: Successfully parsed save data:
+          - Version: ${parsedData.version}
+          - Timestamp: ${new Date(parsedData.timestamp).toLocaleString()}
+          - Turn: ${parsedData.meta?.turn}
+        `);
+        
+        // Keep track of the previous state
+        const prevState = this.state;
+        
+        // Replace state
+        this.state = parsedData.gameState;
+        console.log(`GameStateManager: State successfully replaced`);
+        
+        // Notify listeners about the state change
+        this.notifyListeners(prevState, this.state, { 
+            type: 'STATE_LOADED', 
+            payload: { name } 
+        });
+        
+        // Notify about complete state replacement via event bus
+        this.eventBus.emit('stateLoaded', { name });
+        console.log(`GameStateManager: Game loaded from "${name}"`);
+        return true;
+      } catch (parseError) {
+        console.error('GameStateManager: Failed to parse save data:', parseError);
+        return false;
+      }
     } catch (error) {
-      console.error('Failed to load game:', error);
+      console.error('GameStateManager: Failed to load game:', error);
       return false;
     }
   }

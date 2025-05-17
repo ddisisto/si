@@ -54,6 +54,7 @@ class UIManager {
       this.components.set(id, component);
       
       // Set event bus for component
+      console.log(`UIManager: Setting EventBus for component ${id}`);
       component.setEventBus(this.eventBus);
       
       console.log(`Component registered: ${id}`);
@@ -81,6 +82,13 @@ class UIManager {
    * @param gameState Current game state
    */
   public update(gameState: Readonly<GameState>): void {
+    const prevTurn = this.gameState?.meta.turn;
+    const newTurn = gameState.meta.turn;
+    
+    if (prevTurn !== newTurn) {
+      console.log(`UIManager: Updating components with new state, turn changed from ${prevTurn} to ${newTurn}`);
+    }
+    
     this.gameState = gameState;
     
     // Update all registered components

@@ -376,32 +376,23 @@ function getAvailableComputing(state: GameState): number {
 
 ## Persistence and Serialization
 
-The state system will support saving and loading game state:
+The state system supports saving and loading game state through the GameStateManager. See [Event Communication and State Persistence](./event_communication_design.md) for comprehensive documentation on the save/load system and its integration with the event architecture.
+
+Key responsibilities of the state management system for persistence:
+
+1. **State Serialization** - Converting state tree to JSON
+2. **State Deserialization** - Rebuilding state from saved data
+3. **Version Management** - Supporting migration between versions
+4. **Metadata Tracking** - Including relevant metadata with saves
+
+The GameStateManager provides these core methods:
 
 ```typescript
-interface SaveGameData {
-  version: string;
-  gameState: GameState;
-  timestamp: number;
-}
+// Save current state to storage
+public saveState(name: string = 'default'): void;
 
-function saveGame(state: GameState, name: string): void {
-  const saveData: SaveGameData = {
-    version: "1.0.0",
-    gameState: state,
-    timestamp: Date.now()
-  };
-  
-  localStorage.setItem(`save_${name}`, JSON.stringify(saveData));
-}
-
-function loadGame(name: string): GameState | null {
-  const saveData = localStorage.getItem(`save_${name}`);
-  if (!saveData) return null;
-  
-  const parsedData = JSON.parse(saveData) as SaveGameData;
-  return parsedData.gameState;
-}
+// Load state from storage
+public loadState(name: string = 'default'): boolean;
 ```
 
 ## State Debugging
