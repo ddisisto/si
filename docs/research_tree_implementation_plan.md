@@ -39,9 +39,9 @@ Following the principles in PHILOSOPHY.md:
    - [ ] Add sample node positions and layout
 
 3. **Research State Integration**
-   - [ ] Connect research data to game state
-   - [ ] Implement state update patterns for research
-   - [ ] Create selectors for accessing research data
+   - [x] Connect research data to game state
+   - [x] Implement state update patterns for research
+   - [x] Create selectors for accessing research data
 
 ### Phase 2: Basic Rendering System (1 week)
 
