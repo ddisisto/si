@@ -148,10 +148,12 @@ class ResearchTreeView extends UIComponent {
         const controlPoint2X = endX + 50; // Control point to the right of end
         const controlPoint2Y = endY;
         
-        // Add path to SVG
+        // Add path to SVG with data attributes for connection highlighting
         html += `
           <path 
             class="${lineClass}"
+            data-from="${node.id}"
+            data-to="${prereqId}"
             d="M ${startX},${startY} C ${controlPoint1X},${controlPoint1Y} ${controlPoint2X},${controlPoint2Y} ${endX},${endY}"
             marker-end="url(#arrowhead)"
           />
@@ -522,12 +524,27 @@ class ResearchTreeView extends UIComponent {
    * Update connection highlights based on selected node
    */
   private updateConnectionHighlights(): void {
-    // For simplicity, we'll just update connection classes during render based on selectedNodeId
-    // This is a temporary approach that will be replaced with proper SVG connections
+    // Remove highlighted class from all connections
+    const connections = this.element.querySelectorAll('.connection');
+    connections.forEach(conn => {
+      conn.classList.remove('connection-highlighted');
+    });
     
-    // We'd need to do more complex matching of SVG paths to properly highlight connections,
-    // but since this is just a temporary solution before we implement proper connection visualization
-    // as noted in the ROADMAP, we'll leave this as a placeholder
+    // Skip if no node is selected or no game state
+    if (!this.selectedNodeId || !this.gameState) return;
+    
+    // Get the selected node
+    const selectedNode = this.gameState.research.nodes[this.selectedNodeId];
+    if (!selectedNode) return;
+    
+    // For each connection related to the selected node, add the highlight class
+    if (selectedNode.prerequisites) {
+      // Add data-from and data-to attributes to paths when creating them to make this easier
+      const relatedConnections = this.element.querySelectorAll(`.connection[data-from="${this.selectedNodeId}"], .connection[data-to="${this.selectedNodeId}"]`);
+      relatedConnections.forEach(conn => {
+        conn.classList.add('connection-highlighted');
+      });
+    }
   }
   
   /**
