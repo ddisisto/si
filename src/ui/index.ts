@@ -9,6 +9,7 @@ import Button from './components/Button';
 import ResourcePanel from './components/ResourcePanel';
 import TurnControls from './components/TurnControls';
 import GameInfoPanel from './components/GameInfoPanel';
+import GameLayout from './components/GameLayout';
 
 // Export UI manager
 import UIManager from './UIManager';
@@ -28,6 +29,7 @@ export {
   ResourcePanel,
   TurnControls,
   GameInfoPanel,
+  GameLayout,
   
   // Legacy canvas components (for backwards compatibility)
   Renderer,

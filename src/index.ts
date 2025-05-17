@@ -3,7 +3,13 @@
  */
 
 import { GameEngine, EventBus } from './core';
-import { Renderer, InputHandler, DemoView } from './ui';
+import { 
+  UIManager, 
+  ResourcePanel, 
+  TurnControls, 
+  GameInfoPanel,
+  GameLayout 
+} from './ui';
 import { ResourceSystem } from './systems';
 
 /**
@@ -15,14 +21,6 @@ function main() {
   try {
     // Initialize core systems
     const eventBus = new EventBus();
-    const renderer = new Renderer();
-    
-    // Create a demo view for testing
-    const demoView = new DemoView();
-    renderer.registerView('demo', demoView);
-    
-    // Initialize input handler with canvas from renderer
-    const inputHandler = new InputHandler(renderer.getDimensions().canvas, eventBus);
     
     // Create game engine
     const gameEngine = new GameEngine();
@@ -31,36 +29,55 @@ function main() {
     const resourceSystem = new ResourceSystem(gameEngine.getStateManager(), eventBus);
     gameEngine.registerSystem(resourceSystem);
     
-    // Subscribe renderer to state changes
-    eventBus.subscribe('stateChanged', (data) => {
-      console.log('State changed event received, updating UI', data);
-      demoView.connectGameState(gameEngine.getState());
-      renderer.render();
-    });
+    // Initialize UI Manager
+    const uiManager = new UIManager(eventBus);
     
-    // Subscribe to mouse events for UI interaction
-    inputHandler.addClickHandler((x, y) => {
-      renderer.handleClick(x, y);
-    });
-    
-    inputHandler.addMoveHandler((x, y) => {
-      renderer.handleHover(x, y);
-    });
-    
-    // Start rendering loop
-    function renderLoop() {
-      renderer.render();
-      requestAnimationFrame(renderLoop);
+    // Get the root element for the game
+    const rootElement = document.getElementById('game-root');
+    if (!rootElement) {
+      throw new Error('Game root element not found');
     }
-    requestAnimationFrame(renderLoop);
     
-    // Set up event handlers
-    document.getElementById('loading')?.remove();
+    // Initialize UI Manager with root element
+    uiManager.initialize(rootElement);
     
-    // Connect state displays to demo view for initial state
-    demoView.connectGameState(gameEngine.getState());
+    // Create main game layout
+    const gameLayout = new GameLayout({ eventBus });
+    uiManager.registerComponent('layout', gameLayout);
     
-    // Start the game loop
+    // Create and register game components
+    const resourcePanel = new ResourcePanel();
+    uiManager.registerComponent('resources', resourcePanel);
+    
+    const turnControls = new TurnControls(eventBus);
+    uiManager.registerComponent('turnControls', turnControls);
+    
+    const gameInfoPanel = new GameInfoPanel();
+    uiManager.registerComponent('gameInfo', gameInfoPanel);
+    
+    // Mount components to layout
+    gameLayout.mountToSidebar(resourcePanel);
+    gameLayout.mountToHeader(turnControls);
+    gameLayout.mountToPanelArea(gameInfoPanel);
+    
+    // Subscribe UI manager to state changes
+    eventBus.subscribe('stateChanged', (data: any) => {
+      console.log('State changed event received, updating UI', data);
+      uiManager.update(gameEngine.getState());
+    });
+    
+    // Initial UI update with current state
+    uiManager.update(gameEngine.getState());
+    
+    // Subscribe to turn end events from UI
+    eventBus.subscribe('turn:end', (data: any) => {
+      console.log('Turn end event received:', data);
+      
+      // Call the turn system's endTurn method
+      gameEngine.getTurnSystem().endTurn(data);
+    });
+    
+    // Initialize and start the game
     gameEngine.initialize();
     gameEngine.start();
     
@@ -68,16 +85,8 @@ function main() {
     
     // Expose game engine to console for debugging
     (window as any).gameEngine = gameEngine;
+    (window as any).uiManager = uiManager;
     
-    // Add event listener for custom turn:end events from UI
-    document.addEventListener('turn:end', (e: any) => {
-      console.log('Turn end event received:', e.detail);
-      eventBus.emit('turn:end', e.detail);
-      
-      // Directly call the turn system's endTurn method for debugging
-      console.log('Directly calling turnSystem.endTurn()');
-      gameEngine.getTurnSystem().endTurn(e.detail);
-    });
   } catch (error) {
     console.error('Failed to initialize game:', error);
   }
