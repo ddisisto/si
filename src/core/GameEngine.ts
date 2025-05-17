@@ -41,6 +41,19 @@ class GameEngine {
       }
     });
     
+    // Subscribe to save/load events
+    this.eventBus.subscribe('action:save', (data: any) => {
+      this.saveGame(data.name);
+      this.eventBus.emit('game:saved', { name: data.name });
+    });
+    
+    this.eventBus.subscribe('action:load', (data: any) => {
+      const success = this.loadGame(data.name);
+      if (success) {
+        this.eventBus.emit('game:loaded', { name: data.name });
+      }
+    });
+    
     console.log('Game Engine initialized');
   }
   

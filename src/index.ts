@@ -8,7 +8,8 @@ import {
   ResourcePanel, 
   TurnControls, 
   GameInfoPanel,
-  MainView
+  MainView,
+  SaveLoadPanel
 } from './ui';
 import { ResourceSystem } from './systems';
 
@@ -97,12 +98,14 @@ function main() {
     const turnControls = new TurnControls(eventBus);
     const gameInfoPanel = new GameInfoPanel();
     const mainView = new MainView();
+    const saveLoadPanel = new SaveLoadPanel({ eventBus });
     
     // Register all components
     uiManager.registerComponent('resources', resourcePanel);
     uiManager.registerComponent('turnControls', turnControls);
     uiManager.registerComponent('gameInfo', gameInfoPanel);
     uiManager.registerComponent('mainView', mainView);
+    uiManager.registerComponent('saveLoad', saveLoadPanel);
     
     console.log('Mounting components to DOM...');
     
@@ -111,6 +114,7 @@ function main() {
     turnControls.mount(headerControls);
     gameInfoPanel.mount(panelArea);
     mainView.mount(main);
+    saveLoadPanel.mount(footerControls);
     
     console.log('All components mounted');
     

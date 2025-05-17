@@ -120,10 +120,20 @@ class GameStateManager {
    */
   public saveState(name: string = 'default'): void {
     try {
+      const gameTime = this.state.meta.gameTime;
+      const turn = this.state.meta.turn;
+      
       const saveData = {
         version: '1.0.0',
         gameState: this.state,
-        timestamp: Date.now()
+        timestamp: Date.now(),
+        meta: {
+          turn,
+          year: gameTime.year,
+          quarter: gameTime.quarter,
+          month: gameTime.month,
+          day: gameTime.day
+        }
       };
       
       localStorage.setItem(`si_save_${name}`, JSON.stringify(saveData));

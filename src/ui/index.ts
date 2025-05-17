@@ -11,6 +11,7 @@ import TurnControls from './components/TurnControls';
 import GameInfoPanel from './components/GameInfoPanel';
 import GameLayout from './components/GameLayout';
 import MainView from './components/MainView';
+import SaveLoadPanel from './components/SaveLoadPanel';
 
 // Export UI manager
 import UIManager from './UIManager';
@@ -25,5 +26,6 @@ export {
   TurnControls,
   GameInfoPanel,
   GameLayout,
-  MainView
+  MainView,
+  SaveLoadPanel
 };
