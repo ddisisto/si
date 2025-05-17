@@ -20,39 +20,35 @@ The game consists of several interconnected systems:
 
 - **CONCEPT.md** - Original concept and brainstorming
 - **PLAN.md** - Game mechanics and system overview
-- **PHILOSOPHY.md** - The vital distilation of what we need to keep in mind for this project to remain engaging **ALWAYS READ THIS** and consider how those principals are practiced
-- **ROADMAP.md** - Development plan and progress tracking
+- **PHILOSOPHY.md** - Core design principles emphasizing meaningful tensions and continuous systems
+- **ROADMAP.md** - Development plan and progress tracking (essential for prioritization)
 - **docs/** - Detailed system design documents:
-  - research_tree_design.md
-  - resource_system_design.md
-  - event_system_design.md
-  - deployment_system_design.md
-  - alignment_system_design.md
-  - technical_architecture.md **ALWAYS READ THIS BEFORE CODING**
-  - state_management_design.md
+  - technical_architecture.md - Architecture overview (review before implementation)
+  - state_management_design.md - Data flow and state structure
+  - research_tree_design.md - Research progression system
+  - resource_system_design.md - Resource mechanics
+  - event_system_design.md - Event triggers and resolution
+  - deployment_system_design.md - AI system deployment
+  - alignment_system_design.md - Value tracking and consequences
 
 ## Current Status
 
-The project is in the initial implementation phase. We have completed design documentation and basic project setup with a functional game engine and rendering system. The next focus is implementing the core state management system.
+The project is in early implementation with core systems partially implemented. We've completed the event bus, state management, resource system foundations, and turn-based progression.
 
 ## Build/Test Commands
 
 - Setup: `npm install`
-- Run dev server: `npm run dev` (don't run this! tell the user to in another terminal, given that it will block)
-- Build: `npm run build`
-- Lint: `npm run lint`
-- Typecheck: `npm run typecheck`
-- Test: `npm run test` (not yet implemented)
-- Single test: `npm run test -- -t "test name pattern"` (not yet implemented)
+- Run dev server: `npm run dev` (instruct user to run in separate terminal)
+- Typecheck: `npm run typecheck` (run after **all** significant code changes)
+- Test: `npm run test` (not yet implemented - add to ROADMAP?)
 
 ## Current Development Focus
 
-- Core state management implementation
-- Resource tracking system
-- Turn-based progression mechanics
-- Game state persistence (save/load)
-- Basic UI for state visualization
-- Research tree visualization (to follow)
+See ROADMAP.md for detailed priorities. Current focus:
+- Research tree visualization
+- Enhanced resource management UI
+- Save/load functionality
+- Event system implementation
 
 ## Code Style Guidelines
 
@@ -116,44 +112,33 @@ This game explores the evolution of AI systems and their relationship with human
 
 ## Implementation Approach
 
-We follow a plan-first, implement-second approach with careful iteration:
+We follow a plan-first, implement-second approach with deliberate iteration:
 
-### Planning Phase
-1. **Thorough Planning** - Create comprehensive design documents before writing any code
-2. **Clear Architecture** - Establish clear system boundaries and interfaces
-3. **Detailed Requirements** - Define specific functionality and behavior expectations
-4. **Documentation-Driven** - Write specifications that can guide implementation
+1. **Documentation-First** - Review relevant design docs before implementation
+2. **Start Minimal** - Create core functionality before adding complexity
+3. **Vertical Slices** - Focus on complete features rather than partial systems
+4. **Incremental Progress** - Build in small, verifiable steps
+5. **Design Alignment** - Ensure implementation matches architectural vision
+6. **Philosophy Integration** - Apply core philosophical principles from PHILOSOPHY.md
 
-### Implementation Phase
-1. **ALWAYS CHECK DOCUMENTATION FIRST** - Review all relevant design documents in docs/ before writing or modifying code
-2. Create a minimal viable version of each system first
-3. Focus on one vertical slice of functionality at a time
-4. **Strictly Follow Plans** - Resist the urge to deviate without clear justification
-5. **Implement Incrementally** - Build in small, testable increments
-6. Gradually add complexity to existing systems
-7. **Validate Against Design** - Regularly compare implementation to design documents
+Before coding any feature, review the technical_architecture.md document and the specific system design document relevant to your task. This ensures consistency with the carefully crafted design and preserves the philosophical approach.
 
-CRITICAL: The project's success depends on respecting the planning work that has been done. Don't rush to implement before understanding the design thoroughly. ALWAYS read ALL relevant documentation in the docs/ directory before writing or modifying any code. This is essential to maintain consistency with the carefully crafted design.
+## Roadmap Prioritization
 
-## Development Focus and Roadmap
+ROADMAP.md is the source of truth for development priorities. For each session:
 
-IMPORTANT: Always prioritize work according to ROADMAP.md. This document is the source of truth for development priorities.
+1. Review ROADMAP.md to identify current phase and priorities
+2. Prioritize tasks within the current phase
+3. Consider git branch, context align, query user if not
+4. Run type checks and browser checks (console logs *before* screenshots/interactions)
+5. Update completion status with [x] when tasks are finished
+6. Focus on completing current phase before moving to the next
 
-1. **Always read ROADMAP.md** at the beginning of each session to understand current priorities
-2. **Follow the established phases** and complete tasks in the defined order
-3. **Resist tangential requests** that don't align with current roadmap priorities
-4. **Update ROADMAP.md** when tasks are completed by marking them with [x]
-5. **Maintain roadmap integrity** by suggesting additions/modifications that align with the overall vision
-
-If a user request doesn't align with the current roadmap phase:
-- Politely explain the current development focus and why maintaining the sequence is important
-- Suggest how the request might fit into the roadmap later
-- Offer to help with the next priority task instead
-
-Only deviate from the roadmap when:
-- Fixing critical bugs that block progress
-- Making small improvements to existing functionality
-- The user explicitly acknowledges they're requesting a deviation from the roadmap
+Balance roadmap adherence with practical development needs:
+- Follow established sequence for major features
+- Address critical bugs immediately, STOP if they require major course deviations
+- Make small improvements to existing functionality when appropriate
+- Only deviate from roadmap with explicit acknowledgment
 
 ## Repository Management
 
