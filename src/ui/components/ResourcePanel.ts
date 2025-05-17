@@ -3,7 +3,7 @@
  */
 
 import UIComponent from './UIComponent';
-import { ComputingResource, FundingResource, InfluenceResource } from '../../types/core/GameState';
+import { InfluenceResource } from '../../types/core/GameState';
 
 /**
  * Panel for displaying and managing game resources

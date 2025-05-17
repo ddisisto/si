@@ -12,8 +12,7 @@ import {
   ResourceState, 
   ComputingResource, 
   InfluenceResource,
-  FundingResource,
-  DataResource 
+  InfluenceFields
 } from '../types/core/GameState';
 
 /**
@@ -36,7 +35,7 @@ interface ResourceCost {
 interface ResourceEffects {
   computingEfficiency?: number;
   fundingMultiplier?: number;
-  influenceMultiplier?: Record<keyof InfluenceResource, number>;
+  influenceMultiplier?: InfluenceFields;
   dataQualityBonus?: number;
   generationBonus?: {
     computing?: number;
@@ -72,7 +71,7 @@ class ResourceSystem extends BaseSystem {
         government: 1.0,
         public: 1.0,
         openSource: 1.0
-      },
+      } as InfluenceFields,
       dataQualityBonus: 0,
       generationBonus: {
         computing: 0,
@@ -112,10 +111,6 @@ class ResourceSystem extends BaseSystem {
    * Handle turn ending events
    */
   private onTurnEnding(data: any): void {
-    // Calculate influenceGrowth based on current game state
-    const state = this.stateManager.getState();
-    const influenceGrowth = this.calculateInfluenceGrowth(state, data.turn);
-    
     // Update resource effects for next turn
     this.updateResourceEffects(data);
   }
@@ -124,7 +119,7 @@ class ResourceSystem extends BaseSystem {
    * Calculate influence growth for the current turn
    * This will be enhanced later with more factors
    */
-  private calculateInfluenceGrowth(state: any, turn: number): Record<keyof InfluenceResource, number> {
+  private calculateInfluenceGrowth(state: any): Record<string, number> {
     // Basic influence growth based on organization type
     const baseGrowth: Partial<Record<keyof InfluenceResource, number>> = {};
     
@@ -148,11 +143,11 @@ class ResourceSystem extends BaseSystem {
     const multipliers = this.resourceEffects.influenceMultiplier;
     
     return {
-      academic: (baseGrowth.academic || 0) * (multipliers.academic || 1.0),
-      industry: (baseGrowth.industry || 0) * (multipliers.industry || 1.0),
-      government: (baseGrowth.government || 0) * (multipliers.government || 1.0),
-      public: (baseGrowth.public || 0) * (multipliers.public || 1.0),
-      openSource: (baseGrowth.openSource || 0) * (multipliers.openSource || 1.0)
+      academic: (baseGrowth.academic || 0) * (multipliers?.academic ?? 1.0),
+      industry: (baseGrowth.industry || 0) * (multipliers?.industry ?? 1.0),
+      government: (baseGrowth.government || 0) * (multipliers?.government ?? 1.0),
+      public: (baseGrowth.public || 0) * (multipliers?.public ?? 1.0),
+      openSource: (baseGrowth.openSource || 0) * (multipliers?.openSource ?? 1.0)
     };
   }
   
@@ -164,7 +159,7 @@ class ResourceSystem extends BaseSystem {
     const resources = state.resources;
     
     // Calculate influence growth
-    const influenceGrowth = this.calculateInfluenceGrowth(state, turn);
+    const influenceGrowth = this.calculateInfluenceGrowth(state);
     
     // Dispatch generate resources action
     this.stateManager.dispatch({
@@ -397,7 +392,7 @@ class ResourceSystem extends BaseSystem {
   /**
    * Update resource effects based on deployments, research, etc.
    */
-  private updateResourceEffects(data: any): void {
+  private updateResourceEffects(_data: any): void {
     const state = this.stateManager.getState();
     
     // Reset effects to base values
@@ -410,19 +405,24 @@ class ResourceSystem extends BaseSystem {
       if (deploymentInfo.effects) {
         // Apply computing efficiency
         if (deploymentInfo.effects.computingEfficiency) {
-          newEffects.computingEfficiency *= (1 + deploymentInfo.effects.computingEfficiency);
+          if (newEffects.computingEfficiency) {
+            newEffects.computingEfficiency *= (1 + deploymentInfo.effects.computingEfficiency);
+          }
         }
         
         // Apply funding multiplier
         if (deploymentInfo.effects.fundingMultiplier) {
-          newEffects.fundingMultiplier *= (1 + deploymentInfo.effects.fundingMultiplier);
+          if (newEffects.fundingMultiplier) {
+            newEffects.fundingMultiplier *= (1 + deploymentInfo.effects.fundingMultiplier);
+          }
         }
         
         // Apply influence multipliers
         if (deploymentInfo.effects.influenceGrowth) {
           for (const [key, value] of Object.entries(deploymentInfo.effects.influenceGrowth)) {
-            const typedKey = key as keyof InfluenceResource;
-            if (typedKey in newEffects.influenceMultiplier) {
+            // Check if this is a valid influence field
+            if (key !== 'history' && newEffects.influenceMultiplier) {
+              const typedKey = key as keyof InfluenceFields;
               newEffects.influenceMultiplier[typedKey] *= (1 + (value as number));
             }
           }
@@ -436,10 +436,14 @@ class ResourceSystem extends BaseSystem {
         // Apply generation bonuses
         if (deploymentInfo.effects.generationBonus) {
           if (deploymentInfo.effects.generationBonus.computing) {
-            newEffects.generationBonus.computing += deploymentInfo.effects.generationBonus.computing;
+            if (newEffects.generationBonus) {
+              newEffects.generationBonus.computing += deploymentInfo.effects.generationBonus.computing;
+            }
           }
           if (deploymentInfo.effects.generationBonus.funding) {
-            newEffects.generationBonus.funding += deploymentInfo.effects.generationBonus.funding;
+            if (newEffects.generationBonus) {
+              newEffects.generationBonus.funding += deploymentInfo.effects.generationBonus.funding;
+            }
           }
         }
       }
@@ -555,7 +559,7 @@ class ResourceSystem extends BaseSystem {
         utilization: Math.round((Object.values(resources.computing.allocated).reduce((sum, val) => sum + val, 0) / resources.computing.total) * 100),
         capPercentage: Math.round((resources.computing.total / resources.computing.cap) * 100),
         efficiency: resources.computing.efficiency || 1.0,
-        effectiveGeneration: resources.computing.generation * (this.resourceEffects.generationBonus.computing || 0)
+        effectiveGeneration: resources.computing.generation * (this.resourceEffects.generationBonus?.computing || 0)
       },
       funding: {
         current: resources.funding.current,

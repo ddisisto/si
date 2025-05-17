@@ -93,6 +93,10 @@ export interface InfluenceResource {
   history?: InfluenceChange[]; // History of influence changes
 }
 
+// Type for influence without history field
+export type InfluenceFields = Omit<InfluenceResource, 'history'>;
+
+
 export interface InfluenceChange {
   turn: number;                        // Turn when change occurred
   previous: Record<string, number>;    // Previous influence values

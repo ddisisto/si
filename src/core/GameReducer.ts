@@ -187,7 +187,13 @@ function resourceReducer(state: ResourceState, action: GameAction): ResourceStat
             ...(state.influence.history || []).slice(-9),
             {
               turn: action.payload.turn,
-              previous: { ...state.influence },
+              previous: {
+                academic: state.influence.academic,
+                industry: state.influence.industry,
+                government: state.influence.government,
+                public: state.influence.public,
+                openSource: state.influence.openSource
+              },
               changes: {
                 academic: (action.payload.influenceGrowth?.academic || 0),
                 industry: (action.payload.influenceGrowth?.industry || 0),
@@ -303,12 +309,14 @@ function resourceReducer(state: ResourceState, action: GameAction): ResourceStat
         
         // Apply each influence cost
         for (const [key, value] of Object.entries(costs.influence)) {
-          if (key in newInfluence) {
+          if (key in newInfluence && key !== 'history') {
             const fieldKey = key as keyof typeof newInfluence;
             const oldValue = newInfluence[fieldKey];
             // Influence can't go below 0
-            newInfluence[fieldKey] = Math.max(0, oldValue - value);
-            influenceChanges[key] = -value;
+            if (typeof oldValue === 'number' && fieldKey !== 'history') {
+              newInfluence[fieldKey] = Math.max(0, oldValue - (value as number));
+            }
+            influenceChanges[key] = -(value as number);
           }
         }
         
@@ -321,7 +329,13 @@ function resourceReducer(state: ResourceState, action: GameAction): ResourceStat
               ...(updatedState.influence.history || []).slice(-9),
               {
                 turn: action.payload.turn,
-                previous: { ...updatedState.influence },
+                previous: {
+                  academic: updatedState.influence.academic,
+                  industry: updatedState.influence.industry,
+                  government: updatedState.influence.government,
+                  public: updatedState.influence.public,
+                  openSource: updatedState.influence.openSource
+                },
                 changes: influenceChanges,
                 reason: reason || 'general',
                 timestamp: Date.now()
