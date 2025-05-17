@@ -15,6 +15,7 @@ interface GameLayoutOptions {
 class GameLayout extends UIComponent {
   // References to container elements for mounting child components
   private headerElement: HTMLElement | null = null;
+  private viewTitleElement: HTMLElement | null = null;
   private sidebarElement: HTMLElement | null = null;
   private mainElement: HTMLElement | null = null;
   private panelAreaElement: HTMLElement | null = null;
@@ -36,6 +37,7 @@ class GameLayout extends UIComponent {
     return `
       <header class="game-header">
         <div class="game-title">SuperInt++</div>
+        <div class="view-title" id="view-title"></div>
         <div class="game-controls" id="game-controls"></div>
       </header>
       
@@ -59,6 +61,7 @@ class GameLayout extends UIComponent {
     try {
       // Get references to all container elements
       this.headerElement = this.element.querySelector('.game-controls');
+      this.viewTitleElement = this.element.querySelector('.view-title');
       this.sidebarElement = this.element.querySelector('.game-sidebar');
       this.mainElement = this.element.querySelector('.game-main');
       this.panelAreaElement = this.element.querySelector('.game-panel-area');
@@ -66,6 +69,7 @@ class GameLayout extends UIComponent {
 
       console.log('GameLayout mounted with elements:', {
         header: !!this.headerElement,
+        viewTitle: !!this.viewTitleElement,
         sidebar: !!this.sidebarElement,
         main: !!this.mainElement,
         panelArea: !!this.panelAreaElement,
@@ -79,6 +83,41 @@ class GameLayout extends UIComponent {
     }
   }
   
+  /**
+   * Mount a component to the view title area
+   * @param component Component to mount
+   */
+  public mountToViewTitle(component: UIComponent): void {
+    try {
+      if (!this.viewTitleElement) {
+        // If we don't have a reference, try to get it again
+        this.viewTitleElement = this.element.querySelector('.view-title');
+        
+        if (!this.viewTitleElement) {
+          // Create the element if it doesn't exist
+          this.viewTitleElement = document.createElement('div');
+          this.viewTitleElement.className = 'view-title';
+          const header = this.element.querySelector('.game-header');
+          if (header) {
+            const gameTitle = header.querySelector('.game-title');
+            if (gameTitle) {
+              header.insertBefore(this.viewTitleElement, gameTitle.nextSibling);
+            } else {
+              header.appendChild(this.viewTitleElement);
+            }
+          } else {
+            console.error('Header element not found');
+            return;
+          }
+        }
+      }
+      
+      component.mount(this.viewTitleElement);
+    } catch (error) {
+      console.error('Error mounting to view title:', error);
+    }
+  }
+
   /**
    * Mount a component to the header area
    * @param component Component to mount

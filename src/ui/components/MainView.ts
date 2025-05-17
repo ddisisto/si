@@ -3,15 +3,18 @@
  */
 
 import UIComponent from './UIComponent';
-import { ResearchTreeView } from './research';
+import { ResearchTreeView, ResearchTreeHeader } from './research';
 import { EventBus } from '../../core';
+import GameLayout from './GameLayout';
 
 /**
  * Primary view component for the main game area
  */
 class MainView extends UIComponent {
   private researchTreeView: ResearchTreeView | null = null;
+  private researchTreeHeader: ResearchTreeHeader | null = null;
   private showResearchTree: boolean = false;
+  private gameLayout: GameLayout | null = null;
   
   /**
    * Create a new main view
@@ -29,6 +32,33 @@ class MainView extends UIComponent {
     // Create research tree component
     this.researchTreeView = new ResearchTreeView();
     this.researchTreeView.setEventBus(eventBus);
+    
+    // Create research tree header component
+    this.researchTreeHeader = new ResearchTreeHeader();
+    this.researchTreeHeader.setEventBus(eventBus);
+    
+    // Listen for back to main event
+    eventBus.subscribe('ui:back_to_main', () => {
+      this.showResearchTree = false;
+      
+      // Unmount research tree before switching view
+      if (this.researchTreeHeader) {
+        this.researchTreeHeader.unmount();
+      }
+      
+      if (this.researchTreeView) {
+        this.researchTreeView.unmount();
+      }
+      
+      this.render();
+    });
+  }
+  
+  /**
+   * Set the game layout reference
+   */
+  public setGameLayout(layout: GameLayout): void {
+    this.gameLayout = layout;
   }
   
   /**
@@ -38,10 +68,6 @@ class MainView extends UIComponent {
     // Show research tree if enabled
     if (this.showResearchTree) {
       return `
-        <div class="view-header">
-          <h2>Research Tree</h2>
-          <button id="back-to-main" class="game-button secondary">Back to Main</button>
-        </div>
         <div id="research-tree-container"></div>
       `;
     }
@@ -83,24 +109,14 @@ class MainView extends UIComponent {
           this.researchTreeView.unmount();
         }
         
+        // Mount the research tree header to the view title area
+        if (this.researchTreeHeader && this.gameLayout) {
+          this.gameLayout.mountToViewTitle(this.researchTreeHeader);
+        }
+        
         // Then render the new container and mount the tree
         this.render();
         this.mountResearchTree();
-      });
-    }
-    
-    // Add a back button in research view
-    const backButton = this.element.querySelector('#back-to-main');
-    if (backButton) {
-      backButton.addEventListener('click', () => {
-        this.showResearchTree = false;
-        
-        // Unmount research tree before switching view
-        if (this.researchTreeView) {
-          this.researchTreeView.unmount();
-        }
-        
-        this.render();
       });
     }
   }

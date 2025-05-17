@@ -95,20 +95,15 @@ class ResearchTreeView extends UIComponent {
     
     // Build the HTML for the research tree controls
     let html = `
-      <div class="research-tree-header">
-        <div class="research-title">
-          <h2>Research Tree</h2>
-          <div class="stats">
-            <span>Nodes: ${nodeCount}</span>
-            <span>Active: ${research.activeResearch.length}</span>
-            <span>Completed: ${research.completed.length}</span>
-          </div>
-        </div>
-        <div class="research-controls">
-          <button class="zoom-control view-all">View All</button>
-          <button class="filter-toggle" data-expanded="${this.isFilterPanelVisible}">
-            <span class="filter-icon">⚙️</span>
-          </button>
+      <div class="research-controls">
+        <button class="zoom-control view-all">View All</button>
+        <button class="filter-toggle" data-expanded="${this.isFilterPanelVisible}">
+          <span class="filter-icon">⚙️</span>
+        </button>
+        <div class="stats">
+          <span>Nodes: ${nodeCount}</span>
+          <span>Active: ${research.activeResearch.length}</span>
+          <span>Completed: ${research.completed.length}</span>
         </div>
       </div>
       <div class="filter-panel ${this.isFilterPanelVisible ? 'visible' : 'hidden'}">

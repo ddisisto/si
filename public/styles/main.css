@@ -76,6 +76,39 @@ button, input, select, textarea {
   border-bottom: 1px solid var(--color-surface);
 }
 
+.game-title {
+  font-weight: bold;
+  font-size: var(--font-size-lg);
+  color: var(--color-primary);
+  margin-right: var(--spacing-md);
+}
+
+.view-title {
+  display: flex;
+  align-items: center;
+  flex: 1;
+}
+
+.view-title h2 {
+  margin: 0;
+  color: var(--color-text);
+  font-size: var(--font-size-md);
+}
+
+.research-tree-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.game-controls {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
 .game-sidebar {
   grid-area: sidebar;
   background-color: var(--color-overlay);
