@@ -20,6 +20,7 @@ The game consists of several interconnected systems:
 
 - **CONCEPT.md** - Original concept and brainstorming
 - **PLAN.md** - Game mechanics and system overview
+- **PHILOSOPHY.md** - The vital distilation of what we need to keep in mind for this project to remain engaging **ALWAYS READ THIS** and consider how those principals are practiced
 - **ROADMAP.md** - Development plan and progress tracking
 - **docs/** - Detailed system design documents:
   - research_tree_design.md
@@ -27,7 +28,7 @@ The game consists of several interconnected systems:
   - event_system_design.md
   - deployment_system_design.md
   - alignment_system_design.md
-  - technical_architecture.md
+  - technical_architecture.md **ALWAYS READ THIS BEFORE CODING**
   - state_management_design.md
 
 ## Current Status
