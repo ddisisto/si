@@ -113,12 +113,23 @@ This game explores the evolution of AI systems and their relationship with human
 
 ## Implementation Approach
 
-We follow an iterative development approach:
+We follow a plan-first, implement-second approach with careful iteration:
+
+### Planning Phase
+1. **Thorough Planning** - Create comprehensive design documents before writing any code
+2. **Clear Architecture** - Establish clear system boundaries and interfaces
+3. **Detailed Requirements** - Define specific functionality and behavior expectations
+4. **Documentation-Driven** - Write specifications that can guide implementation
+
+### Implementation Phase
 1. Create a minimal viable version of each system first
 2. Focus on one vertical slice of functionality at a time
-3. Gradually add complexity to existing systems
-4. Prioritize testability and maintainability
-5. Regular working prototypes to validate design decisions
+3. **Strictly Follow Plans** - Resist the urge to deviate without clear justification
+4. **Implement Incrementally** - Build in small, testable increments
+5. Gradually add complexity to existing systems
+6. **Validate Against Design** - Regularly compare implementation to design documents
+
+CRITICAL: The project's success depends on respecting the planning work that has been done. Don't rush to implement before understanding the design thoroughly, and always check implementation against documented plans.
 
 ## Development Focus and Roadmap
 
