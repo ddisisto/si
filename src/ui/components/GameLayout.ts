@@ -61,9 +61,6 @@ class GameLayout extends UIComponent {
     this.mainElement = this.element.querySelector('.game-main');
     this.panelAreaElement = this.element.querySelector('.game-panel-area');
     this.footerElement = this.element.querySelector('.game-footer');
-    
-    // Add debug class for styling
-    this.element.classList.add('debug-grid');
   }
   
   /**
@@ -121,10 +118,6 @@ class GameLayout extends UIComponent {
    */
   public update(gameState: Readonly<any>): void {
     super.update(gameState);
-    
-    // We don't need to update children here as they are
-    // registered separately with the UIManager and will
-    // receive their own update calls
   }
 }
 

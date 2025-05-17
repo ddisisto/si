@@ -21,7 +21,6 @@ class UIManager {
    */
   constructor(eventBus: EventBus) {
     this.eventBus = eventBus;
-    console.log('UIManager created with EventBus:', eventBus);
   }
   
   /**
@@ -30,7 +29,6 @@ class UIManager {
    */
   public initialize(rootElement: HTMLElement): void {
     this.rootElement = rootElement;
-    console.log('UIManager initialized with root element:', rootElement);
     
     // Clear any loading indicators or previous content
     const loading = rootElement.querySelector('#loading');
@@ -48,7 +46,6 @@ class UIManager {
   public registerComponent(id: string, component: UIComponent): void {
     // Store the component
     this.components.set(id, component);
-    console.log(`Component registered: ${id}`, component);
     
     // Set event bus for component
     component.setEventBus(this.eventBus);
@@ -58,12 +55,10 @@ class UIManager {
       // Replace the existing content with our layout
       this.rootElement.innerHTML = '';
       component.mount(this.rootElement);
-      console.log(`Component mounted: ${id}`);
       
       // Update with current state if available
       if (this.gameState) {
         component.update(this.gameState);
-        console.log(`Component updated with state: ${id}`);
       }
     }
   }
@@ -73,12 +68,10 @@ class UIManager {
    * @param gameState Current game state
    */
   public update(gameState: Readonly<GameState>): void {
-    console.log('UIManager updating with game state:', gameState);
     this.gameState = gameState;
     
     // Update all registered components
-    this.components.forEach((component, id) => {
-      console.log(`Updating component: ${id}`);
+    this.components.forEach(component => {
       component.update(gameState);
     });
   }
@@ -100,7 +93,6 @@ class UIManager {
     if (component) {
       component.unmount();
       this.components.delete(id);
-      console.log(`Component removed: ${id}`);
     }
   }
   

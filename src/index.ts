@@ -60,35 +60,22 @@ function main() {
     gameLayout.mountToHeader(turnControls);
     gameLayout.mountToPanelArea(gameInfoPanel);
     
-    // Get initial state and log it
+    // Get initial state
     const initialState = gameEngine.getState();
-    console.log('Initial game state:', initialState);
     
     // Subscribe UI manager to state changes
     eventBus.subscribe('stateChanged', (data: any) => {
-      console.log('State changed event received, updating UI', data);
       uiManager.update(gameEngine.getState());
     });
     
     // Initial UI update with current state
-    console.log('Updating UI with initial state');
     uiManager.update(initialState);
     
     // Subscribe to turn end events from UI
     eventBus.subscribe('turn:end', (data: any) => {
-      console.log('Turn end event received:', data);
-      
       // Call the turn system's endTurn method
       gameEngine.getTurnSystem().endTurn(data);
     });
-    
-    // Log the layout's HTML for debugging
-    console.log('Game layout HTML:', gameLayout.getElement().outerHTML);
-    
-    // Log the components' HTML for debugging
-    console.log('Resource panel HTML:', resourcePanel.getElement().outerHTML);
-    console.log('Turn controls HTML:', turnControls.getElement().outerHTML);
-    console.log('Game info panel HTML:', gameInfoPanel.getElement().outerHTML);
     
     // Initialize and start the game
     gameEngine.initialize();
