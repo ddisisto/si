@@ -73,16 +73,16 @@ The roadmap will be updated as development progresses to reflect new priorities,
 - [x] Add basic UI for state display
 
 ### Research Tree Visualization (4 weeks)
-- [ ] Create research tree foundation
+- [x] Create research tree foundation
   - [x] Define research node data structures
   - [x] Create sample research data
   - [x] Implement state integration for research
   - [x] Create research action types
-- [ ] Implement node rendering system
-  - [ ] Create ResearchTreeView component
-  - [ ] Implement ResearchNode component
-  - [ ] Design basic node styling
-  - [ ] Create node status indicators
+- [x] Implement node rendering system
+  - [x] Create ResearchTreeView component
+  - [x] Implement ResearchNode component
+  - [x] Design basic node styling
+  - [x] Create node status indicators
 - [ ] Create connection visualization
   - [ ] Implement SVG connection lines
   - [ ] Create directional arrows
