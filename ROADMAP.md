@@ -47,6 +47,7 @@ The roadmap will be updated as development progresses to reflect new priorities,
 - [x] Technical architecture design (docs/technical_architecture.md)
 - [x] Finalize project structure
 - [x] Define core data structures and interfaces
+- [x] Design state management approach (docs/state_management_design.md)
 - [ ] Create detailed component diagrams
 - [ ] Establish coding standards and patterns
 - [ ] Plan testing approach and framework

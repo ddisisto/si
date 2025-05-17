@@ -28,29 +28,30 @@ The game consists of several interconnected systems:
   - deployment_system_design.md
   - alignment_system_design.md
   - technical_architecture.md
-  - implementation_plan.md
+  - state_management_design.md
 
 ## Current Status
 
-The project is in pre-implementation planning phase. Design documentation is complete, and implementation will begin with the core engine and basic gameplay systems.
+The project is in the initial implementation phase. We have completed design documentation and basic project setup with a functional game engine and rendering system. The next focus is implementing the core state management system.
 
 ## Build/Test Commands
 
-Future commands (not yet implemented):
 - Setup: `npm install`
 - Run dev server: `npm run dev` (don't run this! tell the user to in another terminal, given that it will block)
+- Build: `npm run build`
 - Lint: `npm run lint`
 - Typecheck: `npm run typecheck`
-- Test: `npm run test`
-- Single test: `npm run test -- -t "test name pattern"`
+- Test: `npm run test` (not yet implemented)
+- Single test: `npm run test -- -t "test name pattern"` (not yet implemented)
 
 ## Current Development Focus
 
-- Project structure setup
-- Core game engine implementation
-- Research tree visualization and interaction
-- Resource system implementation
-- Basic UI framework
+- Core state management implementation
+- Resource tracking system
+- Turn-based progression mechanics
+- Game state persistence (save/load)
+- Basic UI for state visualization
+- Research tree visualization (to follow)
 
 ## Code Style Guidelines
 
