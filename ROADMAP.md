@@ -64,7 +64,7 @@ The roadmap will be updated as development progresses to reflect new priorities,
 ### Game State Management (3 weeks)
 - [x] Implement core state management
 - [x] Create resource tracking system
-- [ ] Implement turn-based progression
+- [x] Implement turn-based progression
 - [ ] Design and implement saving/loading
 - [x] Add basic UI for state display
 

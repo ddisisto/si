@@ -205,9 +205,22 @@
   color: var(--color-primary);
 }
 
+.turn-date {
+  color: var(--color-secondary);
+  font-weight: 500;
+  margin-top: var(--spacing-xs);
+}
+
+.time-scale {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  opacity: 0.9;
+}
+
 .turn-phase {
   color: var(--color-text-muted);
   font-size: var(--font-size-sm);
+  margin-top: var(--spacing-xs);
 }
 
 .turn-buttons {
