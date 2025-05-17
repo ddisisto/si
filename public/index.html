@@ -4,35 +4,18 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SuperInt++</title>
-  <style>
-    body, html {
-      margin: 0;
-      padding: 0;
-      width: 100%;
-      height: 100%;
-      overflow: hidden;
-      background-color: #1e1e2e;
-      color: #cdd6f4;
-      font-family: Arial, sans-serif;
-    }
-    canvas {
-      display: block;
-    }
-    #loading {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      text-align: center;
-    }
-  </style>
+  <link rel="stylesheet" href="styles/main.css">
+  <!-- Preload fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
 </head>
 <body>
-  <div id="loading">
-    <h1>SuperInt++</h1>
-    <p>Initializing game...</p>
+  <div id="game-root">
+    <div id="loading">
+      <h1>SuperInt++</h1>
+      <p>Initializing game...</p>
+    </div>
   </div>
-  
-  <!-- Game will be mounted here by the JavaScript code -->
 </body>
 </html>

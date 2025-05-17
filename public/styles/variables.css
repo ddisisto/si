@@ -1,0 +1,120 @@
+/**
+ * CSS Variables for SuperInt++
+ * 
+ * This file contains all color, spacing, and typography variables
+ * used throughout the application.
+ */
+
+:root {
+  /* Color Scheme - Catppuccin Mocha */
+  --color-background: #1e1e2e;
+  --color-surface: #313244;
+  --color-overlay: #181825;
+  
+  --color-text: #cdd6f4;
+  --color-text-muted: #a6adc8;
+  --color-text-subtle: #7f849c;
+  
+  --color-primary: #cba6f7;    /* Lavender */
+  --color-secondary: #f38ba8;  /* Red */
+  --color-accent: #89b4fa;     /* Blue */
+  --color-success: #a6e3a1;    /* Green */
+  --color-warning: #f9e2af;    /* Yellow */
+  --color-danger: #f38ba8;     /* Red */
+  --color-info: #89dceb;       /* Cyan */
+  
+  /* Category Colors */
+  --color-computing: #89b4fa;  /* Blue */
+  --color-funding: #f9e2af;    /* Yellow */
+  --color-influence: #cba6f7;  /* Lavender */
+  --color-data: #89dceb;       /* Cyan */
+  
+  /* Research Categories */
+  --color-research-fundamental: #94e2d5;  /* Teal */
+  --color-research-applied: #a6e3a1;      /* Green */
+  --color-research-hardware: #f38ba8;     /* Red */
+  --color-research-alignment: #cba6f7;    /* Lavender */
+  
+  /* Spacing */
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+  --spacing-xxl: 48px;
+  
+  /* Typography */
+  --font-family-base: 'Inter', sans-serif;
+  --font-family-heading: 'Inter', sans-serif;
+  --font-family-mono: 'Fira Code', monospace;
+  
+  --font-size-xs: 0.75rem;
+  --font-size-sm: 0.875rem;
+  --font-size-md: 1rem;
+  --font-size-lg: 1.25rem;
+  --font-size-xl: 1.5rem;
+  --font-size-xxl: 2rem;
+  
+  /* Border Radius */
+  --border-radius-sm: 4px;
+  --border-radius-md: 8px;
+  --border-radius-lg: 12px;
+  
+  /* Shadows */
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.2);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.25);
+  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.3);
+  
+  /* Animation */
+  --transition-fast: 0.1s ease-out;
+  --transition-medium: 0.2s ease-out;
+  --transition-slow: 0.3s ease-out;
+  
+  /* Z-index layers */
+  --z-index-base: 1;
+  --z-index-above: 10;
+  --z-index-modal: 100;
+  --z-index-tooltip: 200;
+  --z-index-notification: 300;
+}
+
+/* Dark mode overrides (default) */
+@media (prefers-color-scheme: dark) {
+  :root {
+    /* Already set for dark mode */
+  }
+}
+
+/* Light mode overrides */
+@media (prefers-color-scheme: light) {
+  :root {
+    /* Catppuccin Latte */
+    --color-background: #eff1f5;
+    --color-surface: #ccd0da;
+    --color-overlay: #e6e9ef;
+    
+    --color-text: #4c4f69;
+    --color-text-muted: #5c5f77;
+    --color-text-subtle: #6c6f85;
+    
+    --color-primary: #8839ef;    /* Lavender */
+    --color-secondary: #d20f39;  /* Red */
+    --color-accent: #1e66f5;     /* Blue */
+    --color-success: #40a02b;    /* Green */
+    --color-warning: #df8e1d;    /* Yellow */
+    --color-danger: #d20f39;     /* Red */
+    --color-info: #209fb5;       /* Cyan */
+    
+    /* Category Colors */
+    --color-computing: #1e66f5;  /* Blue */
+    --color-funding: #df8e1d;    /* Yellow */
+    --color-influence: #8839ef;  /* Lavender */
+    --color-data: #209fb5;       /* Cyan */
+    
+    /* Research Categories */
+    --color-research-fundamental: #179299;  /* Teal */
+    --color-research-applied: #40a02b;      /* Green */
+    --color-research-hardware: #d20f39;     /* Red */
+    --color-research-alignment: #8839ef;    /* Lavender */
+  }
+}
