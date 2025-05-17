@@ -50,8 +50,11 @@ class ResearchTreeView extends UIComponent {
   // Store filter visibility state
   private isFilterPanelVisible: boolean = false;
   // Bound event handlers for filters
-  private boundHandleToggleFilter: (event: Event) => void;
   private boundHandleToggleFilterPanel: (event: Event) => void;
+  private boundHandleToggleDropdown: (event: Event) => void;
+  private boundHandleSelectFilterOption: (event: Event) => void;
+  // Track which dropdowns are open
+  private openDropdowns: Set<string> = new Set();
   
   /**
    * Create a new research tree view
@@ -70,8 +73,9 @@ class ResearchTreeView extends UIComponent {
     this.boundHandleWheel = this.handleWheel.bind(this);
     
     // Create bound event handlers for filters
-    this.boundHandleToggleFilter = this.handleToggleFilter.bind(this);
     this.boundHandleToggleFilterPanel = this.handleToggleFilterPanel.bind(this);
+    this.boundHandleToggleDropdown = this.handleToggleDropdown.bind(this);
+    this.boundHandleSelectFilterOption = this.handleSelectFilterOption.bind(this);
   }
   
   /**
@@ -103,37 +107,64 @@ class ResearchTreeView extends UIComponent {
         <div class="research-controls">
           <button class="zoom-control view-all">View All</button>
           <button class="filter-toggle" data-expanded="${this.isFilterPanelVisible}">
-            ${this.isFilterPanelVisible ? 'Hide Filters' : 'Show Filters'}
+            <span class="filter-icon">⚙️</span>
           </button>
         </div>
       </div>
       <div class="filter-panel ${this.isFilterPanelVisible ? 'visible' : 'hidden'}">
-        <div class="filter-section">
-          <div class="filter-section-header">
-            <span class="filter-label">Filter by Category</span>
-          </div>
-          <div class="filter-options">
-            ${Object.entries(this.categoryFilters).map(([category, isEnabled]) => `
-              <div class="filter-item category-filter ${isEnabled ? 'active' : ''}" 
-                   data-filter-type="category" data-filter-value="${category}">
-                <span class="filter-color" style="background-color: ${this.getCategoryColor(category)}"></span>
-                <span class="filter-name">${category}</span>
+        <div class="filter-controls">
+          <div class="filter-dropdown">
+            <label for="category-filter">Category:</label>
+            <div class="dropdown-container">
+              <div class="dropdown-selected" data-filter-type="category">
+                <span>${Object.entries(this.categoryFilters).filter(([_, isEnabled]) => isEnabled).length} selected</span>
+                <span class="dropdown-arrow">▼</span>
               </div>
-            `).join('')}
-          </div>
-        </div>
-        <div class="filter-section">
-          <div class="filter-section-header">
-            <span class="filter-label">Filter by Status</span>
-          </div>
-          <div class="filter-options">
-            ${Object.entries(this.statusFilters).map(([status, isEnabled]) => `
-              <div class="filter-item status-filter ${isEnabled ? 'active' : ''}" 
-                   data-filter-type="status" data-filter-value="${status}">
-                <span class="filter-color status-color ${status}"></span>
-                <span class="filter-name">${this.formatStatus(status)}</span>
+              <div class="dropdown-options">
+                <div class="dropdown-option select-all" data-filter-type="category" data-filter-action="all">
+                  <span>Select All</span>
+                </div>
+                <div class="dropdown-option select-none" data-filter-type="category" data-filter-action="none">
+                  <span>Select None</span>
+                </div>
+                <div class="dropdown-divider"></div>
+                ${Object.entries(this.categoryFilters).map(([category, isEnabled]) => `
+                  <div class="dropdown-option ${isEnabled ? 'active' : ''}" 
+                       data-filter-type="category" data-filter-value="${category}">
+                    <span class="filter-color" style="background-color: ${this.getCategoryColor(category)}"></span>
+                    <span>${category}</span>
+                    ${isEnabled ? '<span class="check-mark">✓</span>' : ''}
+                  </div>
+                `).join('')}
               </div>
-            `).join('')}
+            </div>
+          </div>
+          
+          <div class="filter-dropdown">
+            <label for="status-filter">Status:</label>
+            <div class="dropdown-container">
+              <div class="dropdown-selected" data-filter-type="status">
+                <span>${Object.entries(this.statusFilters).filter(([_, isEnabled]) => isEnabled).length} selected</span>
+                <span class="dropdown-arrow">▼</span>
+              </div>
+              <div class="dropdown-options">
+                <div class="dropdown-option select-all" data-filter-type="status" data-filter-action="all">
+                  <span>Select All</span>
+                </div>
+                <div class="dropdown-option select-none" data-filter-type="status" data-filter-action="none">
+                  <span>Select None</span>
+                </div>
+                <div class="dropdown-divider"></div>
+                ${Object.entries(this.statusFilters).map(([status, isEnabled]) => `
+                  <div class="dropdown-option ${isEnabled ? 'active' : ''}" 
+                       data-filter-type="status" data-filter-value="${status}">
+                    <span class="filter-color status-color ${status}"></span>
+                    <span>${this.formatStatus(status)}</span>
+                    ${isEnabled ? '<span class="check-mark">✓</span>' : ''}
+                  </div>
+                `).join('')}
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -445,10 +476,16 @@ class ResearchTreeView extends UIComponent {
       filterToggleButton.addEventListener('click', this.boundHandleToggleFilterPanel);
     }
     
-    // Bind filter item events
-    const filterItems = this.element.querySelectorAll('.filter-item');
-    filterItems.forEach(filter => {
-      filter.addEventListener('click', this.boundHandleToggleFilter);
+    // Bind dropdown toggle events
+    const dropdownSelected = this.element.querySelectorAll('.dropdown-selected');
+    dropdownSelected.forEach(dropdown => {
+      dropdown.addEventListener('click', this.boundHandleToggleDropdown);
+    });
+    
+    // Bind dropdown option events
+    const dropdownOptions = this.element.querySelectorAll('.dropdown-option');
+    dropdownOptions.forEach(option => {
+      option.addEventListener('click', this.boundHandleSelectFilterOption);
     });
     
     // Bind panning and zooming events
@@ -534,25 +571,126 @@ class ResearchTreeView extends UIComponent {
     // Toggle the filter panel visibility
     this.isFilterPanelVisible = !this.isFilterPanelVisible;
     
+    // Clear any open dropdowns
+    this.openDropdowns.clear();
+    
     // Re-render the tree with the updated filter panel state
     this.render();
+    
+    // Add document click handler to close filter panel when clicking outside
+    if (this.isFilterPanelVisible) {
+      document.addEventListener('click', this.handleClickOutside.bind(this));
+    } else {
+      document.removeEventListener('click', this.handleClickOutside.bind(this));
+    }
   }
   
   /**
-   * Handle toggling individual filters
+   * Handle clicks outside the filter panel to close it
    */
-  private handleToggleFilter(event: Event): void {
-    event.stopPropagation();
-    const filterElement = event.currentTarget as HTMLElement;
-    const filterType = filterElement.dataset.filterType;
-    const filterValue = filterElement.dataset.filterValue;
+  private handleClickOutside(event: Event): void {
+    const filterPanel = this.element.querySelector('.filter-panel');
+    const filterToggle = this.element.querySelector('.filter-toggle');
     
-    if (filterType && filterValue) {
-      // Toggle the filter state based on its type
-      if (filterType === 'category') {
-        this.categoryFilters[filterValue] = !this.categoryFilters[filterValue];
-      } else if (filterType === 'status') {
-        this.statusFilters[filterValue] = !this.statusFilters[filterValue];
+    if (filterPanel && filterToggle && 
+        !filterPanel.contains(event.target as Node) && 
+        !filterToggle.contains(event.target as Node)) {
+      // Close any open dropdowns
+      this.openDropdowns.clear();
+      
+      // If clicking outside, close the filter panel
+      if (this.isFilterPanelVisible) {
+        this.isFilterPanelVisible = false;
+        this.render();
+        document.removeEventListener('click', this.handleClickOutside.bind(this));
+      }
+    }
+  }
+  
+  /**
+   * Handle toggling dropdown visibility
+   */
+  private handleToggleDropdown(event: Event): void {
+    event.stopPropagation();
+    const dropdownElement = event.currentTarget as HTMLElement;
+    const filterType = dropdownElement.dataset.filterType;
+    
+    if (filterType) {
+      // Close other dropdowns
+      this.openDropdowns.forEach(type => {
+        if (type !== filterType) {
+          this.openDropdowns.delete(type);
+        }
+      });
+      
+      // Toggle this dropdown
+      if (this.openDropdowns.has(filterType)) {
+        this.openDropdowns.delete(filterType);
+      } else {
+        this.openDropdowns.add(filterType);
+      }
+      
+      // Update dropdown visibility without full re-render
+      this.updateDropdownVisibility();
+    }
+  }
+  
+  /**
+   * Update dropdown visibility without re-rendering the whole tree
+   */
+  private updateDropdownVisibility(): void {
+    // Update all dropdowns
+    const dropdowns = this.element.querySelectorAll('.dropdown-container');
+    dropdowns.forEach(dropdown => {
+      const selected = dropdown.querySelector('.dropdown-selected');
+      const options = dropdown.querySelector('.dropdown-options');
+      if (selected && options) {
+        const filterType = (selected as HTMLElement).dataset.filterType;
+        if (filterType) {
+          if (this.openDropdowns.has(filterType)) {
+            options.classList.add('visible');
+          } else {
+            options.classList.remove('visible');
+          }
+        }
+      }
+    });
+  }
+  
+  /**
+   * Handle selecting a filter option from dropdown
+   */
+  private handleSelectFilterOption(event: Event): void {
+    event.stopPropagation();
+    const optionElement = event.currentTarget as HTMLElement;
+    const filterType = optionElement.dataset.filterType;
+    const filterValue = optionElement.dataset.filterValue;
+    const filterAction = optionElement.dataset.filterAction;
+    
+    if (filterType) {
+      // Handle "Select All" or "Select None" actions
+      if (filterAction === 'all' || filterAction === 'none') {
+        const selectAll = filterAction === 'all';
+        
+        if (filterType === 'category') {
+          // Set all category filters to the selection state
+          Object.keys(this.categoryFilters).forEach(category => {
+            this.categoryFilters[category] = selectAll;
+          });
+        } else if (filterType === 'status') {
+          // Set all status filters to the selection state
+          Object.keys(this.statusFilters).forEach(status => {
+            this.statusFilters[status] = selectAll;
+          });
+        }
+      } 
+      // Handle individual item selection
+      else if (filterValue) {
+        if (filterType === 'category') {
+          this.categoryFilters[filterValue] = !this.categoryFilters[filterValue];
+        } else if (filterType === 'status') {
+          this.statusFilters[filterValue] = !this.statusFilters[filterValue];
+        }
       }
       
       // Re-render the tree with the new filters
@@ -775,11 +913,20 @@ class ResearchTreeView extends UIComponent {
       filterToggleButton.removeEventListener('click', this.boundHandleToggleFilterPanel);
     }
     
-    // Remove filter item events
-    const filterItems = this.element.querySelectorAll('.filter-item');
-    filterItems.forEach(filter => {
-      filter.removeEventListener('click', this.boundHandleToggleFilter);
+    // Remove dropdown toggle events
+    const dropdownSelected = this.element.querySelectorAll('.dropdown-selected');
+    dropdownSelected.forEach(dropdown => {
+      dropdown.removeEventListener('click', this.boundHandleToggleDropdown);
     });
+    
+    // Remove dropdown option events
+    const dropdownOptions = this.element.querySelectorAll('.dropdown-option');
+    dropdownOptions.forEach(option => {
+      option.removeEventListener('click', this.boundHandleSelectFilterOption);
+    });
+    
+    // Remove document click listener
+    document.removeEventListener('click', this.handleClickOutside.bind(this));
     
     // Remove wheel event listener
     const viewPort = this.element.querySelector('.research-tree-view-port');
