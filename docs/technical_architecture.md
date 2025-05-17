@@ -54,25 +54,22 @@ class GameEngine {
 
 ### Game State
 
-Centralized state storage for all game data:
+Centralized state storage for all game data, structured as a hierarchical tree of immutable objects:
 
 ```typescript
 interface GameState {
-  readonly meta: {
-    turn: number;
-    phase: GamePhase;
-    organization: Organization;
-    difficulty: Difficulty;
-  };
-  readonly resources: ResourceState;
-  readonly research: ResearchState;
-  readonly deployments: DeploymentState;
-  readonly events: EventState;
-  readonly world: WorldState;
-  readonly competitors: CompetitorState;
-  readonly settings: SettingsState;
+  readonly meta: GameMetaState;           // Game-wide metadata
+  readonly resources: ResourceState;      // Resource tracking 
+  readonly research: ResearchState;       // Research tree state
+  readonly deployments: DeploymentState;  // Deployed AI systems
+  readonly events: EventState;            // Event queue and history
+  readonly world: WorldState;             // World map and regions
+  readonly competitors: CompetitorState;  // AI competitors
+  readonly settings: SettingsState;       // Game settings
 }
 ```
+
+For detailed information about the state structure and management approach, see [State Management Design](./state_management_design.md).
 
 ### Systems
 
@@ -278,39 +275,44 @@ Each view has:
 
 ## State Management
 
-The game uses a unidirectional data flow pattern:
+The game uses an immutable state management approach with unidirectional data flow:
 
-1. **State** - Single source of truth for game data
-2. **Actions** - Describe changes to be made
-3. **Reducer** - Produces new state from old state and action
-4. **Selectors** - Extract specific data for components
+1. **GameState** - Centralized, immutable state tree as single source of truth
+2. **Actions** - Plain objects describing intended state changes
+3. **Reducers** - Pure functions that compute new state from previous state and actions
+4. **GameStateManager** - Coordinates state updates and notifies systems of changes
+5. **TurnSystem** - Handles progression of game turns and phases
+6. **Selectors** - Extract and derive data from state for components
+
+For detailed information about the state management implementation, see [State Management Design](./state_management_design.md).
 
 ```typescript
-// Action
-interface GameAction {
-  type: string;
-  payload: any;
+// Core state manager
+class GameStateManager {
+  private state: GameState;
+  
+  public getState(): Readonly<GameState>;
+  public dispatch(action: GameAction): void;
+  public subscribe(listener: StateChangeListener): () => void;
 }
 
-// Reducer
-function gameReducer(state: GameState, action: GameAction): GameState {
+// Simplified reducer example
+function resourceReducer(state: ResourceState, action: GameAction): ResourceState {
   switch (action.type) {
-    case 'RESEARCH_START':
+    case 'ALLOCATE_COMPUTING':
       return {
         ...state,
-        research: researchReducer(state.research, action)
+        computing: {
+          ...state.computing,
+          allocated: {
+            ...state.computing.allocated,
+            [action.payload.target]: (state.computing.allocated[action.payload.target] || 0) + action.payload.amount
+          }
+        }
       };
-    // Other cases...
     default:
       return state;
   }
-}
-
-// Selector
-function getAvailableResearch(state: GameState): Research[] {
-  return state.research.nodes.filter(node => 
-    node.visible && !node.completed && canAfford(state.resources, node.cost)
-  );
 }
 ```
 
