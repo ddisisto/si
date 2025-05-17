@@ -88,11 +88,13 @@ The roadmap will be updated as development progresses to reflect new priorities,
   - [ ] Create directional arrows
   - [ ] Handle different connection types
   - [ ] Add connection styling based on status
-- [ ] Add interaction handling
-  - [ ] Implement hover effects
-  - [ ] Create click selection
-  - [ ] Build node information panel
-  - [ ] Add research action UI
+- [x] Add interaction handling
+  - [x] Implement hover effects
+  - [x] Create click selection
+  - [x] Build node information panel
+  - [x] Add research action UI
+  - [x] Fix event binding for research nodes
+  - [x] Implement navigation between main view and research tree
 - [ ] Implement visualization controls
   - [ ] Add zooming functionality
   - [ ] Create panning controls

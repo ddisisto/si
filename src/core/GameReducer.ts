@@ -505,16 +505,18 @@ function researchReducer(state: ResearchState, action: GameAction): ResearchStat
       
     case 'UPDATE_RESEARCH_PROGRESS':
       // Update progress for specific research nodes
-      const progressUpdates = action.payload.progressUpdates;
+      const progressUpdates = action.payload.progressUpdates || {};
       const updatedNodes = { ...state.nodes };
       
-      // Apply all progress updates
-      for (const [id, progress] of Object.entries(progressUpdates)) {
-        if (updatedNodes[id]) {
-          updatedNodes[id] = {
-            ...updatedNodes[id],
-            progress: progress as number
-          };
+      // Apply all progress updates if they exist
+      if (progressUpdates && typeof progressUpdates === 'object') {
+        for (const [id, progress] of Object.entries(progressUpdates)) {
+          if (updatedNodes[id]) {
+            updatedNodes[id] = {
+              ...updatedNodes[id],
+              progress: progress as number
+            };
+          }
         }
       }
       

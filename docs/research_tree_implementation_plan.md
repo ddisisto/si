@@ -65,22 +65,28 @@ Following the principles in PHILOSOPHY.md:
 ### Phase 3: Interaction System (1 week)
 
 1. **Node Selection and Highlighting**
-   - [ ] Implement hover effects for nodes
-   - [ ] Create selection mechanism
+   - [x] Implement hover effects for nodes
+   - [x] Create selection mechanism
    - [ ] Add highlight for related nodes (prerequisites, unlocks)
    - [ ] Implement focus animations
 
 2. **Node Information Display**
-   - [ ] Create detailed node information panel
+   - [x] Create detailed node information panel
    - [ ] Implement tooltips for quick information
-   - [ ] Add progress indicators for in-progress research
-   - [ ] Show resource requirements and effects
+   - [x] Add progress indicators for in-progress research
+   - [x] Show resource requirements and effects
 
 3. **Research Actions**
-   - [ ] Implement start research action
-   - [ ] Create compute allocation interface
-   - [ ] Add cancel research functionality
-   - [ ] Implement research completion events
+   - [x] Implement start research action
+   - [x] Create compute allocation interface
+   - [x] Add cancel research functionality
+   - [x] Implement research completion events
+
+4. **Event Handling Improvements**
+   - [x] Fix event binding to ensure nodes are clickable
+   - [x] Implement proper event cleanup
+   - [x] Ensure consistent event handling across renders
+   - [x] Add navigation between main view and research tree
 
 ### Phase 4: Advanced Visualization Features (1 week)
 
