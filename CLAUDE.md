@@ -56,7 +56,7 @@ The project is in the initial implementation phase. We have completed design doc
 
 ## Code Style Guidelines
 
-- **Framework**: HTML5 Canvas with TypeScript
+- **Framework**: TypeScript with DOM-based UI
 - **Formatting**: Follow Prettier defaults
 - **Imports**: Group imports (1. libraries, 2. components, 3. utilities/types)
 - **Naming**: camelCase for variables/functions, PascalCase for classes/components
@@ -70,7 +70,7 @@ The project is in the initial implementation phase. We have completed design doc
 
 The codebase maintains separation between core systems:
 - **Core**: Game logic (GameEngine, GameState, etc.)
-- **UI**: Canvas rendering and components (Renderer, Views)
+- **UI**: DOM-based UI components and managers (UIManager, UIComponents)
 - **Systems**: Game system implementations (ResourceSystem, ResearchSystem)
 - **Types**: Entity definitions and interfaces
 - **Data**: Game data and definitions
@@ -91,7 +91,8 @@ The research system is a key focus area with these considerations:
 - Consistent color scheme and visual language
 - Clear feedback for user actions
 - Support for different screen sizes
-- Performance optimization for canvas operations
+- Performance optimization for DOM operations
+- Progressive revelation of complexity, aligning with our philosophical approach
 
 ## Philosophical Approach
 
@@ -106,11 +107,12 @@ This game explores the evolution of AI systems and their relationship with human
 
 - Implement core mechanics before "nice-to-have" features
 - Regular refactoring to eliminate technical debt
-- Performance profiling for canvas-intensive operations
+- Performance profiling for DOM-intensive operations
 - Clear interfaces between modules to maintain separation
 - Feature prioritization based on gameplay impact
 - Avoid premature optimization while maintaining scalability
 - Ruthlessly question whether new features serve the core experience
+- Maintain meaningful causality chains between systems as outlined in PHILOSOPHY.md
 
 ## Implementation Approach
 
