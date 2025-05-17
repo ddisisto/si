@@ -97,16 +97,16 @@ Following the principles in PHILOSOPHY.md:
    - [ ] Add focus controls for different tree sections
 
 2. **Category Visualization**
-   - [ ] Implement color coding for categories
-   - [ ] Create category filters/toggles
-   - [ ] Add visual separation between categories
-   - [ ] Implement category headers and labels
+   - [x] Implement color coding for categories
+   - [x] Create category filters/toggles
+   - [x] Add visual separation between categories
+   - [x] Implement category headers and labels
 
 3. **Node Status Visualization**
-   - [ ] Create progress bars for research in progress
-   - [ ] Implement visual effects for completed research
-   - [ ] Add animations for status transitions
-   - [ ] Create special indicators for breakthrough nodes
+   - [x] Create progress bars for research in progress
+   - [x] Implement visual effects for completed research
+   - [x] Add animations for status transitions
+   - [x] Create special indicators for breakthrough nodes
 
 ### Phase 5: Custom Positioning and Polish (2 weeks)
 
@@ -137,19 +137,18 @@ Following the principles in PHILOSOPHY.md:
   /ui
     /components
       /research
-        ResearchTreeView.ts     - Main container component
-        ResearchNode.ts         - Individual node component
-        NodeConnection.ts       - Connection rendering
-        ResearchControls.ts     - UI controls for research
-        ResearchInfoPanel.ts    - Detailed node information
-        CategorySection.ts      - Category grouping component
+        ResearchTreeView.ts     - Main container component with integrated rendering
+        index.ts                - Component exports
   /systems
     ResearchSystem.ts           - Research progression logic
   /types
     Research.ts                 - Research data types
   /data
     ResearchData.ts             - Initial research tree data
+    /research                   - Modular research data organization
 ```
+
+> **Note:** The component structure has been simplified from the original plan. Instead of separate components for nodes, connections and controls, these have been integrated into the ResearchTreeView component for better performance and simpler state management. This approach reduces DOM complexity and improves rendering efficiency.
 
 ### State Management
 
@@ -177,13 +176,15 @@ The research tree will follow the application's overall state management pattern
 
 ### Rendering Approach
 
-The research tree will use DOM-based rendering with:
+The research tree uses DOM-based rendering with:
 
-1. **Grid Layout** - CSS Grid for overall positioning
-2. **SVG Connections** - Lines between nodes using SVG
-3. **HTML Components** - Nodes as interactive DOM elements
-4. **CSS Transitions** - Smooth state changes
-5. **Virtualization** - For performance with large trees
+1. **Positioned Elements** - Absolute positioning for precise node placement
+2. **SVG Connections** - SVG paths for connections between nodes with bezier curves
+3. **HTML Components** - Nodes as interactive DOM elements with event delegation
+4. **CSS Transitions** - Smooth state changes and animations
+5. **Optimized DOM** - Flattened DOM structure for better performance
+6. **Z-Index Management** - Careful stacking context management for UI elements like dropdowns
+7. **Transform-based Zoom/Pan** - CSS transforms for efficient zooming and panning
 
 ## Integration Points
 
