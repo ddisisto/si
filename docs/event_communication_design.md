@@ -151,9 +151,11 @@ The state persistence system provides save/load functionality for game state.
    ```
    1. User toggles auto-save → SaveLoadPanel emits action:queue with UPDATE_SETTINGS
    2. GameStateManager updates settings.autoSave
-   3. When turn ends → TurnSystem checks settings.autoSave
+   3. At the START of each turn → TurnSystem checks settings.autoSave
    4. If enabled → calls stateManager.saveState('autosave')
    ```
+   
+   Note: Auto-save happens at the beginning of each turn (not the end) to ensure that when loading a saved game, the player will be at the same turn number they were at when playing.
 
 ### 2.3 Save Data Structure
 
