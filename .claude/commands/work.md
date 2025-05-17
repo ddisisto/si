@@ -4,3 +4,4 @@ In particular the `docs/technical_architecture.md` should be considered, and sho
 You should be on branch main when starting, create a new branch for any major work.
 Use browser tools to ensure page loads (user is running `npm run dev` with auto-reload in background), check its console log for errors / details, interact and view screenshots as needed.
 If any major / blocking issues are detected, flag with the user, or raise a github issue (`gh` command), and wait for resolution before proceeding.
+Always look to cleanup unused code paths and make obvious improvements we find along the way.
