@@ -62,11 +62,11 @@ The roadmap will be updated as development progresses to reflect new priorities,
 - [x] Create game loop architecture
 
 ### Game State Management (3 weeks)
-- [ ] Implement core state management
-- [ ] Create resource tracking system
+- [x] Implement core state management
+- [x] Create resource tracking system
 - [ ] Implement turn-based progression
 - [ ] Design and implement saving/loading
-- [ ] Add basic UI for state display
+- [x] Add basic UI for state display
 
 ### Research Tree Visualization (4 weeks)
 - [ ] Implement node rendering system

@@ -69,27 +69,142 @@ function metaReducer(state: GameMetaState, action: GameAction): GameMetaState {
 function resourceReducer(state: ResourceState, action: GameAction): ResourceState {
   switch (action.type) {
     case 'ALLOCATE_COMPUTING':
+      // Allocate computing to a target activity
+      const targetAllocation = (state.computing.allocated[action.payload.target] || 0) + action.payload.amount;
+      
       return {
         ...state,
         computing: {
           ...state.computing,
           allocated: {
             ...state.computing.allocated,
-            [action.payload.target]: (state.computing.allocated[action.payload.target] || 0) + action.payload.amount
-          }
+            [action.payload.target]: targetAllocation
+          },
+          // Add to allocation history
+          allocationHistory: [
+            ...(state.computing.allocationHistory || []).slice(-9), // Keep last 10 entries
+            {
+              turn: action.payload.turn || 0,
+              target: action.payload.target,
+              amount: action.payload.amount,
+              timestamp: Date.now()
+            }
+          ]
+        }
+      };
+    
+    case 'DEALLOCATE_COMPUTING':
+      // Remove computing allocation from a target
+      const allocations = { ...state.computing.allocated };
+      const currentAllocation = allocations[action.payload.target] || 0;
+      const newAllocation = Math.max(0, currentAllocation - action.payload.amount);
+      
+      // Update or remove the allocation
+      if (newAllocation > 0) {
+        allocations[action.payload.target] = newAllocation;
+      } else {
+        delete allocations[action.payload.target];
+      }
+      
+      return {
+        ...state,
+        computing: {
+          ...state.computing,
+          allocated: allocations,
+          // Add to allocation history
+          allocationHistory: [
+            ...(state.computing.allocationHistory || []).slice(-9),
+            {
+              turn: action.payload.turn || 0,
+              target: action.payload.target,
+              amount: -action.payload.amount, // Negative to show deallocation
+              timestamp: Date.now()
+            }
+          ]
         }
       };
       
     case 'GENERATE_RESOURCES':
       // Generate resources at the start of turn
+      
+      // Compute new funding with income and expenses
       const newFunding = {
         ...state.funding,
-        current: state.funding.current + state.funding.income - state.funding.expenses
+        current: state.funding.current + state.funding.income - state.funding.expenses,
+        // Keep history of funding changes
+        history: [
+          ...(state.funding.history || []).slice(-9),
+          {
+            turn: action.payload.turn,
+            previous: state.funding.current,
+            income: state.funding.income,
+            expenses: state.funding.expenses,
+            change: state.funding.income - state.funding.expenses,
+            timestamp: Date.now()
+          }
+        ]
+      };
+      
+      // Compute new computing total with generation up to the cap
+      const newComputingTotal = Math.min(
+        state.computing.total + state.computing.generation,
+        state.computing.cap
+      );
+      
+      // Generate influence based on deployments and actions
+      // (for now just a small increase to each area)
+      const influenceGrowth = {
+        academic: Math.min(100, state.influence.academic + (action.payload.influenceGrowth?.academic || 0)),
+        industry: Math.min(100, state.influence.industry + (action.payload.influenceGrowth?.industry || 0)),
+        government: Math.min(100, state.influence.government + (action.payload.influenceGrowth?.government || 0)),
+        public: Math.min(100, state.influence.public + (action.payload.influenceGrowth?.public || 0)),
+        openSource: Math.min(100, state.influence.openSource + (action.payload.influenceGrowth?.openSource || 0))
       };
       
       return {
         ...state,
-        funding: newFunding
+        computing: {
+          ...state.computing,
+          total: newComputingTotal,
+          // Keep history of generation
+          generationHistory: [
+            ...(state.computing.generationHistory || []).slice(-9),
+            {
+              turn: action.payload.turn,
+              previous: state.computing.total,
+              generated: state.computing.generation,
+              newTotal: newComputingTotal,
+              timestamp: Date.now()
+            }
+          ]
+        },
+        funding: newFunding,
+        influence: {
+          ...state.influence,
+          ...influenceGrowth,
+          // Keep history of influence changes
+          history: [
+            ...(state.influence.history || []).slice(-9),
+            {
+              turn: action.payload.turn,
+              previous: {
+                academic: state.influence.academic,
+                industry: state.influence.industry,
+                government: state.influence.government,
+                public: state.influence.public,
+                openSource: state.influence.openSource
+              },
+              changes: {
+                academic: (action.payload.influenceGrowth?.academic || 0),
+                industry: (action.payload.influenceGrowth?.industry || 0),
+                government: (action.payload.influenceGrowth?.government || 0),
+                public: (action.payload.influenceGrowth?.public || 0),
+                openSource: (action.payload.influenceGrowth?.openSource || 0)
+              },
+              timestamp: Date.now()
+            }
+          ]
+        }
       };
       
     case 'UPDATE_RESOURCE':
@@ -145,6 +260,143 @@ function resourceReducer(state: ResourceState, action: GameAction): ResourceStat
       }
       
       return state;
+    
+    case 'SPEND_RESOURCES':
+      // Handle spending multiple resource types at once
+      const { costs, reason } = action.payload;
+      let updatedState = { ...state };
+      
+      // Handle computing allocation separately
+      if (costs.computing) {
+        // Computing is allocated, not spent directly
+        updatedState = resourceReducer(updatedState, {
+          type: 'ALLOCATE_COMPUTING',
+          payload: {
+            target: reason || 'general',
+            amount: costs.computing,
+            turn: action.payload.turn
+          }
+        });
+      }
+      
+      // Handle funding costs
+      if (costs.funding) {
+        updatedState = {
+          ...updatedState,
+          funding: {
+            ...updatedState.funding,
+            current: updatedState.funding.current - costs.funding,
+            // Track spending in history
+            expenses: updatedState.funding.expenses + (costs.recurring ? costs.funding : 0),
+            spendingHistory: [
+              ...(updatedState.funding.spendingHistory || []).slice(-9),
+              {
+                turn: action.payload.turn,
+                amount: costs.funding,
+                reason: reason || 'general',
+                recurring: !!costs.recurring,
+                timestamp: Date.now()
+              }
+            ]
+          }
+        };
+      }
+      
+      // Handle influence costs
+      if (costs.influence) {
+        const newInfluence = { ...updatedState.influence };
+        const influenceChanges: Record<string, number> = {};
+        
+        // Apply each influence cost
+        for (const [key, value] of Object.entries(costs.influence)) {
+          if (key in newInfluence && key !== 'history') {
+            const fieldKey = key as keyof typeof newInfluence;
+            const oldValue = newInfluence[fieldKey];
+            // Influence can't go below 0
+            if (typeof oldValue === 'number' && fieldKey !== 'history') {
+              newInfluence[fieldKey] = Math.max(0, oldValue - (value as number));
+            }
+            influenceChanges[key] = -(value as number);
+          }
+        }
+        
+        updatedState = {
+          ...updatedState,
+          influence: {
+            ...newInfluence,
+            // Track influence spending
+            history: [
+              ...(updatedState.influence.history || []).slice(-9),
+              {
+                turn: action.payload.turn,
+                previous: {
+                  academic: updatedState.influence.academic,
+                  industry: updatedState.influence.industry,
+                  government: updatedState.influence.government,
+                  public: updatedState.influence.public,
+                  openSource: updatedState.influence.openSource
+                },
+                changes: influenceChanges,
+                reason: reason || 'general',
+                timestamp: Date.now()
+              }
+            ]
+          }
+        };
+      }
+      
+      // Handle data costs (setting tiers or specialized sets to false)
+      if (costs.data) {
+        const newData = { ...updatedState.data };
+        
+        // Handle tier changes
+        if (costs.data.tiers) {
+          for (const [key, value] of Object.entries(costs.data.tiers)) {
+            if (value === false) {
+              newData.tiers = {
+                ...newData.tiers,
+                [key]: false
+              };
+            }
+          }
+        }
+        
+        // Handle specialized set changes
+        if (costs.data.specializedSets) {
+          for (const [key, value] of Object.entries(costs.data.specializedSets)) {
+            if (value === false) {
+              newData.specializedSets = {
+                ...newData.specializedSets,
+                [key]: false
+              };
+            }
+          }
+        }
+        
+        updatedState = {
+          ...updatedState,
+          data: newData
+        };
+      }
+      
+      return updatedState;
+
+    case 'UPDATE_RESOURCE_CAPS':
+      // Update resource caps (like computing capacity)
+      const { computing, funding } = action.payload;
+      
+      return {
+        ...state,
+        computing: {
+          ...state.computing,
+          cap: computing !== undefined ? computing : state.computing.cap
+        },
+        funding: {
+          ...state.funding,
+          // Other funding caps could be added here
+          ...(funding !== undefined ? { maxReserves: funding } : {})
+        }
+      };
     
     default:
       return state;
