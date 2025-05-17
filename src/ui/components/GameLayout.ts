@@ -25,7 +25,7 @@ class GameLayout extends UIComponent {
    * @param options Configuration options
    */
   constructor(options: GameLayoutOptions) {
-    super('div', 'game-layout');
+    super('div', 'game-root');
     this.eventBus = options.eventBus;
   }
   
@@ -61,6 +61,9 @@ class GameLayout extends UIComponent {
     this.mainElement = this.element.querySelector('.game-main');
     this.panelAreaElement = this.element.querySelector('.game-panel-area');
     this.footerElement = this.element.querySelector('.game-footer');
+    
+    // Add debug class for styling
+    this.element.classList.add('debug-grid');
   }
   
   /**

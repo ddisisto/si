@@ -21,9 +21,7 @@ class UIManager {
    */
   constructor(eventBus: EventBus) {
     this.eventBus = eventBus;
-    
-    // Subscribe to state changes if needed
-    // This is optional if updates are pushed from GameEngine
+    console.log('UIManager created with EventBus:', eventBus);
   }
   
   /**
@@ -32,14 +30,13 @@ class UIManager {
    */
   public initialize(rootElement: HTMLElement): void {
     this.rootElement = rootElement;
+    console.log('UIManager initialized with root element:', rootElement);
     
     // Clear any loading indicators or previous content
     const loading = rootElement.querySelector('#loading');
     if (loading) {
       loading.remove();
     }
-    
-    console.log('UIManager initialized with root element');
   }
   
   /**
@@ -48,37 +45,27 @@ class UIManager {
    * @param component The component to register
    * @param parentId Optional parent component ID to mount to
    */
-  public registerComponent(id: string, component: UIComponent, parentId?: string): void {
+  public registerComponent(id: string, component: UIComponent): void {
     // Store the component
     this.components.set(id, component);
+    console.log(`Component registered: ${id}`, component);
     
     // Set event bus for component
     component.setEventBus(this.eventBus);
     
     // If we have a root element and game state, mount and update the component
-    if (this.rootElement) {
-      let mountTarget = this.rootElement;
-      
-      // If a parent component is specified, mount to it instead of root
-      if (parentId) {
-        const parentComponent = this.components.get(parentId);
-        if (parentComponent) {
-          mountTarget = parentComponent.getElement();
-        } else {
-          console.warn(`Parent component '${parentId}' not found, mounting to root instead`);
-        }
-      }
-      
-      // Mount the component
-      component.mount(mountTarget);
+    if (this.rootElement && id === 'layout') {
+      // Replace the existing content with our layout
+      this.rootElement.innerHTML = '';
+      component.mount(this.rootElement);
+      console.log(`Component mounted: ${id}`);
       
       // Update with current state if available
       if (this.gameState) {
         component.update(this.gameState);
+        console.log(`Component updated with state: ${id}`);
       }
     }
-    
-    console.log(`Component registered: ${id}`);
   }
   
   /**
@@ -86,10 +73,12 @@ class UIManager {
    * @param gameState Current game state
    */
   public update(gameState: Readonly<GameState>): void {
+    console.log('UIManager updating with game state:', gameState);
     this.gameState = gameState;
     
     // Update all registered components
-    this.components.forEach(component => {
+    this.components.forEach((component, id) => {
+      console.log(`Updating component: ${id}`);
       component.update(gameState);
     });
   }
@@ -111,6 +100,7 @@ class UIManager {
     if (component) {
       component.unmount();
       this.components.delete(id);
+      console.log(`Component removed: ${id}`);
     }
   }
   
@@ -119,6 +109,13 @@ class UIManager {
    */
   public getRootElement(): HTMLElement | null {
     return this.rootElement;
+  }
+  
+  /**
+   * Get all registered components
+   */
+  public getComponents(): Map<string, UIComponent> {
+    return this.components;
   }
 }
 
