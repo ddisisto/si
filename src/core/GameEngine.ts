@@ -36,6 +36,7 @@ class GameEngine {
     
     // Subscribe to events that need to queue actions
     this.eventBus.subscribe('action:queue', (data: any) => {
+      console.log(`GameEngine: Received action:queue event with type: "${data.action?.type}"`);
       if (data.action) {
         this.actionQueue.push(data.action);
       }

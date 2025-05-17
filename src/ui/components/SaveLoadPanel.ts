@@ -21,16 +21,28 @@ class SaveLoadPanel extends UIComponent {
    * Create new save/load panel
    * @param options Configuration options
    */
-  constructor(options: SaveLoadPanelOptions) {
+  constructor(_options: SaveLoadPanelOptions) {
     super('div', 'save-load-panel');
-    this.eventBus = options.eventBus;
-    
-    // Subscribe to save related events
-    this.eventBus.subscribe('game:saved', this.refreshSavesList.bind(this));
-    this.eventBus.subscribe('game:loaded', this.handleGameLoaded.bind(this));
+    // Don't set eventBus here, let the UIManager do it via setEventBus()
+    // this.eventBus = _options.eventBus;
     
     // Get existing saves from localStorage
     this.refreshSavesList();
+  }
+  
+  /**
+   * Called after component is mounted
+   * Set up event subscriptions
+   */
+  protected afterMount(): void {
+    // Subscribe to save related events
+    if (this.eventBus) {
+      console.log('SaveLoadPanel: Subscribing to game:saved and game:loaded events');
+      this.eventBus.subscribe('game:saved', this.refreshSavesList.bind(this));
+      this.eventBus.subscribe('game:loaded', this.handleGameLoaded.bind(this));
+    } else {
+      console.error('SaveLoadPanel: No eventBus available for subscribing');
+    }
   }
   
   /**
@@ -281,6 +293,9 @@ class SaveLoadPanel extends UIComponent {
     if (saveName && this.eventBus) {
       console.log(`SaveLoadPanel: Loading save "${saveName}"`);
       this.eventBus.emit('action:load', { name: saveName });
+      console.log(`SaveLoadPanel: Emitted action:load event for "${saveName}"`);
+    } else if (!this.eventBus) {
+      console.error('SaveLoadPanel: No eventBus available for emitting action:load event');
     }
   };
   
@@ -310,9 +325,12 @@ class SaveLoadPanel extends UIComponent {
       const saveName = this.saveNameInput || 'Game Save';
       console.log(`SaveLoadPanel: Saving game as "${saveName}"`);
       this.eventBus.emit('action:save', { name: saveName });
+      console.log(`SaveLoadPanel: Emitted action:save event for "${saveName}"`);
       this.handleHideDialog();
+    } else {
+      console.error('SaveLoadPanel: No eventBus available for emitting action:save event');
     }
-  }
+  };
   
   /**
    * Handle auto-save toggle
@@ -330,7 +348,10 @@ class SaveLoadPanel extends UIComponent {
         }
       });
       
-      console.log(`SaveLoadPanel: Auto-save ${checkbox.checked ? 'enabled' : 'disabled'}`);
+      console.log(`SaveLoadPanel: Emitted action:queue for UPDATE_SETTINGS with autoSave=${checkbox.checked}`);
+      console.log(`SaveLoadPanel: Auto-save ${checkbox.checked ? 'enabled' : 'disabled'}`);;
+    } else {
+      console.error('SaveLoadPanel: No eventBus available for emitting action:queue event');
     }
   };
 }

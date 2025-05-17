@@ -98,7 +98,8 @@ function main() {
     const turnControls = new TurnControls(eventBus);
     const gameInfoPanel = new GameInfoPanel();
     const mainView = new MainView();
-    const saveLoadPanel = new SaveLoadPanel({ eventBus });
+    // SaveLoadPanel should get eventBus from UIManager.registerComponent
+    const saveLoadPanel = new SaveLoadPanel({ eventBus: eventBus });
     
     // Register all components
     uiManager.registerComponent('resources', resourcePanel);

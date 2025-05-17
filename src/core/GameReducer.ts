@@ -702,6 +702,7 @@ function competitorReducer(state: CompetitorState, action: GameAction): Competit
 function settingsReducer(state: SettingsState, action: GameAction): SettingsState {
   switch (action.type) {
     case 'UPDATE_SETTINGS':
+      console.log(`GameReducer: Updating settings with`, action.payload);
       return {
         ...state,
         ...action.payload
