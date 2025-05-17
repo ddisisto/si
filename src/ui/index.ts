@@ -13,6 +13,9 @@ import GameLayout from './components/GameLayout';
 import MainView from './components/MainView';
 import SaveLoadPanel from './components/SaveLoadPanel';
 
+// Export research components
+import { ResearchTreeView } from './components/research';
+
 // Export UI manager
 import UIManager from './UIManager';
 
@@ -27,5 +30,8 @@ export {
   GameInfoPanel,
   GameLayout,
   MainView,
-  SaveLoadPanel
+  SaveLoadPanel,
+  
+  // Research UI components
+  ResearchTreeView
 };

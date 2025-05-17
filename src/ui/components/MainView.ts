@@ -3,11 +3,16 @@
  */
 
 import UIComponent from './UIComponent';
+import { ResearchTreeView } from './research';
+import { EventBus } from '../../core';
 
 /**
  * Primary view component for the main game area
  */
 class MainView extends UIComponent {
+  private researchTreeView: ResearchTreeView | null = null;
+  private showResearchTree: boolean = false;
+  
   /**
    * Create a new main view
    */
@@ -16,9 +21,26 @@ class MainView extends UIComponent {
   }
   
   /**
+   * Set event bus and create child components
+   */
+  public setEventBus(eventBus: EventBus): void {
+    super.setEventBus(eventBus);
+    
+    // Create research tree component
+    this.researchTreeView = new ResearchTreeView();
+    this.researchTreeView.setEventBus(eventBus);
+  }
+  
+  /**
    * Generate the main view HTML
    */
   protected createTemplate(): string {
+    // Show research tree if enabled
+    if (this.showResearchTree) {
+      return `<div id="research-tree-container"></div>`;
+    }
+    
+    // Otherwise show the welcome/intro panel
     return `
       <div class="main-content">
         <h2>SuperInt++</h2>
@@ -26,6 +48,7 @@ class MainView extends UIComponent {
         <div class="main-section">
           <h3>Getting Started</h3>
           <p>Begin by allocating resources to research in the research tree. End your turn to see the results.</p>
+          <button id="show-research-tree" class="game-button primary">Open Research Tree</button>
         </div>
         <div class="main-section">
           <h3>Current Objectives</h3>
@@ -37,6 +60,57 @@ class MainView extends UIComponent {
         </div>
       </div>
     `;
+  }
+  
+  /**
+   * Attach event handlers after rendering
+   */
+  protected bindEvents(): void {
+    // Handle research tree button click
+    const showResearchButton = this.element.querySelector('#show-research-tree');
+    if (showResearchButton) {
+      showResearchButton.addEventListener('click', () => {
+        this.showResearchTree = true;
+        this.render();
+        this.mountResearchTree();
+      });
+    }
+  }
+  
+  /**
+   * Mount the research tree after rendering
+   */
+  protected afterMount(): void {
+    if (this.showResearchTree) {
+      this.mountResearchTree();
+    }
+  }
+  
+  /**
+   * Mount the research tree component
+   */
+  private mountResearchTree(): void {
+    if (this.researchTreeView) {
+      const container = this.element.querySelector('#research-tree-container');
+      if (container) {
+        this.researchTreeView.mount(container as HTMLElement);
+        if (this.gameState) {
+          this.researchTreeView.update(this.gameState);
+        }
+      }
+    }
+  }
+  
+  /**
+   * Update all child components with new state
+   */
+  public update(gameState: Readonly<any>): void {
+    super.update(gameState);
+    
+    // Update research tree if mounted
+    if (this.showResearchTree && this.researchTreeView) {
+      this.researchTreeView.update(gameState);
+    }
   }
 }
 
