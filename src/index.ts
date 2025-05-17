@@ -8,7 +8,8 @@ import {
   ResourcePanel, 
   TurnControls, 
   GameInfoPanel,
-  GameLayout 
+  GameLayout,
+  MainView
 } from './ui';
 import { ResourceSystem } from './systems';
 
@@ -55,10 +56,14 @@ function main() {
     const gameInfoPanel = new GameInfoPanel();
     uiManager.registerComponent('gameInfo', gameInfoPanel);
     
+    const mainView = new MainView();
+    uiManager.registerComponent('mainView', mainView);
+    
     // Mount components to layout
     gameLayout.mountToSidebar(resourcePanel);
     gameLayout.mountToHeader(turnControls);
     gameLayout.mountToPanelArea(gameInfoPanel);
+    gameLayout.mountToMain(mainView);
     
     // Get initial state
     const initialState = gameEngine.getState();

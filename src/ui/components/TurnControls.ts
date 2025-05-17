@@ -63,8 +63,6 @@ class TurnControls extends UIComponent {
    * Handle end turn button click
    */
   private handleEndTurn = (): void => {
-    console.log('End Turn button clicked');
-    
     if (this.gameState && this.eventBus) {
       // Emit end turn event
       this.eventBus.emit('turn:end', { 
