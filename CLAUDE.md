@@ -138,3 +138,44 @@ Only deviate from the roadmap when:
 - Fixing critical bugs that block progress
 - Making small improvements to existing functionality
 - The user explicitly acknowledges they're requesting a deviation from the roadmap
+
+## Repository Management
+
+This repository follows a simple but effective git workflow:
+
+1. **Regular Commits**
+   - Commit frequently with clear, descriptive messages
+   - Each commit should address a single logical change
+   - Include issue/task references when applicable
+   - Commit format: `type(scope): concise description` (e.g., `feat(research): add tech tree node visualization`)
+   - Types: feat, fix, docs, style, refactor, test, chore
+
+2. **Branching Strategy**
+   - `main` branch is always stable and deployable
+   - Create feature branches for development work: `feature/feature-name`
+   - Create bugfix branches for fixes: `fix/bug-description`
+   - Create hotfix branches for urgent production fixes: `hotfix/issue-description`
+
+3. **Pull Request Workflow**
+   - Create a PR for each branch when ready for review
+   - PR title should clearly describe the change
+   - Include summary of changes and reference to related issues
+   - Add simple test plan for verification
+   - Self-review code before submitting
+
+4. **Commit and PR Management During Sessions**
+   - At session end, commit current work in progress
+   - For completed features, create PR to main
+   - For in-progress work spanning multiple sessions, push to feature branch
+
+5. **Release Management**
+   - Tag important milestones with semantic version numbers (v0.1.0, v0.2.0, etc.)
+   - Include simple changelog for each release
+   - Major versions for breaking changes, minor for features, patch for fixes
+
+6. **Automated Tasks**
+   - Run linting and typechecking before commits
+   - Execute tests when available
+   - Keep PRs focused and review carefully before merging
+
+Claude will manage these git operations as regular background tasks during development without requiring explicit instructions for each commit, branch, or PR.
