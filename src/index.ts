@@ -2,16 +2,24 @@
  * SuperInt++ Game Entry Point
  */
 
-import { GameEngine } from './core';
-import { Renderer } from './ui';
+import { GameEngine, EventBus } from './core';
+import { Renderer, InputHandler } from './ui';
 
+/**
+ * Initialize and start the game
+ */
 function main() {
   console.log('SuperInt++ Game Initialized');
   
   try {
-    // Initialize game components
+    // Initialize core systems
+    const eventBus = new EventBus();
     const renderer = new Renderer();
+    const inputHandler = new InputHandler(renderer.getDimensions().canvas, eventBus);
     const gameEngine = new GameEngine();
+    
+    // Set up event handlers
+    document.getElementById('loading')?.remove();
     
     // Start the game loop
     gameEngine.start();

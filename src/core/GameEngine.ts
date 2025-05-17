@@ -8,6 +8,7 @@ class GameEngine {
 
   constructor() {
     // Initialize the game engine
+    console.log('Game Engine initialized');
   }
 
   public start(): void {
@@ -15,6 +16,7 @@ class GameEngine {
     
     this.lastTimestamp = performance.now();
     this.gameLoop = requestAnimationFrame(this.update.bind(this));
+    console.log('Game loop started');
   }
 
   public stop(): void {
@@ -22,6 +24,7 @@ class GameEngine {
     
     cancelAnimationFrame(this.gameLoop);
     this.gameLoop = null;
+    console.log('Game loop stopped');
   }
 
   private update(timestamp: number): void {
@@ -29,6 +32,7 @@ class GameEngine {
     this.lastTimestamp = timestamp;
 
     // Update game state based on deltaTime
+    // This will be expanded as we implement the game systems
     
     // Request next frame if game is still running
     if (this.gameLoop !== null) {

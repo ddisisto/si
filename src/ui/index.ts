@@ -3,7 +3,11 @@
  */
 
 import Renderer from './Renderer';
+import View from './View';
+import InputHandler from './InputHandler';
 
 export {
-  Renderer
+  Renderer,
+  View,
+  InputHandler
 };

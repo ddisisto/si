@@ -3,7 +3,12 @@
  */
 
 import GameEngine from './GameEngine';
+import EventBus from './EventBus';
+import { System, BaseSystem } from './System';
 
 export {
-  GameEngine
+  GameEngine,
+  EventBus,
+  System,
+  BaseSystem
 };
