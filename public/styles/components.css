@@ -420,13 +420,12 @@
 }
 
 .zoom-control {
-  width: 30px;
-  height: 30px;
+  padding: var(--spacing-xs) var(--spacing-sm);
   border-radius: var(--border-radius-sm);
   background-color: var(--color-overlay);
   color: var(--color-text);
   font-weight: bold;
-  font-size: var(--font-size-md);
+  font-size: var(--font-size-sm);
   border: none;
   cursor: pointer;
   display: flex;
@@ -438,6 +437,14 @@
 .zoom-control:hover {
   background-color: var(--color-primary);
   color: var(--color-overlay);
+}
+
+/* Add cursor style for touch devices */
+@media (pointer: coarse) {
+  .research-tree-view-port {
+    /* Add a note for pinch-to-zoom on mobile devices */
+    touch-action: none;
+  }
 }
 
 .research-tree-container {
@@ -455,6 +462,8 @@
   position: relative;
   overflow: hidden;
   cursor: grab;
+  /* Hint for users that wheel zooming is available */
+  cursor: zoom-in;
 }
 
 .research-tree-view-port:active {

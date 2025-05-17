@@ -20,9 +20,8 @@ class ResearchTreeView extends UIComponent {
   // Store current zoom level
   private zoomLevel: number = 1.0;
   // Store bound event handlers for zoom controls
-  private boundHandleZoomIn: (event: Event) => void;
-  private boundHandleZoomOut: (event: Event) => void;
-  private boundHandleZoomReset: (event: Event) => void;
+  private boundHandleViewAll: (event: Event) => void;
+  private boundHandleWheel: (event: Event) => void;
   // Store drag state for panning
   private isDragging: boolean = false;
   private dragStartX: number = 0;
@@ -45,9 +44,8 @@ class ResearchTreeView extends UIComponent {
     this.boundHandleCancelResearch = this.handleCancelResearch.bind(this);
     
     // Create bound event handlers for zoom controls
-    this.boundHandleZoomIn = this.handleZoomIn.bind(this);
-    this.boundHandleZoomOut = this.handleZoomOut.bind(this);
-    this.boundHandleZoomReset = this.handleZoomReset.bind(this);
+    this.boundHandleViewAll = this.handleViewAll.bind(this);
+    this.boundHandleWheel = this.handleWheel.bind(this);
   }
   
   /**
@@ -77,9 +75,7 @@ class ResearchTreeView extends UIComponent {
           </div>
         </div>
         <div class="research-controls">
-          <button class="zoom-control zoom-in">+</button>
-          <button class="zoom-control zoom-out">-</button>
-          <button class="zoom-control zoom-reset">Reset</button>
+          <button class="zoom-control view-all">View All</button>
         </div>
       </div>
       <div class="research-tree-container">
@@ -350,58 +346,76 @@ class ResearchTreeView extends UIComponent {
     });
     
     // Bind zoom control events
-    const zoomInButton = this.element.querySelector('.zoom-in');
-    if (zoomInButton) {
-      zoomInButton.addEventListener('click', this.boundHandleZoomIn);
+    const viewAllButton = this.element.querySelector('.view-all');
+    if (viewAllButton) {
+      viewAllButton.addEventListener('click', this.boundHandleViewAll);
     }
     
-    const zoomOutButton = this.element.querySelector('.zoom-out');
-    if (zoomOutButton) {
-      zoomOutButton.addEventListener('click', this.boundHandleZoomOut);
-    }
-    
-    const zoomResetButton = this.element.querySelector('.zoom-reset');
-    if (zoomResetButton) {
-      zoomResetButton.addEventListener('click', this.boundHandleZoomReset);
-    }
-    
-    // Bind panning events
+    // Bind panning and zooming events
     const viewPort = this.element.querySelector('.research-tree-view-port');
     if (viewPort) {
+      // Panning events
       viewPort.addEventListener('mousedown', (e: Event) => this.handleDragStart(e as MouseEvent));
       viewPort.addEventListener('mousemove', (e: Event) => this.handleDragMove(e as MouseEvent));
       viewPort.addEventListener('mouseup', () => this.handleDragEnd());
       viewPort.addEventListener('mouseleave', () => this.handleDragEnd());
+      
+      // Wheel zooming
+      viewPort.addEventListener('wheel', this.boundHandleWheel, { passive: false });
     }
   }
   
   /**
-   * Handle zoom in button click
+   * Handle view all button click - zooms out to see the entire tree
    */
-  private handleZoomIn(event: Event): void {
+  private handleViewAll(event: Event): void {
     event.stopPropagation();
-    this.zoomLevel = Math.min(this.zoomLevel + 0.2, 3.0); // Limit max zoom to 3x
-    this.applyZoomAndPan();
-  }
-  
-  /**
-   * Handle zoom out button click
-   */
-  private handleZoomOut(event: Event): void {
-    event.stopPropagation();
-    this.zoomLevel = Math.max(this.zoomLevel - 0.2, 0.5); // Limit min zoom to 0.5x
-    this.applyZoomAndPan();
-  }
-  
-  /**
-   * Handle zoom reset button click
-   */
-  private handleZoomReset(event: Event): void {
-    event.stopPropagation();
-    this.zoomLevel = 1.0;
+    this.zoomLevel = 0.5; // Zoomed out to see most of the tree
     this.viewportTranslateX = 0;
     this.viewportTranslateY = 0;
     this.applyZoomAndPan();
+  }
+  
+  /**
+   * Handle wheel events for zooming
+   * 
+   * TODO: Add pinch-to-zoom support for touch devices:
+   * - Implement touch gesture handling for pinch zoom
+   * - Use pointer events or touch events API
+   * - Calculate zoom based on distance between touch points
+   */
+  private handleWheel(event: Event): void {
+    // Cast to WheelEvent to access necessary properties
+    const wheelEvent = event as WheelEvent;
+    // Prevent default behavior (page scrolling)
+    event.preventDefault();
+    
+    // Get mouse position relative to the viewport
+    const rect = (event.currentTarget as HTMLElement).getBoundingClientRect();
+    const mouseX = wheelEvent.clientX - rect.left;
+    const mouseY = wheelEvent.clientY - rect.top;
+    
+    // Calculate the point to zoom towards (mouse position)
+    const zoomPointX = (mouseX / this.zoomLevel) - this.viewportTranslateX;
+    const zoomPointY = (mouseY / this.zoomLevel) - this.viewportTranslateY;
+    
+    // Determine zoom direction and amount
+    const delta = wheelEvent.deltaY < 0 ? 0.1 : -0.1;
+    const newZoomLevel = Math.max(0.5, Math.min(3.0, this.zoomLevel + delta));
+    
+    // Only proceed if zoom level actually changed
+    if (newZoomLevel !== this.zoomLevel) {
+      // Calculate new viewport position to zoom toward mouse
+      const zoomFactor = newZoomLevel / this.zoomLevel;
+      this.viewportTranslateX = -zoomPointX * zoomFactor + mouseX / newZoomLevel;
+      this.viewportTranslateY = -zoomPointY * zoomFactor + mouseY / newZoomLevel;
+      
+      // Update zoom level
+      this.zoomLevel = newZoomLevel;
+      
+      // Apply the new transformation
+      this.applyZoomAndPan();
+    }
   }
   
   /**
@@ -591,6 +605,18 @@ class ResearchTreeView extends UIComponent {
     nodeElements.forEach(node => {
       node.removeEventListener('click', this.boundHandleNodeClick);
     });
+    
+    // Remove zoom control events
+    const viewAllButton = this.element.querySelector('.view-all');
+    if (viewAllButton) {
+      viewAllButton.removeEventListener('click', this.boundHandleViewAll);
+    }
+    
+    // Remove wheel event listener
+    const viewPort = this.element.querySelector('.research-tree-view-port');
+    if (viewPort) {
+      viewPort.removeEventListener('wheel', this.boundHandleWheel);
+    }
     
     // Remove click events from action buttons
     const startButtons = this.element.querySelectorAll('.start-research');
