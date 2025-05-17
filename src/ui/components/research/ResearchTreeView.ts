@@ -30,6 +30,17 @@ class ResearchTreeView extends UIComponent {
   private viewportTranslateY: number = 0;
   // Store node positions for connection drawing and highlighting
   private nodePositions: Record<string, { x: number, y: number, width: number, height: number }> = {};
+  // Store category filters
+  private categoryFilters: Record<string, boolean> = {
+    'Foundations': true,
+    'Scaling': true,
+    'Capabilities': true,
+    'Infrastructure': true,
+    'Agency': true,
+    'Alignment': true,
+    'Uncategorized': true
+  };
+  private boundHandleToggleCategory: (event: Event) => void;
   
   /**
    * Create a new research tree view
@@ -46,6 +57,9 @@ class ResearchTreeView extends UIComponent {
     // Create bound event handlers for zoom controls
     this.boundHandleViewAll = this.handleViewAll.bind(this);
     this.boundHandleWheel = this.handleWheel.bind(this);
+    
+    // Create bound event handler for category filters
+    this.boundHandleToggleCategory = this.handleToggleCategory.bind(this);
   }
   
   /**
@@ -76,6 +90,17 @@ class ResearchTreeView extends UIComponent {
         </div>
         <div class="research-controls">
           <button class="zoom-control view-all">View All</button>
+        </div>
+      </div>
+      <div class="category-filters">
+        <div class="filter-label">Filter by Category:</div>
+        <div class="filter-options">
+          ${Object.entries(this.categoryFilters).map(([category, isEnabled]) => `
+            <div class="category-filter ${isEnabled ? 'active' : ''}" data-category="${category}">
+              <span class="filter-color" style="background-color: ${this.getCategoryColor(category)}"></span>
+              <span class="filter-name">${category}</span>
+            </div>
+          `).join('')}
         </div>
       </div>
       <div class="research-tree-container">
@@ -109,6 +134,11 @@ class ResearchTreeView extends UIComponent {
         return; // Skip nodes with no prerequisites
       }
       
+      // Skip nodes that don't match the current category filters
+      if (!this.categoryFilters[node.category as string]) {
+        return;
+      }
+      
       // Get this node's position
       const nodePos = this.nodePositions[node.id];
       if (!nodePos) return;
@@ -119,6 +149,14 @@ class ResearchTreeView extends UIComponent {
       
       // Draw line to each prerequisite
       node.prerequisites.forEach(prereqId => {
+        const prereq = research.nodes[prereqId];
+        if (!prereq) return;
+        
+        // Skip connections to filtered-out prerequisites
+        if (!this.categoryFilters[prereq.category as string]) {
+          return;
+        }
+        
         const prereqPos = this.nodePositions[prereqId];
         if (!prereqPos) return;
         
@@ -185,6 +223,11 @@ class ResearchTreeView extends UIComponent {
     
     // Add all nodes with their positions
     Object.values(research.nodes).forEach(node => {
+      // Skip nodes that don't match the current category filters
+      if (!this.categoryFilters[node.category as string]) {
+        return;
+      }
+      
       const isSelected = node.id === this.selectedNodeId;
       const statusClass = this.getStatusClass(node.status);
       const nodeClass = `research-node ${statusClass} ${isSelected ? 'selected' : ''}`;
@@ -353,6 +396,12 @@ class ResearchTreeView extends UIComponent {
       viewAllButton.addEventListener('click', this.boundHandleViewAll);
     }
     
+    // Bind category filter events
+    const categoryFilters = this.element.querySelectorAll('.category-filter');
+    categoryFilters.forEach(filter => {
+      filter.addEventListener('click', this.boundHandleToggleCategory);
+    });
+    
     // Bind panning and zooming events
     const viewPort = this.element.querySelector('.research-tree-view-port');
     if (viewPort) {
@@ -392,31 +441,55 @@ class ResearchTreeView extends UIComponent {
     // Prevent default behavior (page scrolling)
     event.preventDefault();
     
-    // Get mouse position relative to the viewport
+    // Get viewport dimensions
     const rect = (event.currentTarget as HTMLElement).getBoundingClientRect();
-    const mouseX = wheelEvent.clientX - rect.left;
-    const mouseY = wheelEvent.clientY - rect.top;
     
-    // Calculate the point to zoom towards (mouse position)
-    const zoomPointX = (mouseX / this.zoomLevel) - this.viewportTranslateX;
-    const zoomPointY = (mouseY / this.zoomLevel) - this.viewportTranslateY;
+    // Make zooming smoother by using a smaller delta based on the actual wheel delta
+    // Normalize the wheel delta to a smaller range for smoother zooming
+    const rawDelta = wheelEvent.deltaY;
+    const zoomDirection = rawDelta < 0 ? 1 : -1; // 1 for zoom in, -1 for zoom out
+    const normalizedDelta = Math.min(Math.abs(rawDelta) / 100, 0.5) * 0.15 * zoomDirection;
     
-    // Determine zoom direction and amount
-    const delta = wheelEvent.deltaY < 0 ? 0.1 : -0.1;
-    const newZoomLevel = Math.max(0.5, Math.min(3.0, this.zoomLevel + delta));
+    // Calculate the current zoom level with smoother increment
+    const newZoomLevel = Math.max(0.5, Math.min(3.0, this.zoomLevel + normalizedDelta));
     
     // Only proceed if zoom level actually changed
     if (newZoomLevel !== this.zoomLevel) {
-      // Calculate new viewport position to zoom toward mouse
-      const zoomFactor = newZoomLevel / this.zoomLevel;
-      this.viewportTranslateX = -zoomPointX * zoomFactor + mouseX / newZoomLevel;
-      this.viewportTranslateY = -zoomPointY * zoomFactor + mouseY / newZoomLevel;
+      // Use the same absolute center point approach for both zooming in and out
+      // This creates a more stable and predictable zoom experience
+      const centerX = rect.width / 2;
+      const centerY = rect.height / 2;
+      
+      // Calculate the absolute center point in the content space
+      const absoluteCenterX = (centerX / this.zoomLevel) - this.viewportTranslateX;
+      const absoluteCenterY = (centerY / this.zoomLevel) - this.viewportTranslateY;
+      
+      // Calculate new viewport position to maintain absolute center
+      this.viewportTranslateX = -absoluteCenterX + centerX / newZoomLevel;
+      this.viewportTranslateY = -absoluteCenterY + centerY / newZoomLevel;
       
       // Update zoom level
       this.zoomLevel = newZoomLevel;
       
       // Apply the new transformation
       this.applyZoomAndPan();
+    }
+  }
+  
+  /**
+   * Handle toggling category filters
+   */
+  private handleToggleCategory(event: Event): void {
+    event.stopPropagation();
+    const filterElement = event.currentTarget as HTMLElement;
+    const category = filterElement.dataset.category;
+    
+    if (category) {
+      // Toggle the filter state
+      this.categoryFilters[category] = !this.categoryFilters[category];
+      
+      // Re-render the tree with the new filters
+      this.render();
     }
   }
   
@@ -628,6 +701,12 @@ class ResearchTreeView extends UIComponent {
     if (viewAllButton) {
       viewAllButton.removeEventListener('click', this.boundHandleViewAll);
     }
+    
+    // Remove category filter events
+    const categoryFilters = this.element.querySelectorAll('.category-filter');
+    categoryFilters.forEach(filter => {
+      filter.removeEventListener('click', this.boundHandleToggleCategory);
+    });
     
     // Remove wheel event listener
     const viewPort = this.element.querySelector('.research-tree-view-port');

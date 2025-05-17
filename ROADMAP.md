@@ -98,7 +98,7 @@ The roadmap will be updated as development progresses to reflect new priorities,
 - [x] Implement visualization controls
   - [x] Add zooming functionality
   - [x] Create panning controls
-  - [ ] Implement category filters
+  - [x] Implement category filters
   - [ ] Create focus/navigation controls
 
 ### Research Data Organization (2 weeks)
