@@ -3,7 +3,7 @@
  */
 
 import { GameEngine, EventBus } from './core';
-import { Renderer, InputHandler } from './ui';
+import { Renderer, InputHandler, DemoView } from './ui';
 
 /**
  * Initialize and start the game
@@ -16,10 +16,21 @@ function main() {
     const eventBus = new EventBus();
     const renderer = new Renderer();
     
+    // Create a demo view for testing
+    const demoView = new DemoView();
+    renderer.registerView('demo', demoView);
+    
     // Initialize input handler with canvas from renderer
     new InputHandler(renderer.getDimensions().canvas, eventBus);
     
     const gameEngine = new GameEngine();
+    
+    // Start rendering loop
+    function renderLoop() {
+      renderer.render();
+      requestAnimationFrame(renderLoop);
+    }
+    requestAnimationFrame(renderLoop);
     
     // Set up event handlers
     document.getElementById('loading')?.remove();
