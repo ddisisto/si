@@ -55,10 +55,10 @@ The roadmap will be updated as development progresses to reflect new priorities,
 
 ### Project Setup (2 weeks)
 - [x] Initialize project with TypeScript and build tools
-- [ ] Set up development environment
-- [ ] Create basic HTML/CSS structure
-- [ ] Implement canvas initialization
-- [ ] Create game loop architecture
+- [x] Set up development environment
+- [x] Create basic HTML/CSS structure
+- [x] Implement canvas initialization
+- [x] Create game loop architecture
 
 ### Game State Management (3 weeks)
 - [ ] Implement core state management
