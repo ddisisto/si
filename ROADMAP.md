@@ -74,10 +74,10 @@ The roadmap will be updated as development progresses to reflect new priorities,
 
 ### Research Tree Visualization (4 weeks)
 - [ ] Create research tree foundation
-  - [ ] Define research node data structures
-  - [ ] Create sample research data
-  - [ ] Implement state integration for research
-  - [ ] Create research action types
+  - [x] Define research node data structures
+  - [x] Create sample research data
+  - [x] Implement state integration for research
+  - [x] Create research action types
 - [ ] Implement node rendering system
   - [ ] Create ResearchTreeView component
   - [ ] Implement ResearchNode component
