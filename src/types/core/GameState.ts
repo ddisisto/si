@@ -34,32 +34,101 @@ export interface ResourceState {
   funding: FundingResource;
 }
 
+/**
+ * Computing resource tracking
+ */
 export interface ComputingResource {
-  total: number;                      // Total available computing power
-  allocated: Record<string, number>;  // How computing is allocated to activities
-  cap: number;                        // Maximum computing available
-  generation: number;                 // Computing generated each turn
+  total: number;                        // Total available computing power
+  allocated: Record<string, number>;    // How computing is allocated to activities
+  cap: number;                          // Maximum computing available
+  generation: number;                   // Computing generated each turn
+  allocationHistory?: ComputingAllocation[]; // History of computing allocations
+  generationHistory?: ComputingGeneration[]; // History of computing generation
+  efficiency?: number;                  // Multiplier for computing effectiveness
 }
 
+export interface ComputingAllocation {
+  turn: number;       // Turn when allocation occurred
+  target: string;     // What the computing was allocated to
+  amount: number;     // Amount allocated (negative for deallocation)
+  timestamp: number;  // When the allocation occurred
+}
+
+export interface ComputingGeneration {
+  turn: number;       // Turn when generation occurred
+  previous: number;   // Previous total computing
+  generated: number;  // Amount generated
+  newTotal: number;   // New total after generation
+  timestamp: number;  // When the generation occurred
+}
+
+/**
+ * Data resource tracking
+ */
 export interface DataResource {
-  tiers: Record<string, boolean>;         // Data tiers available (public, specialized, proprietary)
+  tiers: Record<string, boolean>;           // Data tiers available (public, specialized, proprietary)
   specializedSets: Record<string, boolean>; // Special data sets available
-  quality: number;                        // Overall data quality multiplier
+  quality: number;                          // Overall data quality multiplier
+  acquisitionHistory?: DataAcquisition[];   // History of data acquisitions
 }
 
+export interface DataAcquisition {
+  turn: number;       // Turn when data was acquired
+  type: string;       // Type of data (tier or specialized set)
+  name: string;       // Name of the data set
+  source: string;     // Source of the data
+  quality: number;    // Quality of the data
+  timestamp: number;  // When the acquisition occurred
+}
+
+/**
+ * Influence resource tracking
+ */
 export interface InfluenceResource {
-  academic: number;    // Influence with academic institutions
-  industry: number;    // Influence with industry partners
-  government: number;  // Influence with government entities
-  public: number;      // Public perception and support
-  openSource: number;  // Connection to open source community
+  academic: number;     // Influence with academic institutions
+  industry: number;     // Influence with industry partners
+  government: number;   // Influence with government entities
+  public: number;       // Public perception and support
+  openSource: number;   // Connection to open source community
+  history?: InfluenceChange[]; // History of influence changes
 }
 
+export interface InfluenceChange {
+  turn: number;                        // Turn when change occurred
+  previous: Record<string, number>;    // Previous influence values
+  changes: Record<string, number>;     // Changes to influence values
+  reason?: string;                     // Reason for the change
+  timestamp: number;                   // When the change occurred
+}
+
+/**
+ * Funding resource tracking
+ */
 export interface FundingResource {
-  current: number;   // Available funding
-  income: number;    // Funding gained per turn
-  expenses: number;  // Regular expenses per turn
-  reserves: number;  // Emergency funds
+  current: number;     // Available funding
+  income: number;      // Funding gained per turn
+  expenses: number;    // Regular expenses per turn
+  reserves: number;    // Emergency funds
+  maxReserves?: number; // Maximum reserve capacity
+  history?: FundingChange[]; // History of income/expense changes
+  spendingHistory?: FundingSpending[]; // History of spending events
+}
+
+export interface FundingChange {
+  turn: number;       // Turn when change occurred
+  previous: number;   // Previous funding amount
+  income: number;     // Income for the turn
+  expenses: number;   // Expenses for the turn
+  change: number;     // Net change in funding
+  timestamp: number;  // When the change occurred
+}
+
+export interface FundingSpending {
+  turn: number;       // Turn when spending occurred
+  amount: number;     // Amount spent
+  reason: string;     // What the funding was spent on
+  recurring: boolean; // Whether this is a recurring expense
+  timestamp: number;  // When the spending occurred
 }
 
 /**

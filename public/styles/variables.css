@@ -24,10 +24,14 @@
   --color-info: #89dceb;       /* Cyan */
   
   /* Category Colors */
-  --color-computing: #89b4fa;  /* Blue */
-  --color-funding: #f9e2af;    /* Yellow */
-  --color-influence: #cba6f7;  /* Lavender */
-  --color-data: #89dceb;       /* Cyan */
+  --color-computing: #89b4fa;        /* Blue */
+  --color-computing-rgb: 137, 180, 250;
+  --color-funding: #f9e2af;          /* Yellow */
+  --color-funding-rgb: 249, 226, 175;
+  --color-influence: #cba6f7;        /* Lavender */
+  --color-influence-rgb: 203, 166, 247;
+  --color-data: #89dceb;             /* Cyan */
+  --color-data-rgb: 137, 220, 235;
   
   /* Research Categories */
   --color-research-fundamental: #94e2d5;  /* Teal */
@@ -106,10 +110,14 @@
     --color-info: #209fb5;       /* Cyan */
     
     /* Category Colors */
-    --color-computing: #1e66f5;  /* Blue */
-    --color-funding: #df8e1d;    /* Yellow */
-    --color-influence: #8839ef;  /* Lavender */
-    --color-data: #209fb5;       /* Cyan */
+    --color-computing: #1e66f5;        /* Blue */
+    --color-computing-rgb: 30, 102, 245;
+    --color-funding: #df8e1d;          /* Yellow */
+    --color-funding-rgb: 223, 142, 29;
+    --color-influence: #8839ef;        /* Lavender */
+    --color-influence-rgb: 136, 57, 239;
+    --color-data: #209fb5;             /* Cyan */
+    --color-data-rgb: 32, 159, 181;
     
     /* Research Categories */
     --color-research-fundamental: #179299;  /* Teal */

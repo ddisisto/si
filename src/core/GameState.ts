@@ -59,25 +59,33 @@ function createInitialResourceState(): ResourceState {
       total: 50,
       allocated: {},
       cap: 100,
-      generation: 5
+      generation: 5,
+      efficiency: 1.0,
+      allocationHistory: [],
+      generationHistory: []
     },
     data: {
       tiers: { 'public': true },
       specializedSets: {},
-      quality: 1.0
+      quality: 1.0,
+      acquisitionHistory: []
     },
     influence: {
       academic: 20,
       industry: 5,
       government: 5,
       public: 10,
-      openSource: 15
+      openSource: 15,
+      history: []
     },
     funding: {
       current: 1000,
       income: 100,
       expenses: 80,
-      reserves: 0
+      reserves: 0,
+      maxReserves: 5000,
+      history: [],
+      spendingHistory: []
     }
   };
 }
