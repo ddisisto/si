@@ -735,8 +735,16 @@ class ResearchTreeView extends UIComponent {
         }
       }
       
-      // Re-render the tree with the new filters
+      // Keep the dropdown open for multi-selection by ensuring it stays in the open set
+      if (filterType) {
+        this.openDropdowns.add(filterType);
+      }
+      
+      // Re-render the tree with the new filters but keep dropdowns open
+      const previousOpen = new Set(this.openDropdowns);
       this.render();
+      this.openDropdowns = previousOpen;
+      this.updateDropdownVisibility();
     }
   }
   

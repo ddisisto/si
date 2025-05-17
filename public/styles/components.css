@@ -425,26 +425,33 @@
 }
 
 .filter-panel {
-  margin-bottom: var(--spacing-md);
   background-color: var(--color-surface);
   border-radius: var(--border-radius-md);
   transition: all var(--transition-medium);
-  /* Allow dropdown menus to be visible outside */
-  position: relative;
-  z-index: 10;
+  /* Make it float over the tree view content */
+  position: absolute;
+  top: 60px; /* Position below the controls */
+  left: var(--spacing-md);
+  right: var(--spacing-md);
+  z-index: 20;
+  box-shadow: var(--shadow-md);
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
 }
 
 .filter-panel.visible {
   padding: var(--spacing-md);
   max-height: 300px;
   opacity: 1;
+  overflow: visible;
 }
 
 .filter-panel.hidden {
   max-height: 0;
   padding: 0;
   opacity: 0;
-  margin-bottom: 0;
+  overflow: hidden;
 }
 
 .filter-controls {
