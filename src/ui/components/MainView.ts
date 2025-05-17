@@ -3,11 +3,16 @@
  */
 
 import UIComponent from './UIComponent';
+import { ResearchTreeView } from './research';
+import { EventBus } from '../../core';
 
 /**
  * Primary view component for the main game area
  */
 class MainView extends UIComponent {
+  private researchTreeView: ResearchTreeView | null = null;
+  private showResearchTree: boolean = false;
+  
   /**
    * Create a new main view
    */
@@ -16,9 +21,32 @@ class MainView extends UIComponent {
   }
   
   /**
+   * Set event bus and create child components
+   */
+  public setEventBus(eventBus: EventBus): void {
+    super.setEventBus(eventBus);
+    
+    // Create research tree component
+    this.researchTreeView = new ResearchTreeView();
+    this.researchTreeView.setEventBus(eventBus);
+  }
+  
+  /**
    * Generate the main view HTML
    */
   protected createTemplate(): string {
+    // Show research tree if enabled
+    if (this.showResearchTree) {
+      return `
+        <div class="view-header">
+          <h2>Research Tree</h2>
+          <button id="back-to-main" class="game-button secondary">Back to Main</button>
+        </div>
+        <div id="research-tree-container"></div>
+      `;
+    }
+    
+    // Otherwise show the welcome/intro panel
     return `
       <div class="main-content">
         <h2>SuperInt++</h2>
@@ -26,6 +54,7 @@ class MainView extends UIComponent {
         <div class="main-section">
           <h3>Getting Started</h3>
           <p>Begin by allocating resources to research in the research tree. End your turn to see the results.</p>
+          <button id="show-research-tree" class="game-button primary">Open Research Tree</button>
         </div>
         <div class="main-section">
           <h3>Current Objectives</h3>
@@ -37,6 +66,85 @@ class MainView extends UIComponent {
         </div>
       </div>
     `;
+  }
+  
+  /**
+   * Attach event handlers after rendering
+   */
+  protected bindEvents(): void {
+    // Handle research tree button click
+    const showResearchButton = this.element.querySelector('#show-research-tree');
+    if (showResearchButton) {
+      showResearchButton.addEventListener('click', () => {
+        this.showResearchTree = true;
+        
+        // First unmount any existing research tree component
+        if (this.researchTreeView && this.researchTreeView.getElement().parentElement) {
+          this.researchTreeView.unmount();
+        }
+        
+        // Then render the new container and mount the tree
+        this.render();
+        this.mountResearchTree();
+      });
+    }
+    
+    // Add a back button in research view
+    const backButton = this.element.querySelector('#back-to-main');
+    if (backButton) {
+      backButton.addEventListener('click', () => {
+        this.showResearchTree = false;
+        
+        // Unmount research tree before switching view
+        if (this.researchTreeView) {
+          this.researchTreeView.unmount();
+        }
+        
+        this.render();
+      });
+    }
+  }
+  
+  /**
+   * Mount the research tree after rendering
+   */
+  protected afterMount(): void {
+    if (this.showResearchTree) {
+      this.mountResearchTree();
+    }
+  }
+  
+  /**
+   * Mount the research tree component
+   */
+  private mountResearchTree(): void {
+    if (this.researchTreeView) {
+      const container = this.element.querySelector('#research-tree-container');
+      
+      if (container) {
+        this.researchTreeView.mount(container as HTMLElement);
+        
+        if (this.gameState) {
+          this.researchTreeView.update(this.gameState);
+        }
+      } else {
+        console.error('Could not find research-tree-container element');
+      }
+    } else {
+      console.error('ResearchTreeView is not initialized');
+    }
+  }
+  
+  /**
+   * Update all child components with new state
+   */
+  public update(gameState: Readonly<any>): void {
+    super.update(gameState);
+    
+    // Update research tree if mounted
+    if (this.showResearchTree && this.researchTreeView) {
+      this.researchTreeView.update(gameState);
+    }
   }
 }
 

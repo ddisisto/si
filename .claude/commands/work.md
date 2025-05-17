@@ -1,4 +1,4 @@
-Please check the ROADMAP.md, and pick something new to work on. Focus suggestion (if any): "$ARGUMENTS".
+Please check the ROADMAP.md, and pick something new to work on. Focus suggestion (if any): "$ARGUMENTS". If none, look at the current branch name and recent commits.
 Check for existence of relevant design documents BEFORE working on any feature, and if critical pieces are not covered, work on designing and getting user approval on the design/plan before implementing.
 In particular the `docs/technical_architecture.md` should be considered, and should point to relevant detail designs. Keeping this file updated is vital.
 You should be on branch main when starting, create a new branch for any major work.

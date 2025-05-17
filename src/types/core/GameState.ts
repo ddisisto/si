@@ -175,16 +175,44 @@ export interface ResearchState {
   activeResearch: string[];            // Currently researched nodes
   completed: string[];                 // Completed research nodes
   unlocked: string[];                  // Available but not started nodes
+  dataTypes?: Record<string, any>;     // Data types available for research
+  researchBudget?: number;             // Percentage of compute for research
 }
 
-export type ResearchStatus = 'LOCKED' | 'UNLOCKED' | 'IN_PROGRESS' | 'COMPLETED';
+export type ResearchStatus = 'LOCKED' | 'UNLOCKED' | 'IN_PROGRESS' | 'COMPLETED' | 'available' | 'locked' | 'in_progress' | 'completed';
 
 export interface ResearchNode {
   id: string;
   status: ResearchStatus;
   progress: number;
   computeAllocated: number;
-  discoveredCapabilities: string[];
+  startTurn?: number;
+  completionTurn?: number;
+  effectiveComputeRate?: number;
+  deploymentBoosts?: Record<string, number>;
+  discoveredCapabilities?: string[];
+  
+  // Properties from the data model
+  name?: string;
+  description?: string;
+  category?: string;
+  subcategory?: string;
+  type?: string;
+  prerequisites?: string[];
+  exclusions?: string[];
+  computeCost?: number;
+  influenceCost?: Record<string, number>;
+  dataCost?: string[] | any[];
+  deploymentRequirements?: string[];
+  effects?: Record<string, any>;
+  risk?: {
+    probability: number;
+    severity: number;
+  };
+  position?: {
+    x: number;
+    y: number;
+  };
 }
 
 /**

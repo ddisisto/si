@@ -73,17 +73,60 @@ The roadmap will be updated as development progresses to reflect new priorities,
 - [x] Add basic UI for state display
 
 ### Research Tree Visualization (4 weeks)
-- [ ] Implement node rendering system
-- [ ] Create connection visualization
-- [ ] Add interaction handling (hover, click)
-- [ ] Implement zooming and panning
-- [ ] Add node status indicators
+- [x] Create research tree foundation
+  - [x] Define research node data structures
+  - [x] Create sample research data
+  - [x] Implement state integration for research
+  - [x] Create research action types
+- [x] Implement node rendering system
+  - [x] Create ResearchTreeView component
+  - [x] Implement ResearchNode component
+  - [x] Design basic node styling
+  - [x] Create node status indicators
+- [x] Create connection visualization
+  - [x] Implement SVG connection lines
+  - [x] Create directional arrows
+  - [x] Handle different connection types
+  - [x] Add connection styling based on status
+- [x] Add interaction handling
+  - [x] Implement hover effects
+  - [x] Create click selection
+  - [x] Build node information panel
+  - [x] Add research action UI
+  - [x] Fix event binding for research nodes
+  - [x] Implement navigation between main view and research tree
+- [x] Implement visualization controls
+  - [x] Add zooming functionality
+  - [x] Create panning controls
+  - [ ] Implement category filters
+  - [ ] Create focus/navigation controls
+
+### Research Data Organization (2 weeks)
+- [ ] Refactor research data structure
+  - [ ] Create category-based data files
+  - [ ] Extract significant nodes to individual files
+  - [ ] Implement consistent export pattern
+  - [ ] Ensure backward compatibility
+- [ ] Implement data validation
+  - [ ] Add runtime schema validation
+  - [ ] Create TypeScript validation types
+  - [ ] Add warning system for invalid data
+- [ ] Create documentation
+  - [ ] Document node creation process
+  - [ ] Add examples for different node types
+  - [ ] Create README for data organization
 
 ### Custom Research Node Positioning (2 weeks)
-- [ ] Create positioning mode toggle
-- [ ] Implement drag-and-drop functionality
-- [ ] Add position saving and loading
-- [ ] Implement snap-to-grid option
+- [ ] Create positioning system
+  - [ ] Design position data structure
+  - [ ] Implement position saving in state
+  - [ ] Create default layout algorithm
+  - [ ] Add node coordinate system
+- [ ] Build positioning UI
+  - [ ] Create positioning mode toggle
+  - [ ] Implement drag-and-drop functionality
+  - [ ] Add position saving and loading
+  - [ ] Implement snap-to-grid option
 
 ## Phase 2: Core Gameplay Systems
 
@@ -93,18 +136,25 @@ The roadmap will be updated as development progresses to reflect new priorities,
 - [ ] Add prerequisites checking
 - [ ] Implement resource costs
 - [ ] Create research notifications
+- [ ] Add data type requirements for research nodes
+- [ ] Implement research boost mechanics from deployments
 
 ### Resource System Refinement (2 weeks)
 - [ ] Implement resource generation
 - [ ] Create resource allocation UI
 - [ ] Add resource caps and limitations
 - [ ] Implement resource effects from research
+- [ ] Add data types as a tracked resource
+- [ ] Create data quality and quantity tracking
 
-### Deployment System (3 weeks)
+### Deployment System (4 weeks)
 - [ ] Create deployment slot management
 - [ ] Implement deployment effects on resources
 - [ ] Add deployment visualization
 - [ ] Create deployment management UI
+- [ ] Implement data generation from deployments
+- [ ] Add research category boost effects
+- [ ] Create deployment-research feedback visualization
 
 ### Basic Event System (3 weeks)
 - [ ] Implement event triggering framework

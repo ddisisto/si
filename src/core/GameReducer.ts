@@ -10,6 +10,7 @@ import {
   GameMetaState, 
   ResourceState, 
   ResearchState, 
+  ResearchStatus,
   DeploymentState, 
   EventState, 
   WorldState, 
@@ -436,8 +437,15 @@ function resourceReducer(state: ResourceState, action: GameAction): ResourceStat
  */
 function researchReducer(state: ResearchState, action: GameAction): ResearchState {
   switch (action.type) {
+    case 'UPDATE_RESEARCH_STATE':
+      // Complete replacement of research state (for initialization/loading)
+      return {
+        ...state,
+        ...action.payload
+      };
+      
     case 'START_RESEARCH':
-      const { nodeId, computeAmount } = action.payload;
+      const { nodeId, allocatedCompute, turn } = action.payload;
       
       // Update node status and add to active research
       return {
@@ -447,40 +455,66 @@ function researchReducer(state: ResearchState, action: GameAction): ResearchStat
           [nodeId]: {
             ...state.nodes[nodeId],
             status: 'IN_PROGRESS',
-            computeAllocated: computeAmount
+            computeAllocated: allocatedCompute,
+            startTurn: turn,
+            progress: state.nodes[nodeId].progress || 0 // Keep existing progress if resuming
           }
         },
-        activeResearch: [...state.activeResearch, nodeId],
+        activeResearch: state.activeResearch.includes(nodeId) 
+          ? state.activeResearch 
+          : [...state.activeResearch, nodeId],
         unlocked: state.unlocked.filter(id => id !== nodeId)
       };
       
-    case 'UPDATE_RESEARCH_PROGRESS':
-      const updatedNodes = { ...state.nodes };
-      let completedResearch = [...state.completed];
-      let activeResearch = [...state.activeResearch];
+    case 'CANCEL_RESEARCH':
+      const cancelId = action.payload.nodeId;
       
-      // Update progress for all active research based on allocated computing
-      for (const nodeId of state.activeResearch) {
-        const node = state.nodes[nodeId];
-        if (node) {
-          // Simple progress calculation - will be refined later
-          const newProgress = node.progress + node.computeAllocated * 0.1;
-          
-          // Check if research is complete
-          if (newProgress >= 100) {
-            updatedNodes[nodeId] = {
-              ...node,
-              progress: 100,
-              status: 'COMPLETED'
-            };
-            
-            // Move from active to completed
-            completedResearch.push(nodeId);
-            activeResearch = activeResearch.filter(id => id !== nodeId);
-          } else {
-            updatedNodes[nodeId] = {
-              ...node,
-              progress: newProgress
+      // Mark node as available again and remove from active research
+      return {
+        ...state,
+        nodes: {
+          ...state.nodes,
+          [cancelId]: {
+            ...state.nodes[cancelId],
+            status: 'UNLOCKED',  // Back to available
+            computeAllocated: 0, // No compute allocated
+            // Keep progress for resuming later
+          }
+        },
+        activeResearch: state.activeResearch.filter(id => id !== cancelId),
+        unlocked: state.unlocked.includes(cancelId) 
+          ? state.unlocked 
+          : [...state.unlocked, cancelId]
+      };
+      
+    case 'ALLOCATE_RESEARCH_COMPUTE':
+      const allocationId = action.payload.nodeId;
+      const allocationAmount = action.payload.amount;
+      
+      // Add more compute to a research project
+      return {
+        ...state,
+        nodes: {
+          ...state.nodes,
+          [allocationId]: {
+            ...state.nodes[allocationId],
+            computeAllocated: (state.nodes[allocationId].computeAllocated || 0) + allocationAmount
+          }
+        }
+      };
+      
+    case 'UPDATE_RESEARCH_PROGRESS':
+      // Update progress for specific research nodes
+      const progressUpdates = action.payload.progressUpdates || {};
+      const updatedNodes = { ...state.nodes };
+      
+      // Apply all progress updates if they exist
+      if (progressUpdates && typeof progressUpdates === 'object') {
+        for (const [id, progress] of Object.entries(progressUpdates)) {
+          if (updatedNodes[id]) {
+            updatedNodes[id] = {
+              ...updatedNodes[id],
+              progress: progress as number
             };
           }
         }
@@ -488,32 +522,86 @@ function researchReducer(state: ResearchState, action: GameAction): ResearchStat
       
       return {
         ...state,
-        nodes: updatedNodes,
-        completed: completedResearch,
-        activeResearch
+        nodes: updatedNodes
       };
       
-    case 'UNLOCK_RESEARCH':
-      const unlockIds = action.payload.nodeIds;
-      const newUnlocked = [...state.unlocked];
-      const nodesUpdate = { ...state.nodes };
+    case 'COMPLETE_RESEARCH':
+      const completeId = action.payload.nodeId;
+      const completeTurn = action.payload.turn;
       
-      for (const id of unlockIds) {
-        if (!state.unlocked.includes(id) && !state.completed.includes(id) && !state.activeResearch.includes(id)) {
-          newUnlocked.push(id);
-          
-          // Update node status to unlocked
-          nodesUpdate[id] = {
-            ...state.nodes[id],
-            status: 'UNLOCKED'
+      // Mark research as complete
+      return {
+        ...state,
+        nodes: {
+          ...state.nodes,
+          [completeId]: {
+            ...state.nodes[completeId],
+            status: 'COMPLETED',
+            progress: 1.0, // Fully complete
+            computeAllocated: 0, // Free up compute
+            completionTurn: completeTurn
+          }
+        },
+        activeResearch: state.activeResearch.filter(id => id !== completeId),
+        completed: state.completed.includes(completeId) 
+          ? state.completed 
+          : [...state.completed, completeId]
+      };
+      
+    case 'UPDATE_RESEARCH_STATUSES':
+      // Update multiple node statuses at once
+      const statusUpdates = action.payload.statusUpdates;
+      const nodesWithStatusUpdates = { ...state.nodes };
+      
+      // Apply all status updates
+      for (const [id, status] of Object.entries(statusUpdates)) {
+        if (nodesWithStatusUpdates[id]) {
+          nodesWithStatusUpdates[id] = {
+            ...nodesWithStatusUpdates[id],
+            status: status as ResearchStatus
           };
         }
       }
       
+      // Update unlocked list based on available nodes
+      const newUnlocked = Object.entries(nodesWithStatusUpdates)
+        .filter(([, node]) => 
+          node.status === 'UNLOCKED' || 
+          node.status === 'available')
+        .map(([id]) => id);
+      
       return {
         ...state,
-        nodes: nodesUpdate,
+        nodes: nodesWithStatusUpdates,
         unlocked: newUnlocked
+      };
+      
+    case 'UPDATE_RESEARCH_NODE':
+      // Update a specific field in a research node
+      const updateId = action.payload.nodeId;
+      const update = action.payload.update;
+      
+      return {
+        ...state,
+        nodes: {
+          ...state.nodes,
+          [updateId]: {
+            ...state.nodes[updateId],
+            ...update
+          }
+        }
+      };
+      
+    case 'ADD_DATA_TYPE':
+      // Add a new data type to research state
+      const dataType = action.payload.dataType;
+      
+      return {
+        ...state,
+        dataTypes: {
+          ...state.dataTypes,
+          [dataType.id]: dataType
+        }
       };
       
     default:
