@@ -2,4 +2,5 @@
  * Core type definitions for SuperInt++
  */
 
-// Export types from this directory
+// Export game state types
+export * from './core/GameState';

@@ -81,6 +81,8 @@ class Renderer {
     const view = this.views.get(this.activeView);
     if (view) {
       view.render(this.context);
+    } else {
+      console.warn(`Renderer: No active view found with name ${this.activeView}`);
     }
   }
   

@@ -122,14 +122,15 @@ We follow a plan-first, implement-second approach with careful iteration:
 4. **Documentation-Driven** - Write specifications that can guide implementation
 
 ### Implementation Phase
-1. Create a minimal viable version of each system first
-2. Focus on one vertical slice of functionality at a time
-3. **Strictly Follow Plans** - Resist the urge to deviate without clear justification
-4. **Implement Incrementally** - Build in small, testable increments
-5. Gradually add complexity to existing systems
-6. **Validate Against Design** - Regularly compare implementation to design documents
+1. **ALWAYS CHECK DOCUMENTATION FIRST** - Review all relevant design documents in docs/ before writing or modifying code
+2. Create a minimal viable version of each system first
+3. Focus on one vertical slice of functionality at a time
+4. **Strictly Follow Plans** - Resist the urge to deviate without clear justification
+5. **Implement Incrementally** - Build in small, testable increments
+6. Gradually add complexity to existing systems
+7. **Validate Against Design** - Regularly compare implementation to design documents
 
-CRITICAL: The project's success depends on respecting the planning work that has been done. Don't rush to implement before understanding the design thoroughly, and always check implementation against documented plans.
+CRITICAL: The project's success depends on respecting the planning work that has been done. Don't rush to implement before understanding the design thoroughly. ALWAYS read ALL relevant documentation in the docs/ directory before writing or modifying any code. This is essential to maintain consistency with the carefully crafted design.
 
 ## Development Focus and Roadmap
 
