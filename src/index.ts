@@ -8,7 +8,6 @@ import {
   ResourcePanel, 
   TurnControls, 
   GameInfoPanel,
-  GameLayout,
   MainView
 } from './ui';
 import { ResourceSystem } from './systems';
@@ -39,31 +38,84 @@ function main() {
       throw new Error('Game root element not found');
     }
     
-    // Initialize UI Manager with root element
+    // Clear any existing content
+    rootElement.innerHTML = '';
+
+    // Create a new game container
+    const container = document.createElement('div');
+    container.className = 'game-container';
+    rootElement.appendChild(container);
+
+    // Create header
+    const header = document.createElement('header');
+    header.className = 'game-header';
+    container.appendChild(header);
+
+    const headerTitle = document.createElement('div');
+    headerTitle.className = 'game-title';
+    headerTitle.textContent = 'SuperInt++';
+    header.appendChild(headerTitle);
+
+    const headerControls = document.createElement('div');
+    headerControls.className = 'game-controls';
+    header.appendChild(headerControls);
+
+    // Create sidebar
+    const sidebar = document.createElement('aside');
+    sidebar.className = 'game-sidebar';
+    container.appendChild(sidebar);
+
+    // Create main area
+    const main = document.createElement('main');
+    main.className = 'game-main';
+    container.appendChild(main);
+
+    // Create panel area
+    const panelArea = document.createElement('div');
+    panelArea.className = 'game-panel-area';
+    container.appendChild(panelArea);
+
+    // Create footer
+    const footer = document.createElement('footer');
+    footer.className = 'game-footer';
+    container.appendChild(footer);
+
+    const footerInfo = document.createElement('div');
+    footerInfo.className = 'footer-info';
+    footerInfo.textContent = 'v0.1.0';
+    footer.appendChild(footerInfo);
+
+    const footerControls = document.createElement('div');
+    footerControls.className = 'footer-controls';
+    footer.appendChild(footerControls);
+
+    // Initialize UI Manager
     uiManager.initialize(rootElement);
-    
-    // Create main game layout
-    const gameLayout = new GameLayout({ eventBus });
-    uiManager.registerComponent('layout', gameLayout);
-    
+
     // Create and register game components
     const resourcePanel = new ResourcePanel();
-    uiManager.registerComponent('resources', resourcePanel);
-    
     const turnControls = new TurnControls(eventBus);
-    uiManager.registerComponent('turnControls', turnControls);
-    
     const gameInfoPanel = new GameInfoPanel();
-    uiManager.registerComponent('gameInfo', gameInfoPanel);
-    
     const mainView = new MainView();
+    
+    // Register all components
+    uiManager.registerComponent('resources', resourcePanel);
+    uiManager.registerComponent('turnControls', turnControls);
+    uiManager.registerComponent('gameInfo', gameInfoPanel);
     uiManager.registerComponent('mainView', mainView);
     
-    // Mount components to layout
-    gameLayout.mountToSidebar(resourcePanel);
-    gameLayout.mountToHeader(turnControls);
-    gameLayout.mountToPanelArea(gameInfoPanel);
-    gameLayout.mountToMain(mainView);
+    console.log('Mounting components to DOM...');
+    
+    // Mount components directly to their containers
+    resourcePanel.mount(sidebar);
+    turnControls.mount(headerControls);
+    gameInfoPanel.mount(panelArea);
+    mainView.mount(main);
+    
+    console.log('All components mounted');
+    
+    // Update all components with initial state
+    uiManager.update(gameEngine.getState());
     
     // Get initial state
     const initialState = gameEngine.getState();

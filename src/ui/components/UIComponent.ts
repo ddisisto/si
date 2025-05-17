@@ -68,14 +68,23 @@ abstract class UIComponent {
    * Render the component's content
    */
   public render(): void {
-    // Skip rendering if no state is available
+    // Skip rendering if element is not available
     if (!this.element) return;
     
-    // Replace the inner HTML with the template
-    this.element.innerHTML = this.createTemplate();
+    // Get current element innerHTML
+    const currentHTML = this.element.innerHTML;
+    const newHTML = this.createTemplate();
     
-    // Re-attach any event handlers
-    this.bindEvents();
+    // Only update if content has changed (optimization)
+    if (currentHTML !== newHTML) {
+      // Replace the inner HTML with the template
+      this.element.innerHTML = newHTML;
+      
+      // Re-attach any event handlers
+      this.bindEvents();
+    }
+    
+    console.log(`Rendered component: ${this.constructor.name}`);
   }
   
   /**

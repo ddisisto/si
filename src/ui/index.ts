@@ -15,14 +15,8 @@ import MainView from './components/MainView';
 // Export UI manager
 import UIManager from './UIManager';
 
-// Legacy canvas components (will be replaced)
-import Renderer from './Renderer';
-import View from './View';
-import DemoView from './DemoView';
-import InputHandler from './InputHandler';
-
 export {
-  // New DOM-based UI
+  // DOM-based UI
   UIComponent,
   UIManager,
   Panel,
@@ -31,11 +25,5 @@ export {
   TurnControls,
   GameInfoPanel,
   GameLayout,
-  MainView,
-  
-  // Legacy canvas components (for backwards compatibility)
-  Renderer,
-  View,
-  DemoView,
-  InputHandler
+  MainView
 };

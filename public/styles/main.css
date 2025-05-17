@@ -30,7 +30,7 @@ button, input, select, textarea {
 }
 
 /* Main layout */
-#game-root {
+#game-root, .game-root, .game-container {
   display: grid;
   grid-template-columns: 250px 1fr 300px;
   grid-template-rows: auto 1fr auto;

@@ -35,6 +35,11 @@ class UIManager {
     if (loading) {
       loading.remove();
     }
+    
+    console.log('UIManager initialized with root element:', rootElement);
+    
+    // Add a class to the root element to indicate it's been initialized
+    rootElement.classList.add('ui-initialized');
   }
   
   /**
@@ -44,22 +49,30 @@ class UIManager {
    * @param parentId Optional parent component ID to mount to
    */
   public registerComponent(id: string, component: UIComponent): void {
-    // Store the component
-    this.components.set(id, component);
-    
-    // Set event bus for component
-    component.setEventBus(this.eventBus);
-    
-    // If we have a root element and game state, mount and update the component
-    if (this.rootElement && id === 'layout') {
-      // Replace the existing content with our layout
-      this.rootElement.innerHTML = '';
-      component.mount(this.rootElement);
+    try {
+      // Store the component
+      this.components.set(id, component);
       
-      // Update with current state if available
-      if (this.gameState) {
-        component.update(this.gameState);
+      // Set event bus for component
+      component.setEventBus(this.eventBus);
+      
+      console.log(`Component registered: ${id}`);
+      
+      // If we have a root element and this is the layout, mount it
+      if (this.rootElement && id === 'layout') {
+        console.log('Mounting layout to root element');
+        
+        // Replace the existing content with our layout
+        this.rootElement.innerHTML = '';
+        component.mount(this.rootElement);
+        
+        // Update with current state if available
+        if (this.gameState) {
+          component.update(this.gameState);
+        }
       }
+    } catch (error) {
+      console.error(`Error registering component ${id}:`, error);
     }
   }
   
@@ -70,8 +83,11 @@ class UIManager {
   public update(gameState: Readonly<GameState>): void {
     this.gameState = gameState;
     
+    console.log('UIManager updating components with new state');
+    
     // Update all registered components
-    this.components.forEach(component => {
+    this.components.forEach((component, id) => {
+      console.log(`Updating component: ${id}`);
       component.update(gameState);
     });
   }
