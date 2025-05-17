@@ -2,7 +2,7 @@
  * SuperInt++ Game Entry Point
  */
 
-import { GameEngine, EventBus } from './core';
+import { GameEngine } from './core';
 import { 
   UIManager, 
   ResourcePanel, 
@@ -20,18 +20,18 @@ function main() {
   console.log('SuperInt++ Game Initialized');
   
   try {
-    // Initialize core systems
-    const eventBus = new EventBus();
-    
-    // Create game engine
+    // Create game engine - it creates its own event bus internally
     const gameEngine = new GameEngine();
     
-    // Register game systems
-    const resourceSystem = new ResourceSystem(gameEngine.getStateManager(), eventBus);
+    // Get the event bus from the engine to ensure we're using a single instance
+    const engineEventBus = gameEngine.getEventBus();
+    
+    // Register game systems using the engine's event bus
+    const resourceSystem = new ResourceSystem(gameEngine.getStateManager(), engineEventBus);
     gameEngine.registerSystem(resourceSystem);
     
-    // Initialize UI Manager
-    const uiManager = new UIManager(eventBus);
+    // Initialize UI Manager with the engine's event bus
+    const uiManager = new UIManager(engineEventBus);
     
     // Get the root element for the game
     const rootElement = document.getElementById('game-root');
@@ -95,11 +95,11 @@ function main() {
 
     // Create and register game components
     const resourcePanel = new ResourcePanel();
-    const turnControls = new TurnControls(eventBus);
+    const turnControls = new TurnControls(engineEventBus);
     const gameInfoPanel = new GameInfoPanel();
     const mainView = new MainView();
-    // SaveLoadPanel should get eventBus from UIManager.registerComponent
-    const saveLoadPanel = new SaveLoadPanel({ eventBus: eventBus });
+    // Create SaveLoadPanel with the engine's event bus
+    const saveLoadPanel = new SaveLoadPanel({ eventBus: engineEventBus });
     
     // Register all components
     uiManager.registerComponent('resources', resourcePanel);
@@ -135,7 +135,7 @@ function main() {
     });
     
     // Subscribe to turn end events from UI
-    eventBus.subscribe('turn:end', (data: any) => {
+    engineEventBus.subscribe('turn:end', (data: any) => {
       // Call the turn system's endTurn method
       gameEngine.getTurnSystem().endTurn(data);
     });

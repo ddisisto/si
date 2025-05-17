@@ -54,6 +54,7 @@ class UIManager {
       this.components.set(id, component);
       
       // Set event bus for component
+      console.log(`UIManager: Setting EventBus for component ${id}`);
       component.setEventBus(this.eventBus);
       
       console.log(`Component registered: ${id}`);

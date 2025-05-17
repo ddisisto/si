@@ -21,10 +21,11 @@ class SaveLoadPanel extends UIComponent {
    * Create new save/load panel
    * @param options Configuration options
    */
-  constructor(_options: SaveLoadPanelOptions) {
+  constructor(options: SaveLoadPanelOptions) {
     super('div', 'save-load-panel');
-    // Don't set eventBus here, let the UIManager do it via setEventBus()
-    // this.eventBus = _options.eventBus;
+    // We need to set eventBus here to ensure it's available from the start
+    this.eventBus = options.eventBus;
+    console.log('SaveLoadPanel constructor: EventBus is', this.eventBus ? 'available' : 'NOT AVAILABLE');
     
     // Get existing saves from localStorage
     this.refreshSavesList();
@@ -36,6 +37,7 @@ class SaveLoadPanel extends UIComponent {
    */
   protected afterMount(): void {
     // Subscribe to save related events
+    console.log('SaveLoadPanel.afterMount: EventBus is', this.eventBus ? 'available' : 'NOT AVAILABLE');
     if (this.eventBus) {
       console.log('SaveLoadPanel: Subscribing to game:saved and game:loaded events');
       this.eventBus.subscribe('game:saved', this.refreshSavesList.bind(this));
@@ -255,6 +257,7 @@ class SaveLoadPanel extends UIComponent {
    * Show the save dialog
    */
   private handleShowSaveDialog = (): void => {
+    console.log('SaveLoadPanel.handleShowSaveDialog: EventBus is', this.eventBus ? 'available' : 'NOT AVAILABLE');
     // Replace the current template with the save dialog
     this.element.innerHTML = this.createSaveDialogTemplate();
     this.bindEvents();
@@ -287,6 +290,7 @@ class SaveLoadPanel extends UIComponent {
    * Load a saved game
    */
   private handleLoadSave = (event: Event): void => {
+    console.log('SaveLoadPanel.handleLoadSave: EventBus is', this.eventBus ? 'available' : 'NOT AVAILABLE');
     const button = event.target as HTMLButtonElement;
     const saveName = button.getAttribute('data-save');
     
@@ -321,6 +325,7 @@ class SaveLoadPanel extends UIComponent {
    * Save the current game
    */
   private handleSaveGame = (): void => {
+    console.log('SaveLoadPanel.handleSaveGame: EventBus is', this.eventBus ? 'available' : 'NOT AVAILABLE');
     if (this.eventBus) {
       const saveName = this.saveNameInput || 'Game Save';
       console.log(`SaveLoadPanel: Saving game as "${saveName}"`);
@@ -336,6 +341,7 @@ class SaveLoadPanel extends UIComponent {
    * Handle auto-save toggle
    */
   private handleAutoSaveToggle = (event: Event): void => {
+    console.log('SaveLoadPanel.handleAutoSaveToggle: EventBus is', this.eventBus ? 'available' : 'NOT AVAILABLE');
     const checkbox = event.target as HTMLInputElement;
     if (this.eventBus) {
       console.log(`SaveLoadPanel: Setting auto-save to ${checkbox.checked}`);
@@ -349,7 +355,7 @@ class SaveLoadPanel extends UIComponent {
       });
       
       console.log(`SaveLoadPanel: Emitted action:queue for UPDATE_SETTINGS with autoSave=${checkbox.checked}`);
-      console.log(`SaveLoadPanel: Auto-save ${checkbox.checked ? 'enabled' : 'disabled'}`);;
+      console.log(`SaveLoadPanel: Auto-save ${checkbox.checked ? 'enabled' : 'disabled'}`);
     } else {
       console.error('SaveLoadPanel: No eventBus available for emitting action:queue event');
     }
