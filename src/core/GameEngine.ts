@@ -43,14 +43,20 @@ class GameEngine {
     
     // Subscribe to save/load events
     this.eventBus.subscribe('action:save', (data: any) => {
+      console.log(`GameEngine: Received action:save event with name: "${data.name}"`);
       this.saveGame(data.name);
+      console.log(`GameEngine: Emitting game:saved event for "${data.name}"`);
       this.eventBus.emit('game:saved', { name: data.name });
     });
     
     this.eventBus.subscribe('action:load', (data: any) => {
+      console.log(`GameEngine: Received action:load event with name: "${data.name}"`);
       const success = this.loadGame(data.name);
       if (success) {
+        console.log(`GameEngine: Load succeeded, emitting game:loaded event for "${data.name}"`);
         this.eventBus.emit('game:loaded', { name: data.name });
+      } else {
+        console.error(`GameEngine: Failed to load game "${data.name}"`);
       }
     });
     
@@ -200,6 +206,7 @@ class GameEngine {
    * Save the current game state
    */
   public saveGame(name: string = 'default'): void {
+    console.log(`GameEngine: Saving game "${name}"`);
     this.stateManager.saveState(name);
   }
   
@@ -207,7 +214,10 @@ class GameEngine {
    * Load a game state
    */
   public loadGame(name: string = 'default'): boolean {
-    return this.stateManager.loadState(name);
+    console.log(`GameEngine: Loading game "${name}"`);
+    const result = this.stateManager.loadState(name);
+    console.log(`GameEngine: Load result: ${result ? 'success' : 'failed'}`);
+    return result;
   }
 }
 

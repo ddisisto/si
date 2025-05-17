@@ -200,7 +200,10 @@ class TurnSystem extends BaseSystem {
     
     // Auto-save if enabled
     if (this.stateManager.getState().settings.autoSave) {
+      console.log(`TurnSystem: Auto-save is enabled, saving game to "autosave" slot`);
       this.stateManager.saveState('autosave');
+    } else {
+      console.log(`TurnSystem: Auto-save is disabled, skipping auto-save`);
     }
     
     this.eventBus.emit('turn:ended', { 

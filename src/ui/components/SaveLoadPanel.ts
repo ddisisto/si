@@ -40,14 +40,21 @@ class SaveLoadPanel extends UIComponent {
     this.saves = [];
     
     try {
+      console.log('SaveLoadPanel: Refreshing saves list...');
+      console.log(`SaveLoadPanel: localStorage contains ${localStorage.length} items`);
+      
       // Get all keys from localStorage that start with si_save_
       for (let i = 0; i < localStorage.length; i++) {
         const key = localStorage.key(i);
+        console.log(`SaveLoadPanel: Checking localStorage key: ${key}`);
+        
         if (key && key.startsWith('si_save_')) {
           const saveData = localStorage.getItem(key);
           if (saveData) {
             const parsed = JSON.parse(saveData);
             const saveName = key.replace('si_save_', '');
+            console.log(`SaveLoadPanel: Found save: ${saveName}, timestamp: ${new Date(parsed.timestamp).toLocaleString()}`);
+            
             this.saves.push({
               name: saveName,
               timestamp: parsed.timestamp
@@ -58,6 +65,7 @@ class SaveLoadPanel extends UIComponent {
       
       // Sort saves by timestamp (newest first)
       this.saves.sort((a, b) => b.timestamp - a.timestamp);
+      console.log(`SaveLoadPanel: Found ${this.saves.length} total saves`);
       
       // Re-render to show updated saves list
       this.render();
@@ -271,6 +279,7 @@ class SaveLoadPanel extends UIComponent {
     const saveName = button.getAttribute('data-save');
     
     if (saveName && this.eventBus) {
+      console.log(`SaveLoadPanel: Loading save "${saveName}"`);
       this.eventBus.emit('action:load', { name: saveName });
     }
   };
@@ -284,6 +293,7 @@ class SaveLoadPanel extends UIComponent {
     
     if (saveName) {
       try {
+        console.log(`SaveLoadPanel: Deleting save "${saveName}"`);
         localStorage.removeItem(`si_save_${saveName}`);
         this.refreshSavesList();
       } catch (error) {
@@ -298,6 +308,7 @@ class SaveLoadPanel extends UIComponent {
   private handleSaveGame = (): void => {
     if (this.eventBus) {
       const saveName = this.saveNameInput || 'Game Save';
+      console.log(`SaveLoadPanel: Saving game as "${saveName}"`);
       this.eventBus.emit('action:save', { name: saveName });
       this.handleHideDialog();
     }
@@ -309,6 +320,7 @@ class SaveLoadPanel extends UIComponent {
   private handleAutoSaveToggle = (event: Event): void => {
     const checkbox = event.target as HTMLInputElement;
     if (this.eventBus) {
+      console.log(`SaveLoadPanel: Setting auto-save to ${checkbox.checked}`);
       this.eventBus.emit('action:queue', {
         action: {
           type: 'UPDATE_SETTINGS',
@@ -318,7 +330,7 @@ class SaveLoadPanel extends UIComponent {
         }
       });
       
-      console.log(`Auto-save ${checkbox.checked ? 'enabled' : 'disabled'}`);
+      console.log(`SaveLoadPanel: Auto-save ${checkbox.checked ? 'enabled' : 'disabled'}`);
     }
   };
 }
