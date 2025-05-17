@@ -111,9 +111,9 @@ SuperInt++ uses a modular architecture with unidirectional data flow:
 See [ROADMAP.md](ROADMAP.md) for detailed development plans.
 
 ### Current Focus
-- Research tree visualization implementation
+- Custom positioning system for research tree nodes
+- Deployment system implementation
 - Enhanced resource management UI
-- Save/load functionality
 - Event system implementation
 
 ### Recently Completed
@@ -123,6 +123,10 @@ See [ROADMAP.md](ROADMAP.md) for detailed development plans.
 - Basic UI component architecture
 - Comprehensive save/load functionality
 - EventBus communication system
+- Research tree visualization with category and status filters
+- Node interaction system with selection and status indicators
+- Smooth zoom and pan controls for research tree navigation
+- Modular research data organization and validation
 
 ## Contributing
 
