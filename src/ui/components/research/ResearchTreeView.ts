@@ -30,7 +30,7 @@ class ResearchTreeView extends UIComponent {
   private viewportTranslateY: number = 0;
   // Store node positions for connection drawing and highlighting
   private nodePositions: Record<string, { x: number, y: number, width: number, height: number }> = {};
-  // Store category filters
+  // Store filters with appropriate type definitions
   private categoryFilters: Record<string, boolean> = {
     'Foundations': true,
     'Scaling': true,
@@ -40,7 +40,18 @@ class ResearchTreeView extends UIComponent {
     'Alignment': true,
     'Uncategorized': true
   };
-  private boundHandleToggleCategory: (event: Event) => void;
+  
+  private statusFilters: Record<string, boolean> = {
+    'available': true,
+    'in_progress': true,
+    'completed': true,
+    'locked': true
+  };
+  // Store filter visibility state
+  private isFilterPanelVisible: boolean = false;
+  // Bound event handlers for filters
+  private boundHandleToggleFilter: (event: Event) => void;
+  private boundHandleToggleFilterPanel: (event: Event) => void;
   
   /**
    * Create a new research tree view
@@ -58,8 +69,9 @@ class ResearchTreeView extends UIComponent {
     this.boundHandleViewAll = this.handleViewAll.bind(this);
     this.boundHandleWheel = this.handleWheel.bind(this);
     
-    // Create bound event handler for category filters
-    this.boundHandleToggleCategory = this.handleToggleCategory.bind(this);
+    // Create bound event handlers for filters
+    this.boundHandleToggleFilter = this.handleToggleFilter.bind(this);
+    this.boundHandleToggleFilterPanel = this.handleToggleFilterPanel.bind(this);
   }
   
   /**
@@ -90,17 +102,39 @@ class ResearchTreeView extends UIComponent {
         </div>
         <div class="research-controls">
           <button class="zoom-control view-all">View All</button>
+          <button class="filter-toggle" data-expanded="${this.isFilterPanelVisible}">
+            ${this.isFilterPanelVisible ? 'Hide Filters' : 'Show Filters'}
+          </button>
         </div>
       </div>
-      <div class="category-filters">
-        <div class="filter-label">Filter by Category:</div>
-        <div class="filter-options">
-          ${Object.entries(this.categoryFilters).map(([category, isEnabled]) => `
-            <div class="category-filter ${isEnabled ? 'active' : ''}" data-category="${category}">
-              <span class="filter-color" style="background-color: ${this.getCategoryColor(category)}"></span>
-              <span class="filter-name">${category}</span>
-            </div>
-          `).join('')}
+      <div class="filter-panel ${this.isFilterPanelVisible ? 'visible' : 'hidden'}">
+        <div class="filter-section">
+          <div class="filter-section-header">
+            <span class="filter-label">Filter by Category</span>
+          </div>
+          <div class="filter-options">
+            ${Object.entries(this.categoryFilters).map(([category, isEnabled]) => `
+              <div class="filter-item category-filter ${isEnabled ? 'active' : ''}" 
+                   data-filter-type="category" data-filter-value="${category}">
+                <span class="filter-color" style="background-color: ${this.getCategoryColor(category)}"></span>
+                <span class="filter-name">${category}</span>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+        <div class="filter-section">
+          <div class="filter-section-header">
+            <span class="filter-label">Filter by Status</span>
+          </div>
+          <div class="filter-options">
+            ${Object.entries(this.statusFilters).map(([status, isEnabled]) => `
+              <div class="filter-item status-filter ${isEnabled ? 'active' : ''}" 
+                   data-filter-type="status" data-filter-value="${status}">
+                <span class="filter-color status-color ${status}"></span>
+                <span class="filter-name">${this.formatStatus(status)}</span>
+              </div>
+            `).join('')}
+          </div>
         </div>
       </div>
       <div class="research-tree-container">
@@ -134,8 +168,11 @@ class ResearchTreeView extends UIComponent {
         return; // Skip nodes with no prerequisites
       }
       
-      // Skip nodes that don't match the current category filters
-      if (!this.categoryFilters[node.category as string]) {
+      // Skip nodes that don't match the current filters
+      const category = node.category as string;
+      const status = (node.status as string).toLowerCase();
+      
+      if (!this.categoryFilters[category] || !this.statusFilters[status]) {
         return;
       }
       
@@ -153,7 +190,10 @@ class ResearchTreeView extends UIComponent {
         if (!prereq) return;
         
         // Skip connections to filtered-out prerequisites
-        if (!this.categoryFilters[prereq.category as string]) {
+        const prereqCategory = prereq.category as string;
+        const prereqStatus = (prereq.status as string).toLowerCase();
+        
+        if (!this.categoryFilters[prereqCategory] || !this.statusFilters[prereqStatus]) {
           return;
         }
         
@@ -223,8 +263,11 @@ class ResearchTreeView extends UIComponent {
     
     // Add all nodes with their positions
     Object.values(research.nodes).forEach(node => {
-      // Skip nodes that don't match the current category filters
-      if (!this.categoryFilters[node.category as string]) {
+      // Skip nodes that don't match the current filters
+      const category = node.category as string;
+      const status = (node.status as string).toLowerCase();
+      
+      if (!this.categoryFilters[category] || !this.statusFilters[status]) {
         return;
       }
       
@@ -396,10 +439,16 @@ class ResearchTreeView extends UIComponent {
       viewAllButton.addEventListener('click', this.boundHandleViewAll);
     }
     
-    // Bind category filter events
-    const categoryFilters = this.element.querySelectorAll('.category-filter');
-    categoryFilters.forEach(filter => {
-      filter.addEventListener('click', this.boundHandleToggleCategory);
+    // Bind filter panel toggle event
+    const filterToggleButton = this.element.querySelector('.filter-toggle');
+    if (filterToggleButton) {
+      filterToggleButton.addEventListener('click', this.boundHandleToggleFilterPanel);
+    }
+    
+    // Bind filter item events
+    const filterItems = this.element.querySelectorAll('.filter-item');
+    filterItems.forEach(filter => {
+      filter.addEventListener('click', this.boundHandleToggleFilter);
     });
     
     // Bind panning and zooming events
@@ -477,16 +526,34 @@ class ResearchTreeView extends UIComponent {
   }
   
   /**
-   * Handle toggling category filters
+   * Handle toggling the filter panel visibility
    */
-  private handleToggleCategory(event: Event): void {
+  private handleToggleFilterPanel(event: Event): void {
+    event.stopPropagation();
+    
+    // Toggle the filter panel visibility
+    this.isFilterPanelVisible = !this.isFilterPanelVisible;
+    
+    // Re-render the tree with the updated filter panel state
+    this.render();
+  }
+  
+  /**
+   * Handle toggling individual filters
+   */
+  private handleToggleFilter(event: Event): void {
     event.stopPropagation();
     const filterElement = event.currentTarget as HTMLElement;
-    const category = filterElement.dataset.category;
+    const filterType = filterElement.dataset.filterType;
+    const filterValue = filterElement.dataset.filterValue;
     
-    if (category) {
-      // Toggle the filter state
-      this.categoryFilters[category] = !this.categoryFilters[category];
+    if (filterType && filterValue) {
+      // Toggle the filter state based on its type
+      if (filterType === 'category') {
+        this.categoryFilters[filterValue] = !this.categoryFilters[filterValue];
+      } else if (filterType === 'status') {
+        this.statusFilters[filterValue] = !this.statusFilters[filterValue];
+      }
       
       // Re-render the tree with the new filters
       this.render();
@@ -702,10 +769,16 @@ class ResearchTreeView extends UIComponent {
       viewAllButton.removeEventListener('click', this.boundHandleViewAll);
     }
     
-    // Remove category filter events
-    const categoryFilters = this.element.querySelectorAll('.category-filter');
-    categoryFilters.forEach(filter => {
-      filter.removeEventListener('click', this.boundHandleToggleCategory);
+    // Remove filter panel toggle event
+    const filterToggleButton = this.element.querySelector('.filter-toggle');
+    if (filterToggleButton) {
+      filterToggleButton.removeEventListener('click', this.boundHandleToggleFilterPanel);
+    }
+    
+    // Remove filter item events
+    const filterItems = this.element.querySelectorAll('.filter-item');
+    filterItems.forEach(filter => {
+      filter.removeEventListener('click', this.boundHandleToggleFilter);
     });
     
     // Remove wheel event listener
