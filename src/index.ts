@@ -120,13 +120,14 @@ function main() {
     // Get initial state
     const initialState = gameEngine.getState();
     
-    // Subscribe UI manager to state changes
-    eventBus.subscribe('stateChanged', () => {
-      uiManager.update(gameEngine.getState());
-    });
-    
     // Initial UI update with current state
     uiManager.update(initialState);
+    
+    // Subscribe UI manager directly to state changes via state manager
+    // This ensures we catch all state changes regardless of the event bus
+    gameEngine.getStateManager().subscribe((_, nextState) => {
+      uiManager.update(nextState);
+    });
     
     // Subscribe to turn end events from UI
     eventBus.subscribe('turn:end', (data: any) => {

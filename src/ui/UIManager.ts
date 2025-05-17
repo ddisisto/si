@@ -83,11 +83,8 @@ class UIManager {
   public update(gameState: Readonly<GameState>): void {
     this.gameState = gameState;
     
-    console.log('UIManager updating components with new state');
-    
     // Update all registered components
-    this.components.forEach((component, id) => {
-      console.log(`Updating component: ${id}`);
+    this.components.forEach(component => {
       component.update(gameState);
     });
   }

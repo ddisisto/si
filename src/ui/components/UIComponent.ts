@@ -69,7 +69,9 @@ abstract class UIComponent {
    */
   public render(): void {
     // Skip rendering if element is not available
-    if (!this.element) return;
+    if (!this.element) {
+      return;
+    }
     
     // Get current element innerHTML
     const currentHTML = this.element.innerHTML;
@@ -83,8 +85,6 @@ abstract class UIComponent {
       // Re-attach any event handlers
       this.bindEvents();
     }
-    
-    console.log(`Rendered component: ${this.constructor.name}`);
   }
   
   /**
