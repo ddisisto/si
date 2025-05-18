@@ -74,8 +74,19 @@ class GameEngine {
    * Initialize the game engine
    */
   public initialize(): void {
+    console.log('GameEngine: Starting initialization');
+    console.log('GameEngine: Systems to initialize:', this.systems.map(s => s.getName()));
+    
     // Initialize all systems
-    this.systems.forEach(system => system.initialize());
+    this.systems.forEach(system => {
+      console.log(`GameEngine: Initializing system ${system.getName()}`);
+      system.initialize();
+    });
+    
+    // Log final state of research nodes
+    const finalState = this.stateManager.getState();
+    console.log('GameEngine: After initialization, research nodes:', Object.keys(finalState.research.nodes).length);
+    console.log('GameEngine: Research nodes:', finalState.research.nodes);
     
     // Send initialization event
     this.eventBus.emit('engine:initialized');

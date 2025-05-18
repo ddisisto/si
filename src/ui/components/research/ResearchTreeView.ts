@@ -47,10 +47,10 @@ class ResearchTreeView extends UIComponent {
   };
   
   private statusFilters: Record<string, boolean> = {
-    'available': true,
-    'in_progress': true,
-    'completed': true,
-    'locked': true
+    'AVAILABLE': true,
+    'IN_PROGRESS': true,
+    'COMPLETED': true,
+    'LOCKED': true
   };
   
   // Event handlers
@@ -76,14 +76,21 @@ class ResearchTreeView extends UIComponent {
    * Generate the research tree HTML
    */
   protected createTemplate(): string {
+    console.log('ResearchTreeView: createTemplate called');
+    
     if (!this.gameState) {
+      console.log('ResearchTreeView: No game state available');
       return `<div class="research-loading">Loading research data...</div>`;
     }
     
     const { research } = this.gameState;
     const nodeCount = Object.keys(research.nodes).length;
     
+    console.log('ResearchTreeView: Research nodes count:', nodeCount);
+    console.log('ResearchTreeView: Research state:', research);
+    
     if (nodeCount === 0) {
+      console.log('ResearchTreeView: No research nodes available');
       return `<div class="research-empty">No research nodes available.</div>`;
     }
     
@@ -150,9 +157,11 @@ class ResearchTreeView extends UIComponent {
     }
     
     // Render nodes
+    console.log('ResearchTreeView: setupEvents - calling renderNodes');
     this.renderNodes();
     
     // Update connections
+    console.log('ResearchTreeView: setupEvents - calling updateNodePositions');
     this.updateNodePositions();
   }
   
@@ -170,14 +179,20 @@ class ResearchTreeView extends UIComponent {
     const { research } = this.gameState;
     
     // Create and render filtered nodes
+    let visibleNodeCount = 0;
+    
     Object.entries(research.nodes).forEach(([nodeId, node]) => {
+      console.log(`ResearchTreeView: Processing node ${nodeId}, visible: ${this.isNodeVisible(node)}`);
+      
       if (this.isNodeVisible(node)) {
+        visibleNodeCount++;
         const isSelected = nodeId === this.selectedNodeId;
         const nodeRenderer = new ResearchNodeRenderer(node, nodeId, isSelected);
         if (this.gameEngine) {
           nodeRenderer.setGameEngine(this.gameEngine);
         }
         
+        console.log(`ResearchTreeView: Adding node ${nodeId} to container`);
         nodesContainer.appendChild(nodeRenderer.element);
         
         // Add click handler
@@ -186,6 +201,8 @@ class ResearchTreeView extends UIComponent {
         this.nodeRenderers.set(nodeId, nodeRenderer);
       }
     });
+    
+    console.log(`ResearchTreeView: Rendered ${visibleNodeCount} visible nodes`);
   }
   
   /**
@@ -209,6 +226,10 @@ class ResearchTreeView extends UIComponent {
     const nodeCategory = node.category || 'Uncategorized';
     const categoryVisible = this.categoryFilters[nodeCategory];
     const statusVisible = this.statusFilters[node.status];
+    
+    console.log(`ResearchTreeView: Node ${node.id} - category: ${nodeCategory}, status: ${node.status}`);
+    console.log(`ResearchTreeView: Category visible: ${categoryVisible}, Status visible: ${statusVisible}`);
+    console.log(`ResearchTreeView: Status filters:`, this.statusFilters);
     
     return categoryVisible && statusVisible;
   }

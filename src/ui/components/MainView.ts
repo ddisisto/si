@@ -46,6 +46,12 @@ class MainView extends UIComponent {
       this.buttonShowcase.setEventBus(eventBus);
     }
     
+    // Also set game engine if we have it
+    if (this.gameEngine) {
+      this.researchTreeView.setGameEngine(this.gameEngine);
+      this.researchTreeHeader.setGameEngine(this.gameEngine);
+    }
+    
     // Listen for back to main event
     eventBus.subscribe('ui:back_to_main', () => {
       this.showResearchTree = false;
@@ -73,6 +79,24 @@ class MainView extends UIComponent {
    */
   public setGameLayout(layout: GameLayout): void {
     this.gameLayout = layout;
+  }
+  
+  /**
+   * Override setGameEngine to pass it to child components
+   */
+  public setGameEngine(gameEngine: any): void {
+    super.setGameEngine(gameEngine);
+    
+    // Pass gameEngine to child components
+    if (this.researchTreeView) {
+      this.researchTreeView.setGameEngine(gameEngine);
+    }
+    if (this.researchTreeHeader) {
+      this.researchTreeHeader.setGameEngine(gameEngine);
+    }
+    if (this.buttonShowcase) {
+      this.buttonShowcase.setGameEngine(gameEngine);
+    }
   }
   
   /**
@@ -185,12 +209,19 @@ class MainView extends UIComponent {
    * Mount the research tree component
    */
   private mountResearchTree(): void {
+    console.log('MainView: Mounting research tree');
+    
     if (this.researchTreeView) {
+      console.log('MainView: ResearchTreeView exists, mounting to element');
       // Mount directly to this.element instead of an inner container
       this.researchTreeView.mount(this.element);
         
       if (this.gameState) {
+        console.log('MainView: Updating ResearchTreeView with gameState');
+        console.log('MainView: GameState research nodes:', Object.keys(this.gameState.research.nodes).length);
         this.researchTreeView.update(this.gameState);
+      } else {
+        console.log('MainView: No gameState available');
       }
     } else {
       console.error('ResearchTreeView is not initialized');
