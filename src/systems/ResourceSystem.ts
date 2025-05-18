@@ -309,25 +309,17 @@ class ResourceSystem extends BaseSystem {
       }
     }
     
-    // Check data costs
+    // Check data requirements (persistent model - not consumed)
     if (costs.data) {
-      // Check data type requirements
-      if (costs.data.types) {
-        for (const [typeKey, requiredAmount] of Object.entries(costs.data.types)) {
+      // Check data type requirements (amount and quality)
+      if (costs.data.requirements) {
+        for (const [typeKey, requirement] of Object.entries(costs.data.requirements)) {
           const dataType = typeKey as DataType;
-          const available = resources.data.types[dataType]?.amount || 0;
-          if (available < requiredAmount) {
-            return false;
-          }
-        }
-      }
-      
-      // Check minimum quality requirement
-      if (costs.data.minimumQuality) {
-        for (const [typeKey] of Object.entries(costs.data.types || {})) {
-          const dataType = typeKey as DataType;
-          const quality = resources.data.types[dataType]?.quality || 0;
-          if (quality < costs.data.minimumQuality) {
+          const typeData = resources.data.types[dataType];
+          
+          if (!typeData || 
+              typeData.amount < requirement.minAmount || 
+              typeData.quality < requirement.minQuality) {
             return false;
           }
         }
@@ -556,24 +548,14 @@ class ResourceSystem extends BaseSystem {
   }
   
   /**
-   * Add data of a specific type
+   * Add data of a specific type (persistent asset model)
    */
   public addDataType(type: DataType, amount: number, source: string, quality?: number): boolean {
     const state = this.stateManager.getState();
     const turn = state.meta.turn;
     const currentData = state.resources.data;
     
-    // Check if there's capacity
-    const newUsedCapacity = currentData.usedCapacity + amount;
-    if (newUsedCapacity > currentData.totalCapacity) {
-      this.eventBus.emit('data:add:failed', {
-        type,
-        amount,
-        source,
-        reason: 'Insufficient storage capacity'
-      });
-      return false;
-    }
+    // No capacity check needed - acquisition is the constraint
     
     // Calculate new quality (weighted average if quality provided)
     const currentTypeData = currentData.types[type];
@@ -585,6 +567,13 @@ class ResourceSystem extends BaseSystem {
                    (currentTypeData.amount + amount);
     } else if (quality !== undefined) {
       newQuality = quality;
+    }
+    
+    // Quality refresh - new high-quality data improves overall quality
+    if (quality && quality > currentTypeData.quality) {
+      // Boost quality more aggressively if new data is significantly better
+      const qualityBoost = (quality - currentTypeData.quality) * 0.5;
+      newQuality = Math.min(1.0, newQuality + qualityBoost);
     }
     
     // Add the source if it's not already there
@@ -601,16 +590,6 @@ class ResourceSystem extends BaseSystem {
         quality: newQuality,
         sources: updatedSources,
         lastUpdated: turn
-      }
-    });
-    
-    // Update used capacity
-    this.stateManager.dispatch({
-      type: 'UPDATE_RESOURCE',
-      payload: {
-        resourceType: 'data',
-        field: 'usedCapacity',
-        amount: newUsedCapacity
       }
     });
     
@@ -679,53 +658,72 @@ class ResourceSystem extends BaseSystem {
   }
   
   /**
-   * Consume data of a specific type (for research, training, etc.)
+   * Check if data requirements are met (persistent asset model)
    */
-  public consumeDataType(type: DataType, amount: number, reason: string): boolean {
+  public checkDataAccess(type: DataType, requirement: { minAmount: number; minQuality: number }): boolean {
     const state = this.stateManager.getState();
-    const currentData = state.resources.data;
-    const currentTypeData = currentData.types[type];
+    const typeData = state.resources.data.types[type];
     
-    // Check if enough data is available
-    if (currentTypeData.amount < amount) {
-      this.eventBus.emit('data:consume:failed', {
-        type,
-        amount,
-        available: currentTypeData.amount,
-        reason: 'Insufficient data'
-      });
+    if (!typeData) {
       return false;
     }
     
-    // Update data amount
-    this.stateManager.dispatch({
-      type: 'UPDATE_DATA_TYPE',
-      payload: {
-        dataType: type,
-        amount: currentTypeData.amount - amount,
-        lastUpdated: state.meta.turn
-      }
-    });
+    return typeData.amount >= requirement.minAmount && 
+           typeData.quality >= requirement.minQuality;
+  }
+  
+  /**
+   * Mark data as being used by a system
+   */
+  public markDataInUse(type: DataType, userId: string): void {
+    const state = this.stateManager.getState();
+    const currentTypeData = state.resources.data.types[type];
     
-    // Update used capacity
-    this.stateManager.dispatch({
-      type: 'UPDATE_RESOURCE',
-      payload: {
-        resourceType: 'data',
-        field: 'usedCapacity',
-        amount: currentData.usedCapacity - amount
-      }
-    });
+    if (!currentTypeData.inUse) {
+      currentTypeData.inUse = [];
+    }
     
-    // Emit event for UI updates
-    this.eventBus.emit('data:consumed', {
-      type,
-      amount,
-      reason,
-      turn: state.meta.turn
-    });
+    if (!currentTypeData.inUse.includes(userId)) {
+      this.stateManager.dispatch({
+        type: 'UPDATE_DATA_TYPE',
+        payload: {
+          dataType: type,
+          inUse: [...currentTypeData.inUse, userId]
+        }
+      });
+      
+      this.eventBus.emit('data:access:started', {
+        type,
+        userId,
+        turn: state.meta.turn
+      });
+    }
+  }
+  
+  /**
+   * Release data usage by a system
+   */
+  public releaseDataUsage(type: DataType, userId: string): void {
+    const state = this.stateManager.getState();
+    const currentTypeData = state.resources.data.types[type];
     
-    return true;
+    if (currentTypeData.inUse) {
+      const newInUse = currentTypeData.inUse.filter(id => id !== userId);
+      
+      this.stateManager.dispatch({
+        type: 'UPDATE_DATA_TYPE',
+        payload: {
+          dataType: type,
+          inUse: newInUse
+        }
+      });
+      
+      this.eventBus.emit('data:access:ended', {
+        type,
+        userId,
+        turn: state.meta.turn
+      });
+    }
   }
   
   /**
@@ -772,9 +770,7 @@ class ResourceSystem extends BaseSystem {
         specializedSetCount: Object.values(resources.data.specializedSets).filter(Boolean).length,
         quality: resources.data.quality,
         effectiveQuality: resources.data.quality + (this.resourceEffects.dataQualityBonus || 0),
-        totalCapacity: resources.data.totalCapacity,
-        usedCapacity: resources.data.usedCapacity,
-        capacityUsage: Math.round((resources.data.usedCapacity / resources.data.totalCapacity) * 100),
+        totalAmount: Object.values(resources.data.types).reduce((sum, type) => sum + type.amount, 0),
         types: this.calculateDataTypeMetrics(resources.data)
       }
     };

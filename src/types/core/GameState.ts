@@ -112,8 +112,10 @@ export enum DataType {
 export interface DataTypeInfo {
   amount: number;         // Quantity of this data type
   quality: number;        // Quality rating (0-1)
+  decayRate: number;      // Quality decay per turn
   sources: string[];      // Where this data comes from
   generationRate: number; // How much is generated per turn
+  inUse: string[];        // Systems currently using this data
   lastUpdated: number;    // Turn when last updated
 }
 
@@ -125,8 +127,6 @@ export interface DataResource {
   tiers: Record<string, boolean>;           // Data tiers available (public, specialized, proprietary)
   specializedSets: Record<string, boolean>; // Special data sets available
   quality: number;                          // Overall data quality multiplier
-  totalCapacity: number;                    // Total storage capacity
-  usedCapacity: number;                     // Currently used storage
   acquisitionHistory?: DataAcquisition[];   // History of data acquisitions
 }
 

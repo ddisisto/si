@@ -90,8 +90,6 @@ function createInitialResourceState(): ResourceState {
       tiers: { 'public': true },
       specializedSets: {},
       quality: 1.0,
-      totalCapacity: 1000,
-      usedCapacity: 100,
       acquisitionHistory: []
     },
     influence: {
@@ -125,8 +123,10 @@ function createInitialDataTypes(): Record<DataType, DataTypeInfo> {
     initialTypes[type] = {
       amount: 0,
       quality: 0.5,
+      decayRate: getDefaultDecayRate(type),
       sources: [],
       generationRate: 0,
+      inUse: [],
       lastUpdated: 0
     };
   });
@@ -135,8 +135,10 @@ function createInitialDataTypes(): Record<DataType, DataTypeInfo> {
   initialTypes[DataType.TEXT] = {
     amount: 100,
     quality: 0.7,
+    decayRate: 0.01,  // Slow decay for text data
     sources: ['academic_library', 'public_web'],
     generationRate: 10,
+    inUse: [],
     lastUpdated: 0
   };
   
@@ -144,12 +146,30 @@ function createInitialDataTypes(): Record<DataType, DataTypeInfo> {
   initialTypes[DataType.IMAGE] = {
     amount: 50,
     quality: 0.5,
+    decayRate: 0.02,  // Medium decay for image data
     sources: ['public_web'],
     generationRate: 5,
+    inUse: [],
     lastUpdated: 0
   };
   
   return initialTypes;
+}
+
+/**
+ * Get default decay rate for a data type
+ */
+function getDefaultDecayRate(type: DataType): number {
+  const decayRates: Record<DataType, number> = {
+    [DataType.TEXT]: 0.01,       // Text data decays slowly
+    [DataType.IMAGE]: 0.02,      // Images decay at medium rate
+    [DataType.VIDEO]: 0.03,      // Video data decays faster
+    [DataType.SYNTHETIC]: 0.02,  // Synthetic data has medium decay
+    [DataType.BEHAVIORAL]: 0.04, // Behavioral data becomes stale quickly
+    [DataType.SCIENTIFIC]: 0.015 // Scientific data has slower decay
+  };
+  
+  return decayRates[type] || 0.02; // Default to medium decay
 }
 
 /**

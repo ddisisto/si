@@ -95,9 +95,7 @@ class ResourcePanel extends UIComponent {
       tierCount: Object.values(data.tiers).filter(Boolean).length,
       specializedSetCount: Object.values(data.specializedSets).filter(Boolean).length,
       quality: data.quality,
-      totalCapacity: data.totalCapacity,
-      usedCapacity: data.usedCapacity,
-      capacityUsage: Math.round((data.usedCapacity / data.totalCapacity) * 100),
+      totalAmount: Object.values(data.types).reduce((sum, type) => sum + type.amount, 0),
       types: data.types
     };
   }
@@ -322,9 +320,6 @@ class ResourcePanel extends UIComponent {
   private renderDataSection(): string {
     const m = this.metrics.data;
     
-    // Create progress bar for capacity usage
-    const capacityBar = this.createProgressBar(m.capacityUsage, 'data-capacity');
-    
     // Get data type display names
     const dataTypeNames: Record<DataType, string> = {
       [DataType.TEXT]: 'Text',
@@ -339,11 +334,8 @@ class ResourcePanel extends UIComponent {
       <div class="resource-section">
         <h3>Data</h3>
         <div class="resource-item">
-          <div class="resource-label">Storage</div>
-          <div class="resource-value-bar">
-            ${capacityBar}
-            <span class="bar-value">${m.usedCapacity}/${m.totalCapacity} (${m.capacityUsage}%)</span>
-          </div>
+          <div class="resource-label">Total Data</div>
+          <div class="resource-value">${this.formatValue(m.totalAmount)} units</div>
         </div>
         <div class="resource-item">
           <div class="resource-label">Overall Quality</div>
@@ -375,14 +367,20 @@ class ResourcePanel extends UIComponent {
         const dataType = typeKey as DataType;
         const name = names[dataType];
         
+        const qualityClass = typeInfo.quality >= 0.7 ? 'quality-high' : 
+                           typeInfo.quality >= 0.4 ? 'quality-medium' : 'quality-low';
+        const decayIndicator = typeInfo.decayRate ? `↓${(typeInfo.decayRate * 100).toFixed(1)}%/turn` : '';
+        
         return `
           <div class="resource-item data-type">
             <div class="resource-label">${name}</div>
             <div class="resource-value">
               ${this.formatValue(typeInfo.amount)}
               <span class="secondary">
-                (Q: ${typeInfo.quality.toFixed(1)})
-                ${typeInfo.generationRate > 0 ? `+${typeInfo.generationRate}/turn` : ''}
+                <span class="${qualityClass}">Q: ${typeInfo.quality.toFixed(2)}</span>
+                ${decayIndicator ? `<span class="decay-indicator">${decayIndicator}</span>` : ''}
+                ${typeInfo.generationRate > 0 ? `<span class="generation">+${typeInfo.generationRate}/turn</span>` : ''}
+                ${typeInfo.inUse && typeInfo.inUse.length > 0 ? `<span class="in-use">[${typeInfo.inUse.length} systems]</span>` : ''}
               </span>
             </div>
           </div>

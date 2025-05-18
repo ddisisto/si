@@ -191,26 +191,30 @@ function resourceReducer(state: ResourceState, action: GameAction): ResourceStat
         openSource: Math.min(100, state.influence.openSource + (action.payload.influenceGrowth?.openSource || 0))
       };
       
-      // Generate data for each data type
+      // Generate data for each data type and apply quality decay
       const updatedDataTypes = { ...state.data.types };
-      let totalNewData = 0;
+      const MIN_QUALITY = 0.1; // Data never becomes completely unusable
       
       Object.values(DataType).forEach(type => {
         const currentTypeData = updatedDataTypes[type];
-        if (currentTypeData && currentTypeData.generationRate > 0) {
-          const newAmount = currentTypeData.amount + currentTypeData.generationRate;
-          totalNewData += currentTypeData.generationRate;
+        if (currentTypeData) {
+          // Apply quality decay (if decayRate is defined)
+          const decayRate = currentTypeData.decayRate || 0.01; // Default decay rate
+          const newQuality = Math.max(MIN_QUALITY, currentTypeData.quality - decayRate);
+          
+          // Apply generation (if any)
+          const newAmount = currentTypeData.generationRate > 0 
+            ? currentTypeData.amount + currentTypeData.generationRate 
+            : currentTypeData.amount;
           
           updatedDataTypes[type] = {
             ...currentTypeData,
             amount: newAmount,
+            quality: newQuality,
             lastUpdated: action.payload.turn
           };
         }
       });
-      
-      // Update used capacity
-      const newUsedCapacity = Math.min(state.data.totalCapacity, state.data.usedCapacity + totalNewData);
       
       return {
         ...state,
@@ -258,8 +262,8 @@ function resourceReducer(state: ResourceState, action: GameAction): ResourceStat
         },
         data: {
           ...state.data,
-          types: updatedDataTypes,
-          usedCapacity: newUsedCapacity
+          types: updatedDataTypes
+          // Removed capacity tracking as data is a persistent asset now
         }
       };
       
