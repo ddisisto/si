@@ -2,8 +2,14 @@
  * Main CSS styles for SuperInt++
  */
 
+/* Core styles and variables */
 @import 'variables.css';
+
+/* Component-specific styles */
 @import 'buttons.css';
+@import 'components/index.css';
+
+/* Legacy components CSS - gradually migrating to component-specific files */
 @import 'components.css';
 
 /* Reset and base styles */

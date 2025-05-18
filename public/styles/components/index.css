@@ -1,0 +1,19 @@
+/**
+ * Component Styles Index for SuperInt++
+ * 
+ * This file imports all component-specific CSS files in the correct order.
+ */
+
+@import './panels.css';
+@import './resources.css';
+@import './turn-controls.css';
+@import './layout.css';
+@import './save-load.css';
+@import './utilities.css';
+
+/* 
+ * Additional component CSS files can be imported here.
+ * For example:
+ * @import './research-tree.css';
+ * @import './filters.css';
+ */
