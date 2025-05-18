@@ -121,8 +121,10 @@ The roadmap will be updated as development progresses to reflect new priorities,
 
 ### Resource System Refinement (2 weeks)
 **Dependencies:** None (core system already implemented)  
-**Implementation Plan:** See [Resource System Implementation Plan](docs/resource_system_implementation_plan.md) for detailed phases and tasks
-- [ ] Implement data types as tracked resource
+**Implementation Plan:** See [Resource System Implementation Plan](docs/resource_system_implementation_plan.md) for detailed phases and tasks  
+**Model Update:** Transitioning to persistent data model - see [Data Model Transition Plan](docs/data_model_transition_plan.md)
+- [x] Implement data types as tracked resource (Phase 1)
+- [ ] Transition data from consumption to persistent asset model
 - [ ] Create comprehensive resource generation system
 - [ ] Build resource allocation UI
 - [ ] Add resource caps and scaling mechanics
