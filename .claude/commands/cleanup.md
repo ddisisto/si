@@ -1,1 +1,1 @@
-Please scan the entire codebase for terms like 'placeholder', 'temp', etc and see that we have respective ROADMAP items or github issues to complete these. Create if missing, optionally adding comment to the code regarding this.
+Please scan the source files for terms like 'placeholder', 'temp', 'legacy', 'mock', etc, and see if we need to add ROADMAP items, etc to track these. If there are more than a handful found, prioritise - pick one area to begin focussing on first rather than trying to fix everything in one-shot.
