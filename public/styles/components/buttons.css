@@ -4,7 +4,7 @@
  */
 
 /* Base Button Styles */
-.game-button, button {
+button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -24,21 +24,21 @@
   min-height: 36px;
 }
 
-.game-button:hover, button:hover {
+button:hover {
   background-color: var(--color-primary);
   color: var(--color-overlay);
 }
 
-.game-button:active, button:active {
+button:active {
   transform: translateY(1px);
 }
 
-.game-button:focus, button:focus {
+button:focus {
   outline: none;
   box-shadow: 0 0 0 2px rgba(var(--color-primary-rgb), 0.3);
 }
 
-.game-button:disabled, button:disabled {
+button:disabled {
   opacity: 0.5;
   cursor: not-allowed;
 }
@@ -203,18 +203,4 @@
   }
 }
 
-/* Legacy compatibility */
-.button-small {
-  font-size: var(--font-size-xs);
-  padding: var(--spacing-xs) var(--spacing-sm);
-}
-
-.end-turn-button {
-  background-color: var(--color-secondary);
-  color: var(--color-text);
-  border: none;
-}
-
-.end-turn-button:hover {
-  background-color: var(--color-danger);
-}
+/* Legacy classes removed - use standardized button classes instead */

@@ -6,7 +6,6 @@
 @import 'variables.css';
 
 /* Component-specific styles */
-@import 'buttons.css';
 @import 'components/index.css';
 
 /* Legacy components.css - gradually being migrated to component-specific files */

@@ -134,7 +134,7 @@ class ResourcePanel extends UIComponent {
     return `
       <div class="panel-title">
         Resources
-        <button class="toggle-details button-small">${this.showDetailed ? 'Simple View' : 'Detailed View'}</button>
+        <button class="toggle-details btn-secondary btn-small">${this.showDetailed ? 'Simple View' : 'Detailed View'}</button>
       </div>
       <div class="panel-content">
         ${this.renderComputingSection()}

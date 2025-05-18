@@ -100,8 +100,8 @@ class MainView extends UIComponent {
           <h3>Getting Started</h3>
           <p>Begin by allocating resources to research in the research tree. End your turn to see the results.</p>
           <div class="action-buttons">
-            <button id="show-research-tree" class="game-button btn-primary btn-medium">Open Research Tree</button>
-            <button id="show-button-showcase" class="game-button btn-secondary btn-medium">UI Component Showcase</button>
+            <button id="show-research-tree" class="btn-primary btn-medium">Open Research Tree</button>
+            <button id="show-button-showcase" class="btn-secondary btn-medium">UI Component Showcase</button>
           </div>
         </div>
         <div class="main-section">

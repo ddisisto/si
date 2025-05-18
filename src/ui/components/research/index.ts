@@ -16,7 +16,7 @@ class ResearchTreeHeader extends UIComponent {
   protected createTemplate(): string {
     return `
       <h2>Research Tree</h2>
-      <button id="back-to-main" class="game-button secondary">Back to Main</button>
+      <button id="back-to-main" class="btn-secondary">Back to Main</button>
     `;
   }
   

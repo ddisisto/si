@@ -4,6 +4,9 @@
  * This file imports all component-specific CSS files in the correct order.
  */
 
+/* Core UI Components */
+@import './buttons.css';
+
 /* Layout and Container Components */
 @import './panels.css';
 @import './layout.css';
