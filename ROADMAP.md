@@ -8,10 +8,11 @@ This roadmap is the authoritative source for development priorities. All develop
 
 1. Focus on completing the current (usually the deepest nested) phase before moving to the next
 2. Complete sections, or shift remaining items down to a more appropriate place if not urgent
-3. Complete tasks in the order they are listed within each phase
+3. Complete tasks in the order they are listed within each phase, reorder with explicit approval
 4. Mark tasks as completed by changing `[ ]` to `[x]` when they are done
 5. Add new subtasks as needed, maintaining the overall structure
 6. Document implementation details and decisions in code and documentation
+7. Whether designing or coding, documenting or testing, try to embrace the philosophy of the project. The project's success rides on this more than you know.
 
 The roadmap will be updated as development progresses to reflect new priorities, insights, and completed work.
 
