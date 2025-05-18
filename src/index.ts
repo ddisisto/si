@@ -87,14 +87,14 @@ function main() {
 
     // Initialize UI Manager
     uiManager.initialize(rootElement);
+    uiManager.setGameEngine(gameEngine);
 
     // Create and register game components
     const resourcePanel = new ResourcePanel();
-    const turnControls = new TurnControls(engineEventBus);
+    const turnControls = new TurnControls();
     const gameInfoPanel = new GameInfoPanel();
     const mainView = new MainView();
-    // Create SaveLoadPanel with the engine's event bus
-    const saveLoadPanel = new SaveLoadPanel({ eventBus: engineEventBus });
+    const saveLoadPanel = new SaveLoadPanel();
     
     // Set game engine on mainView so child components can access it
     mainView.setGameEngine(gameEngine);

@@ -91,14 +91,21 @@ The codebase maintains separation between core systems:
 
 1. **Single EventBus Instance** - Always use the GameEngine's EventBus instance throughout the application. Multiple EventBus instances will break event communication.
 
-2. **Event Flow Patterns**:
+2. **Unified Component Architecture**:
+   - All UI components extend UIComponent base class
+   - Components receive GameEngine reference via `setGameEngine()`
+   - EventBus access is through GameEngine reference only
+   - Use helper methods `emit()` and `subscribe()` for event communication
+
+3. **Event Flow Patterns**:
    - Command events (`action:*`) - UI to Game Core (requests for state changes)
    - State change events (`game:*`) - Game Core to UI (notifications of completed changes)
+   - UI events (`ui:*`) - Inter-component communication
    - System events (`turn:*`, `phase:*`) - Between Game Systems (coordination)
 
-3. **State Change Notifications** - When replacing state directly (e.g., when loading a saved game), ensure all listeners are notified properly through `notifyListeners()`.
+4. **State Change Notifications** - When replacing state directly (e.g., when loading a saved game), ensure all listeners are notified properly through `notifyListeners()`.
 
-4. **Event Documentation** - Always document new event types in `/docs/eventbus_design.md` to maintain the registry of events.
+5. **Event Documentation** - Always document new event types in `/docs/eventbus_design.md` to maintain the registry of events.
 
 ## Data Resource Model
 
