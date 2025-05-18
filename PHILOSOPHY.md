@@ -129,6 +129,12 @@ Create mechanics where:
 - Value tradeoffs = felt through gameplay outcomes
 - Ethical questions emerge naturally from tactical decisions
 
+## Documentation as cognitive framework
+
+Project artifacts (ROADMAP, CLAUDE.md, this file) = not just records but *active participants* in development. Documentation shapes thought patterns, enables meta-awareness, creates feedback loops between human creativity and AI capability.
+
+Key insight: Structure information to maximize collaborative intelligence. The medium becomes the message - AI developing AI game develops AI development practices.
+
 ## Closing principle: coherent multiplicity
 
 Game systems = many, perspectives = multiple, mechanics = diverse

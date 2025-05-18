@@ -159,11 +159,12 @@ We follow a unified approach to development that combines philosophical depth wi
 
 ### Practical Workflow
 1. **Context Assessment** - In new sessions, begin by checking git branch, recent commits, and running type checking to establish current state
-2. **Documentation Review** - Before implementing any feature, examine technical_architecture.md and the relevant system design documents
-3. **Incremental Implementation** - Build features in small, verifiable steps with frequent type checking
-4. **Refactoring Check** - Before adding new features, assess if existing code needs refactoring (especially files >300 lines)
-5. **Validation Checkpoint** - After feature work is complete, ask the user whether to run functional tests, commit changes, or continue development
-6. **Continuous Reflection** - Periodically assess whether implementation aligns with both technical architecture and philosophical principles
+2. **Philosophy Alignment** - **ESSENTIAL**: Before starting any new feature or major refactor, read PHILOSOPHY.md to ensure alignment with core principles. Consider how the work embodies tensions, feedback loops, and meaningful complexity
+3. **Documentation Review** - Before implementing any feature, examine technical_architecture.md and the relevant system design documents
+4. **Incremental Implementation** - Build features in small, verifiable steps with frequent type checking
+5. **Refactoring Check** - Before adding new features, assess if existing code needs refactoring (especially files >300 lines)
+6. **Validation Checkpoint** - After feature work is complete, ask the user whether to run functional tests, commit changes, or continue development
+7. **Continuous Reflection** - Periodically assess whether implementation aligns with both technical architecture and philosophical principles
 
 Before coding any feature, review the technical_architecture.md document and the specific system design document relevant to your task. This ensures consistency with the carefully crafted design and preserves the philosophical approach.
 
