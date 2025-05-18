@@ -94,6 +94,25 @@ interface System {
 }
 ```
 
+#### System Modularization Pattern
+
+As systems grow beyond ~400 lines, they should be refactored into focused subsystems. The ResourceSystem provides a reference implementation:
+
+- **Main System Class** (ResourceSystem.ts):
+  - Coordinates subsystems
+  - Handles EventBus subscriptions 
+  - Delegates operations to specific managers
+  - Maintains public interface
+
+- **Subsystem Modules** (resources/ directory):
+  - **ComputingManager** - Handles computing resource allocations
+  - **DataManager** - Manages data types and access
+  - **ResourceCalculations** - Pure calculation functions
+  - **ResourceEffects** - Effect aggregation and application
+  - **ResourceOperations** - High-level operations (spending, affordability)
+
+Each subsystem receives StateManager and EventBus references and focuses on a single responsibility. This pattern improves maintainability, testing, and code organization.
+
 ### UI Architecture (DOM-based)
 
 The UI layer uses DOM elements exclusively, providing a responsive and accessible interface:

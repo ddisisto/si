@@ -175,4 +175,4 @@ The `.claude/commands/` directory contains workflow commands:
 
 ## Recent Learnings and Notes
 
-This final section represents recent learnings. Content should be moved to other sections or files as appropriate.
+- At some point, we should use our lovely browser tools to scan /r/MachineLearning, /r/ArtificialIntelligence, /r/singularity, /r/accelerate, etc (.../top/month in each case), to get ideas. The comments there are often very enlightening, and show varied perspectives we may consider
