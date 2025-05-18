@@ -1,1 +1,1 @@
-First run local type-check to make sure everything compiles. Then use the local browser tools to load the game ui page, check the console logs, try to address any errors found within, or report "All ok!" if none. Focus (if applicable): $ARGUMENTS
+First run local type-check to make sure everything compiles. Then use the local browser tools to load the game ui page, check the console logs first, try to address any errors found within, or report "UI is alive!" if none. Focus (if none given, ask user if there's any UI interaction specifically to be tested): $ARGUMENTS
