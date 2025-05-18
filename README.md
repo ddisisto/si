@@ -44,14 +44,22 @@ SuperInt++ consists of several interconnected systems:
 - **PHILOSOPHY.md** - Core design philosophy and principles
 - **ROADMAP.md** - Development plan and progress tracking
 - **CLAUDE.md** - Implementation guidelines and project context
-- **docs/** - Detailed system design documents:
-  - technical_architecture.md - Technical architecture overview
-  - state_management_design.md - State management approach
-  - resource_system_design.md - Resource system mechanics
-  - research_tree_design.md - Research progression system
-  - game_events_design.md - Game events system design
-  - deployment_system_design.md - Deployment system mechanics
-  - alignment_system_design.md - Alignment system design
+- **docs/** - Technical and design documentation:
+  - **Core Architecture:**
+    - technical_architecture.md - Technical architecture overview
+    - state_management_design.md - State management approach
+    - eventbus_design.md - Event bus system documentation
+    - ui_component_system.md - UI component architecture
+  - **design/** - System design documents:
+    - resource_system_design.md - Resource system mechanics
+    - research_tree_design.md - Research progression system
+    - game_events_design.md - Game events system design
+    - deployment_system_design.md - Deployment system mechanics
+    - alignment_system_design.md - Alignment system design
+    - deployment_research_integration.md - Integration between deployment and research
+    - resource_system_implementation_plan.md - Resource system implementation roadmap
+  - **wip/** - Work in progress documentation:
+    - research_tree_implementation_plan.md - Research tree implementation tracking
 
 ## Getting Started (Future)
 

@@ -21,26 +21,26 @@ The roadmap will be updated as development progresses to reflect new priorities,
 ### Game Design Documentation
 - [x] Initial concept development (CONCEPT.md)
 - [x] Basic game mechanics planning (PLAN.md)
-- [x] Complete research tree design (docs/research_tree_design.md)
+- [x] Complete research tree design (docs/design/research_tree_design.md)
   - [x] Design all research categories
   - [x] Create node structure
   - [x] Define dependency framework
   - [ ] Balance research costs and effects
-- [x] Resource system design (docs/resource_system_design.md)
+- [x] Resource system design (docs/design/resource_system_design.md)
   - [x] Define resource types and mechanics
   - [ ] Define resource generation rates
   - [ ] Balance resource costs for research/deployment
   - [ ] Define resource caps and scaling
-- [x] Game events design (docs/game_events_design.md)
+- [x] Game events design (docs/design/game_events_design.md)
   - [x] Create event categories and types
   - [x] Design event triggers and conditions
   - [ ] Write event text and choices
   - [ ] Balance event probability and impact
-- [x] Deployment system design (docs/deployment_system_design.md)
+- [x] Deployment system design (docs/design/deployment_system_design.md)
   - [x] Define deployment types
   - [x] Design deployment mechanics
   - [ ] Balance deployment costs and effects
-- [x] Alignment system design (docs/alignment_system_design.md)
+- [x] Alignment system design (docs/design/alignment_system_design.md)
   - [x] Define alignment dimensions
   - [x] Design alignment mechanics
   - [ ] Balance alignment costs and effects
@@ -123,7 +123,7 @@ The roadmap will be updated as development progresses to reflect new priorities,
 
 ### 🚨 IMMEDIATE PRIORITY: Data Model Transition (1 week)
 **Rationale:** Must complete before other systems are built on consumption model  
-**Implementation Plan:** See [Data Model Transition Plan](docs/data_model_transition_plan.md) and [Implementation Checklist](docs/data_model_implementation_checklist.md)
+**Implementation Plan:** Data model transition is now complete
 - [x] Remove data consumption mechanics from codebase
 - [x] Update type definitions for persistent asset model
 - [x] Implement quality decay system
@@ -145,7 +145,7 @@ The roadmap will be updated as development progresses to reflect new priorities,
 
 ### Resource System Refinement (1 week)
 **Dependencies:** Data Model Transition (MUST be complete), Code Refactoring (for maintainability)  
-**Implementation Plan:** See [Resource System Implementation Plan](docs/resource_system_implementation_plan.md) for detailed phases and tasks  
+**Implementation Plan:** See [Resource System Implementation Plan](docs/design/resource_system_implementation_plan.md) for detailed phases and tasks  
 - [ ] Create comprehensive resource generation system
 - [ ] Build resource allocation UI
 - [ ] Add influence and funding mechanics

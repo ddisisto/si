@@ -23,14 +23,21 @@ The game consists of several interconnected systems:
 - **PLAN.md** - Game mechanics and system overview
 - **PHILOSOPHY.md** - Core design principles emphasizing meaningful tensions and continuous systems
 - **ROADMAP.md** - Development plan and progress tracking (essential for prioritization)
-- **docs/** - Detailed system design documents:
+- **docs/** - Technical and design documentation:
   - technical_architecture.md - Architecture overview (review before implementation)
   - state_management_design.md - Data flow and state structure
-  - research_tree_design.md - Research progression system
-  - resource_system_design.md - Resource mechanics
-  - game_events_design.md - Event triggers and resolution
-  - deployment_system_design.md - AI system deployment
-  - alignment_system_design.md - Value tracking and consequences
+  - eventbus_design.md - EventBus system documentation
+  - ui_component_system.md - UI component patterns and architecture
+  - **design/** - System design documents:
+    - research_tree_design.md - Research progression system
+    - resource_system_design.md - Resource mechanics
+    - game_events_design.md - Event triggers and resolution
+    - deployment_system_design.md - AI system deployment
+    - alignment_system_design.md - Value tracking and consequences
+    - deployment_research_integration.md - Integration design between systems
+    - resource_system_implementation_plan.md - Resource system development roadmap
+  - **wip/** - Work in progress tracking:
+    - research_tree_implementation_plan.md - Research tree implementation status
 
 ## Current Status
 
