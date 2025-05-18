@@ -22,6 +22,7 @@ SuperInt++ uses a lightweight UI approach with standard HTML elements styled wit
 2. Maintains semantic HTML for accessibility
 3. Reduces JavaScript overhead
 4. Provides flexibility for component-specific customization
+5. Uses plain HTML buttons with CSS classes - no custom Button component
 
 ### Base Component Structure
 
@@ -54,8 +55,18 @@ CSS is organized by component type, with each component having its own CSS file:
 
 - `variables.css` - Design tokens (colors, spacing, typography)
 - `main.css` - Global styles and layout
-- `buttons.css` - Button component styles
-- `components.css` - Generic component styles
+- `components/` - Component-specific CSS files:
+  - `buttons.css` - Button component styles
+  - `panels.css` - Panel component styles
+  - `resources.css` - Resource panel styles
+  - `turn-controls.css` - Turn control styles
+  - `save-load.css` - Save/Load panel styles
+  - `research-tree.css` - Research tree styles
+  - `filters.css` - Filter component styles
+  - `layout.css` - Layout component styles
+  - `utilities.css` - Utility classes
+  - `index.css` - Component style imports
+- `components.css` - Legacy component styles (being phased out)
 
 ## Button System
 
@@ -150,7 +161,7 @@ Button CSS is structured to provide consistent styling across all button types:
 
 ```css
 /* Base button styles */
-.game-button, button {
+button {
   /* Common styling */
   display: inline-flex;
   align-items: center;

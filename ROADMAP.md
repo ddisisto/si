@@ -201,8 +201,8 @@ The roadmap will be updated as development progresses to reflect new priorities,
   - [x] Modularize CSS into component-specific files
   - [x] Standardize control styling across the application
   - [x] Create UI component documentation
-  - [ ] Review element classes for alignment with styling
-  - [ ] Audit CSS for redundancy and unused styles
+  - [x] Review element classes for alignment with styling
+  - [x] Audit CSS for redundancy and unused styles
 
 ### Audio Implementation (2 weeks)
 - [ ] Add sound effects
