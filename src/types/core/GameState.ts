@@ -95,22 +95,50 @@ export interface ComputingGeneration {
 }
 
 /**
+ * Enum for different data types in the game
+ */
+export enum DataType {
+  TEXT = 'text',           // Natural language data (books, articles, web content)
+  IMAGE = 'image',         // Visual data (photos, diagrams, medical images)
+  VIDEO = 'video',         // Video content (surveillance, educational, entertainment)
+  SYNTHETIC = 'synthetic', // AI-generated data for training
+  BEHAVIORAL = 'behavioral', // Human behavior patterns and interactions
+  SCIENTIFIC = 'scientific' // Research data (experiments, simulations, papers)
+}
+
+/**
+ * Information about a specific data type
+ */
+export interface DataTypeInfo {
+  amount: number;         // Quantity of this data type
+  quality: number;        // Quality rating (0-1)
+  sources: string[];      // Where this data comes from
+  generationRate: number; // How much is generated per turn
+  lastUpdated: number;    // Turn when last updated
+}
+
+/**
  * Data resource tracking
  */
 export interface DataResource {
+  types: Record<DataType, DataTypeInfo>;    // Data organized by type
   tiers: Record<string, boolean>;           // Data tiers available (public, specialized, proprietary)
   specializedSets: Record<string, boolean>; // Special data sets available
   quality: number;                          // Overall data quality multiplier
+  totalCapacity: number;                    // Total storage capacity
+  usedCapacity: number;                     // Currently used storage
   acquisitionHistory?: DataAcquisition[];   // History of data acquisitions
 }
 
 export interface DataAcquisition {
-  turn: number;       // Turn when data was acquired
-  type: string;       // Type of data (tier or specialized set)
-  name: string;       // Name of the data set
-  source: string;     // Source of the data
-  quality: number;    // Quality of the data
-  timestamp: number;  // When the acquisition occurred
+  turn: number;          // Turn when data was acquired
+  dataType?: DataType;   // Type of data if it's a specific data type
+  category: string;      // Category: 'type', 'tier', or 'specializedSet'
+  name: string;          // Name of the data set or type
+  source: string;        // Source of the data
+  amount?: number;       // Amount acquired (for data types)
+  quality: number;       // Quality of the data
+  timestamp: number;     // When the acquisition occurred
 }
 
 /**

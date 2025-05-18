@@ -3,7 +3,7 @@
  */
 
 import UIComponent from './UIComponent';
-import { InfluenceResource } from '../../types/core/GameState';
+import { InfluenceResource, DataType } from '../../types/core/GameState';
 
 /**
  * Panel for displaying and managing game resources
@@ -94,7 +94,11 @@ class ResourcePanel extends UIComponent {
     this.metrics.data = {
       tierCount: Object.values(data.tiers).filter(Boolean).length,
       specializedSetCount: Object.values(data.specializedSets).filter(Boolean).length,
-      quality: data.quality
+      quality: data.quality,
+      totalCapacity: data.totalCapacity,
+      usedCapacity: data.usedCapacity,
+      capacityUsage: Math.round((data.usedCapacity / data.totalCapacity) * 100),
+      types: data.types
     };
   }
   
@@ -318,9 +322,37 @@ class ResourcePanel extends UIComponent {
   private renderDataSection(): string {
     const m = this.metrics.data;
     
+    // Create progress bar for capacity usage
+    const capacityBar = this.createProgressBar(m.capacityUsage, 'data-capacity');
+    
+    // Get data type display names
+    const dataTypeNames: Record<DataType, string> = {
+      [DataType.TEXT]: 'Text',
+      [DataType.IMAGE]: 'Image',
+      [DataType.VIDEO]: 'Video',
+      [DataType.SYNTHETIC]: 'Synthetic',
+      [DataType.BEHAVIORAL]: 'Behavioral',
+      [DataType.SCIENTIFIC]: 'Scientific'
+    };
+    
     return `
       <div class="resource-section">
         <h3>Data</h3>
+        <div class="resource-item">
+          <div class="resource-label">Storage</div>
+          <div class="resource-value-bar">
+            ${capacityBar}
+            <span class="bar-value">${m.usedCapacity}/${m.totalCapacity} (${m.capacityUsage}%)</span>
+          </div>
+        </div>
+        <div class="resource-item">
+          <div class="resource-label">Overall Quality</div>
+          <div class="resource-value">${m.quality.toFixed(1)}</div>
+        </div>
+        
+        <h4>Data Types</h4>
+        ${this.renderDataTypes(m.types, dataTypeNames)}
+        
         <div class="resource-item">
           <div class="resource-label">Data Tiers</div>
           <div class="resource-value">${m.tierCount}</div>
@@ -329,12 +361,34 @@ class ResourcePanel extends UIComponent {
           <div class="resource-label">Specialized Sets</div>
           <div class="resource-value">${m.specializedSetCount}</div>
         </div>
-        <div class="resource-item">
-          <div class="resource-label">Quality</div>
-          <div class="resource-value">${m.quality.toFixed(1)}</div>
-        </div>
       </div>
     `;
+  }
+  
+  /**
+   * Render individual data types
+   */
+  private renderDataTypes(types: Record<DataType, any>, names: Record<DataType, string>): string {
+    return Object.entries(types)
+      .filter(([_, typeInfo]) => typeInfo.amount > 0 || typeInfo.generationRate > 0)
+      .map(([typeKey, typeInfo]) => {
+        const dataType = typeKey as DataType;
+        const name = names[dataType];
+        
+        return `
+          <div class="resource-item data-type">
+            <div class="resource-label">${name}</div>
+            <div class="resource-value">
+              ${this.formatValue(typeInfo.amount)}
+              <span class="secondary">
+                (Q: ${typeInfo.quality.toFixed(1)})
+                ${typeInfo.generationRate > 0 ? `+${typeInfo.generationRate}/turn` : ''}
+              </span>
+            </div>
+          </div>
+        `;
+      })
+      .join('');
   }
   
   /**

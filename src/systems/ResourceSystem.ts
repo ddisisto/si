@@ -12,22 +12,11 @@ import {
   ResourceState, 
   ComputingResource, 
   InfluenceResource,
-  InfluenceFields
+  InfluenceFields,
+  DataType,
+  DataResource
 } from '../types/core/GameState';
-
-/**
- * Interface for resource costs
- */
-interface ResourceCost {
-  computing?: number;
-  funding?: number;
-  influence?: Partial<Record<keyof InfluenceResource, number>>;
-  data?: {
-    tiers?: Record<string, boolean>;
-    specializedSets?: Record<string, boolean>;
-  };
-  recurring?: boolean;
-}
+import { ResourceCost } from '../types/systems/ResourceCost';
 
 /**
  * Interface for resource effects
@@ -320,8 +309,30 @@ class ResourceSystem extends BaseSystem {
       }
     }
     
-    // Check data costs - we just verify that the data is available
+    // Check data costs
     if (costs.data) {
+      // Check data type requirements
+      if (costs.data.types) {
+        for (const [typeKey, requiredAmount] of Object.entries(costs.data.types)) {
+          const dataType = typeKey as DataType;
+          const available = resources.data.types[dataType]?.amount || 0;
+          if (available < requiredAmount) {
+            return false;
+          }
+        }
+      }
+      
+      // Check minimum quality requirement
+      if (costs.data.minimumQuality) {
+        for (const [typeKey] of Object.entries(costs.data.types || {})) {
+          const dataType = typeKey as DataType;
+          const quality = resources.data.types[dataType]?.quality || 0;
+          if (quality < costs.data.minimumQuality) {
+            return false;
+          }
+        }
+      }
+      
       // Check tier access
       if (costs.data.tiers) {
         for (const [key, value] of Object.entries(costs.data.tiers)) {
@@ -545,6 +556,179 @@ class ResourceSystem extends BaseSystem {
   }
   
   /**
+   * Add data of a specific type
+   */
+  public addDataType(type: DataType, amount: number, source: string, quality?: number): boolean {
+    const state = this.stateManager.getState();
+    const turn = state.meta.turn;
+    const currentData = state.resources.data;
+    
+    // Check if there's capacity
+    const newUsedCapacity = currentData.usedCapacity + amount;
+    if (newUsedCapacity > currentData.totalCapacity) {
+      this.eventBus.emit('data:add:failed', {
+        type,
+        amount,
+        source,
+        reason: 'Insufficient storage capacity'
+      });
+      return false;
+    }
+    
+    // Calculate new quality (weighted average if quality provided)
+    const currentTypeData = currentData.types[type];
+    let newQuality = currentTypeData.quality;
+    
+    if (quality !== undefined && currentTypeData.amount > 0) {
+      // Weighted average of existing and new quality
+      newQuality = (currentTypeData.amount * currentTypeData.quality + amount * quality) / 
+                   (currentTypeData.amount + amount);
+    } else if (quality !== undefined) {
+      newQuality = quality;
+    }
+    
+    // Add the source if it's not already there
+    const updatedSources = currentTypeData.sources.includes(source) 
+      ? currentTypeData.sources 
+      : [...currentTypeData.sources, source];
+    
+    // Dispatch action to update data type
+    this.stateManager.dispatch({
+      type: 'UPDATE_DATA_TYPE',
+      payload: {
+        dataType: type,
+        amount: currentTypeData.amount + amount,
+        quality: newQuality,
+        sources: updatedSources,
+        lastUpdated: turn
+      }
+    });
+    
+    // Update used capacity
+    this.stateManager.dispatch({
+      type: 'UPDATE_RESOURCE',
+      payload: {
+        resourceType: 'data',
+        field: 'usedCapacity',
+        amount: newUsedCapacity
+      }
+    });
+    
+    // Add to acquisition history
+    const acquisition = {
+      turn,
+      dataType: type,
+      category: 'type',
+      name: type,
+      source,
+      amount,
+      quality: quality || newQuality,
+      timestamp: Date.now()
+    };
+    
+    const currentHistory = currentData.acquisitionHistory || [];
+    this.stateManager.dispatch({
+      type: 'UPDATE_RESOURCE',
+      payload: {
+        resourceType: 'data',
+        field: 'acquisitionHistory',
+        amount: [...currentHistory.slice(-9), acquisition]
+      }
+    });
+    
+    // Emit event for UI updates
+    this.eventBus.emit('data:added', {
+      type,
+      amount,
+      source,
+      quality: newQuality,
+      turn
+    });
+    
+    return true;
+  }
+  
+  /**
+   * Set data generation rate for a specific type
+   */
+  public setDataGenerationRate(type: DataType, rate: number, source: string): void {
+    const state = this.stateManager.getState();
+    const turn = state.meta.turn;
+    const currentTypeData = state.resources.data.types[type];
+    
+    // Update the generation rate
+    this.stateManager.dispatch({
+      type: 'UPDATE_DATA_TYPE',
+      payload: {
+        dataType: type,
+        generationRate: rate,
+        sources: currentTypeData.sources.includes(source) 
+          ? currentTypeData.sources 
+          : [...currentTypeData.sources, source],
+        lastUpdated: turn
+      }
+    });
+    
+    // Emit event for UI updates
+    this.eventBus.emit('data:generation:updated', {
+      type,
+      rate,
+      source,
+      turn
+    });
+  }
+  
+  /**
+   * Consume data of a specific type (for research, training, etc.)
+   */
+  public consumeDataType(type: DataType, amount: number, reason: string): boolean {
+    const state = this.stateManager.getState();
+    const currentData = state.resources.data;
+    const currentTypeData = currentData.types[type];
+    
+    // Check if enough data is available
+    if (currentTypeData.amount < amount) {
+      this.eventBus.emit('data:consume:failed', {
+        type,
+        amount,
+        available: currentTypeData.amount,
+        reason: 'Insufficient data'
+      });
+      return false;
+    }
+    
+    // Update data amount
+    this.stateManager.dispatch({
+      type: 'UPDATE_DATA_TYPE',
+      payload: {
+        dataType: type,
+        amount: currentTypeData.amount - amount,
+        lastUpdated: state.meta.turn
+      }
+    });
+    
+    // Update used capacity
+    this.stateManager.dispatch({
+      type: 'UPDATE_RESOURCE',
+      payload: {
+        resourceType: 'data',
+        field: 'usedCapacity',
+        amount: currentData.usedCapacity - amount
+      }
+    });
+    
+    // Emit event for UI updates
+    this.eventBus.emit('data:consumed', {
+      type,
+      amount,
+      reason,
+      turn: state.meta.turn
+    });
+    
+    return true;
+  }
+  
+  /**
    * Calculate resource metrics for UI display and gameplay effects
    */
   public calculateResourceMetrics(): Record<string, any> {
@@ -587,11 +771,36 @@ class ResourceSystem extends BaseSystem {
         tierCount: Object.values(resources.data.tiers).filter(Boolean).length,
         specializedSetCount: Object.values(resources.data.specializedSets).filter(Boolean).length,
         quality: resources.data.quality,
-        effectiveQuality: resources.data.quality + (this.resourceEffects.dataQualityBonus || 0)
+        effectiveQuality: resources.data.quality + (this.resourceEffects.dataQualityBonus || 0),
+        totalCapacity: resources.data.totalCapacity,
+        usedCapacity: resources.data.usedCapacity,
+        capacityUsage: Math.round((resources.data.usedCapacity / resources.data.totalCapacity) * 100),
+        types: this.calculateDataTypeMetrics(resources.data)
       }
     };
     
     return metrics;
+  }
+  
+  /**
+   * Calculate metrics for each data type
+   */
+  private calculateDataTypeMetrics(dataResource: DataResource): Record<DataType, any> {
+    const metrics: Partial<Record<DataType, any>> = {};
+    
+    Object.entries(dataResource.types).forEach(([typeKey, typeInfo]) => {
+      const dataType = typeKey as DataType;
+      metrics[dataType] = {
+        amount: typeInfo.amount,
+        quality: typeInfo.quality,
+        generationRate: typeInfo.generationRate,
+        sources: typeInfo.sources,
+        storageUsage: typeInfo.amount, // Can be expanded to include size differences
+        lastUpdated: typeInfo.lastUpdated
+      };
+    });
+    
+    return metrics as Record<DataType, any>;
   }
 }
 

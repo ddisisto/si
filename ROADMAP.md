@@ -120,15 +120,13 @@ The roadmap will be updated as development progresses to reflect new priorities,
 ## Phase 2: Core Gameplay Systems
 
 ### Resource System Refinement (2 weeks)
-**Dependencies:** None (core system already implemented)
-- [ ] Implement resource generation
-- [ ] Create resource allocation UI
-- [ ] Add resource caps and limitations
-- [ ] Implement resource effects from research
-- [ ] Add data types as a tracked resource
-  - [ ] Define data type categories (text, image, synthetic, etc.)
-  - [ ] Create data quality and quantity tracking
-  - [ ] Implement data storage and management
+**Dependencies:** None (core system already implemented)  
+**Implementation Plan:** See [Resource System Implementation Plan](docs/resource_system_implementation_plan.md) for detailed phases and tasks
+- [ ] Implement data types as tracked resource
+- [ ] Create comprehensive resource generation system
+- [ ] Build resource allocation UI
+- [ ] Add resource caps and scaling mechanics
+- [ ] Integrate with event and deployment systems
 
 ### Deployment System - Foundation (3 weeks)
 **Dependencies:** Resource System (needs data type tracking)

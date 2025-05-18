@@ -17,7 +17,8 @@ import {
   CompetitorState, 
   SettingsState,
   DeploymentHistoryEntry,
-  ResolvedEvent
+  ResolvedEvent,
+  DataType
 } from '../types/core/GameState';
 
 /**
@@ -190,6 +191,27 @@ function resourceReducer(state: ResourceState, action: GameAction): ResourceStat
         openSource: Math.min(100, state.influence.openSource + (action.payload.influenceGrowth?.openSource || 0))
       };
       
+      // Generate data for each data type
+      const updatedDataTypes = { ...state.data.types };
+      let totalNewData = 0;
+      
+      Object.values(DataType).forEach(type => {
+        const currentTypeData = updatedDataTypes[type];
+        if (currentTypeData && currentTypeData.generationRate > 0) {
+          const newAmount = currentTypeData.amount + currentTypeData.generationRate;
+          totalNewData += currentTypeData.generationRate;
+          
+          updatedDataTypes[type] = {
+            ...currentTypeData,
+            amount: newAmount,
+            lastUpdated: action.payload.turn
+          };
+        }
+      });
+      
+      // Update used capacity
+      const newUsedCapacity = Math.min(state.data.totalCapacity, state.data.usedCapacity + totalNewData);
+      
       return {
         ...state,
         computing: {
@@ -233,6 +255,11 @@ function resourceReducer(state: ResourceState, action: GameAction): ResourceStat
               timestamp: Date.now()
             }
           ]
+        },
+        data: {
+          ...state.data,
+          types: updatedDataTypes,
+          usedCapacity: newUsedCapacity
         }
       };
       
@@ -289,6 +316,24 @@ function resourceReducer(state: ResourceState, action: GameAction): ResourceStat
       }
       
       return state;
+      
+    case 'UPDATE_DATA_TYPE':
+      // Update a specific data type's information
+      const { dataType, ...updates } = action.payload;
+      
+      return {
+        ...state,
+        data: {
+          ...state.data,
+          types: {
+            ...state.data.types,
+            [dataType as DataType]: {
+              ...state.data.types[dataType as DataType],
+              ...updates
+            }
+          }
+        }
+      };
     
     case 'SPEND_RESOURCES':
       // Handle spending multiple resource types at once
