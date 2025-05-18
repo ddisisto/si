@@ -9,7 +9,7 @@
 @import 'buttons.css';
 @import 'components/index.css';
 
-/* Legacy components CSS - gradually migrating to component-specific files */
+/* Legacy components.css - gradually being migrated to component-specific files */
 @import 'components.css';
 
 /* Reset and base styles */
@@ -173,36 +173,3 @@ button, input, select, textarea {
     max-height: 200px;
   }
 }
-
-/* Utility classes */
-.hidden {
-  display: none !important;
-}
-
-.flex {
-  display: flex;
-}
-
-.flex-column {
-  flex-direction: column;
-}
-
-.items-center {
-  align-items: center;
-}
-
-.justify-between {
-  justify-content: space-between;
-}
-
-.text-center {
-  text-align: center;
-}
-
-.mt-sm { margin-top: var(--spacing-sm); }
-.mt-md { margin-top: var(--spacing-md); }
-.mt-lg { margin-top: var(--spacing-lg); }
-
-.mb-sm { margin-bottom: var(--spacing-sm); }
-.mb-md { margin-bottom: var(--spacing-md); }
-.mb-lg { margin-bottom: var(--spacing-lg); }

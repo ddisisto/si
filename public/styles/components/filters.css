@@ -1,0 +1,219 @@
+/**
+ * Filter System Styles for SuperInt++
+ * 
+ * This file contains styles for filter-related components:
+ * - Filter panel
+ * - Dropdowns
+ * - Status indicators
+ */
+
+/* Filter Toggle Button */
+.filter-toggle {
+  font-size: var(--font-size-sm);
+  padding: var(--spacing-xs);
+  margin-left: var(--spacing-xs);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+}
+
+.filter-icon {
+  font-size: 16px;
+}
+
+/* Filter Panel */
+.filter-panel {
+  background-color: var(--color-surface);
+  border-radius: var(--border-radius-md);
+  transition: all var(--transition-medium);
+  /* Make it float over the tree view content */
+  position: absolute;
+  top: 60px; /* Position below the controls */
+  left: var(--spacing-md);
+  right: var(--spacing-md);
+  z-index: 20;
+  box-shadow: var(--shadow-md);
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+}
+
+.filter-panel.visible {
+  padding: var(--spacing-md);
+  max-height: 300px;
+  opacity: 1;
+  overflow: visible;
+}
+
+.filter-panel.hidden {
+  max-height: 0;
+  padding: 0;
+  opacity: 0;
+  overflow: hidden;
+}
+
+.filter-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  margin-bottom: var(--spacing-sm);
+}
+
+.filter-header h3 {
+  margin: 0;
+  font-size: var(--font-size-md);
+  color: var(--color-primary);
+}
+
+.close-filter {
+  font-size: var(--font-size-sm);
+  padding: var(--spacing-xs);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background-color: var(--color-overlay);
+  color: var(--color-text-muted);
+  border: none;
+  cursor: pointer;
+}
+
+.close-filter:hover {
+  background-color: var(--color-danger);
+  color: var(--color-text);
+}
+
+.filter-controls {
+  display: flex;
+  gap: var(--spacing-md);
+  flex-wrap: wrap;
+}
+
+/* Filter Dropdowns */
+.filter-dropdown {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+}
+
+.filter-dropdown label {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  font-weight: bold;
+}
+
+.dropdown-container {
+  position: relative;
+  min-width: 140px;
+  /* Ensure dropdown has proper stacking context */
+  z-index: 1500;
+}
+
+.dropdown-selected {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: var(--color-overlay);
+  padding: 6px 10px;
+  border-radius: var(--border-radius-sm);
+  cursor: pointer;
+  user-select: none;
+  font-size: var(--font-size-xs);
+}
+
+.dropdown-arrow {
+  margin-left: 6px;
+  font-size: 8px;
+}
+
+.dropdown-options {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  background-color: var(--color-surface);
+  border-radius: var(--border-radius-sm);
+  box-shadow: var(--shadow-md);
+  margin-top: 4px;
+  z-index: 2000; /* Higher z-index to ensure dropdowns appear on top of all other elements */
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition: all var(--transition-fast);
+  /* Fix for dropdown positioning */
+  transform: translateZ(0);
+}
+
+.dropdown-options.visible {
+  max-height: 300px;
+  opacity: 1;
+  overflow-y: auto;
+}
+
+.dropdown-option {
+  display: flex;
+  align-items: center;
+  padding: 6px 10px;
+  font-size: var(--font-size-xs);
+  cursor: pointer;
+  user-select: none;
+  position: relative;
+}
+
+.dropdown-option:hover {
+  background-color: var(--color-overlay);
+}
+
+.dropdown-option.active {
+  font-weight: bold;
+}
+
+.dropdown-option .check-mark {
+  position: absolute;
+  right: 10px;
+  color: var(--color-success);
+}
+
+.dropdown-divider {
+  height: 1px;
+  background-color: var(--color-overlay);
+  margin: 4px 0;
+}
+
+.select-all, .select-none {
+  font-weight: bold;
+  color: var(--color-text-muted);
+}
+
+/* Filter Color Indicators */
+.filter-color {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  margin-right: 6px;
+  flex-shrink: 0;
+}
+
+/* Status filter colors */
+.status-color.available {
+  background-color: var(--color-accent);
+}
+
+.status-color.in_progress {
+  background-color: var(--color-primary);
+}
+
+.status-color.completed {
+  background-color: var(--color-success);
+}
+
+.status-color.locked {
+  background-color: var(--color-overlay);
+}
