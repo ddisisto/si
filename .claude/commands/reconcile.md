@@ -1,4 +1,7 @@
-Initiate document reconciliation process using essence-hierarchy approach. The core vision must flow through all documents while allowing for practical evolution.
+Initiate intelligent project reconciliation - the universal entry point for understanding what needs attention across the entire project.
+
+## Core Philosophy
+Reconciliation is state-aware: it reads the project's current position and suggests the most relevant next actions. This isn't just document alignment but comprehensive project state assessment.
 
 ## Document Hierarchy (Essence → Implementation)
 1. **CONCEPT.md** - Immutable core vision (AI development game, competitive landscape, inflection points)
@@ -6,46 +9,59 @@ Initiate document reconciliation process using essence-hierarchy approach. The c
 3. **PLAN.md** - Game mechanics translation of concept+philosophy
 4. **ARCHITECTURE.md** - Technical implementation of the plan
 5. **ROADMAP.md** - Current development priorities
-6. **CLAUDE.md** - Working instructions and patterns
-7. **CREATIVE_IDEAS.md** - Future possibilities (doesn't constrain others)
+6. **README.md** - Bridge document: public face + developer onboarding
+7. **CLAUDE.md** - Working instructions and patterns
+8. **CREATIVE_IDEAS.md** - Future possibilities (doesn't constrain others)
 
-## Reconciliation Process
+## Change-Driven Reconciliation Process
 
-### Step 1: Identify Documents to Compare
+### Step 1: Identify What Changed
 ```bash
-STATIC=$(ls -t *.md | grep -E "CONCEPT|PHILOSOPHY" | tail -1)
-DYNAMIC=$(ls -t *.md | grep -E "ROADMAP|CLAUDE" | head -1)
+# Start from recent changes, not arbitrary oldest/newest
+git log --oneline -10 -- "*.md" "src/**" "docs/**"
 ```
 
-### Step 2: Extract Essence Violations
-Check if dynamic documents still embody the essence of static ones:
-- Does ROADMAP still aim toward the core vision from CONCEPT?
-- Do current features embrace PHILOSOPHY's continuous systems?
-- Does ARCHITECTURE support PLAN's mechanics?
+### Step 2: Trace Impact Upward
+Starting from actual changes, work backwards through hierarchy:
+- Did implementation reveal issues with ARCHITECTURE?
+- Does ARCHITECTURE still align with PLAN?
+- Does PLAN still embody PHILOSOPHY?
+- Only elevate to CONCEPT if fundamental assumptions challenged
 
-### Step 3: Cascade Updates
-When misalignment found, updates flow DOWN the hierarchy:
-- If ROADMAP drifts from CONCEPT → adjust ROADMAP priorities
-- If implementation violates PHILOSOPHY → update ARCHITECTURE patterns
-- If PLAN proves impractical → propose PLAN adjustments (rare)
-- If CONCEPT/PHILOSOPHY need change → require explicit approval (very rare)
+### Step 3: Natural Cascading
+Follow document links to detailed designs/implementations:
+- ARCHITECTURE → `/docs/design/*.md`
+- ROADMAP → current implementation tasks
+- Changes cascade through natural references, not forced traversal
 
-### Step 4: Document Reconciliation
-```yaml
-last_reconciled: $(date '+%Y-%m-%d %H:%M:%S')
-essence_check: CONCEPT→PHILOSOPHY→PLAN→ROADMAP
-violations_found: [list specific items]
-actions_taken: [updates made]
-```
+### Step 4: Context-Aware Actions
+Based on findings, initiate appropriate actions:
+- Update downstream docs if upstream vision clarified
+- Implement features if alignment confirmed
+- Refactor code if architecture violated
+- Create issues for significant pivots
 
-### Step 5: Trigger Implementation
-Based on reconciliation findings:
-- Create new ROADMAP items
-- Update CLAUDE.md instructions
-- Refactor code to match ARCHITECTURE
-- Generate issues for major pivots
+### Step 5: README Synthesis (Final Step)
+After internal reconciliation, ask: "Does our public face reflect reality?"
+- Update status if significantly shifted
+- Revise architecture description if evolved
+- Ensure setup process still accurate
+- Bridge internal state to external understanding
 
-## Example Flow
-"CONCEPT says AI takeover is major inflection, but ROADMAP has no tasks for this → Add inflection mechanics to ROADMAP Phase 3"
+## Reconciliation Meanings by Context
+
+The command adapts to current project state:
+- **Post-feature**: Check if implementation aligns with design
+- **Pre-planning**: Ensure new features fit core vision
+- **Post-refactor**: Update docs to reflect new patterns
+- **Milestone**: Deep review including foundational docs
+
+## Example Flows
+
+**Implementation Drift**:
+"Recent commits added caching to ResourceSystem → Check if this aligns with ARCHITECTURE patterns → Update architecture if new pattern emerged → Ensure PLAN's resource mechanics still accurate"
+
+**Feature Planning**:
+"ROADMAP shows AI takeover mechanics next → Verify this matches CONCEPT's inflection point → Check PHILOSOPHY for relevant tensions → Review PLAN for mechanics guidance"
 
 Focus area (if provided): "$ARGUMENTS"
