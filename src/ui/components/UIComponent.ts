@@ -18,7 +18,6 @@ interface GameEngineInterface {
 abstract class UIComponent {
   public element: HTMLElement;
   protected gameState: Readonly<GameState> | null = null;
-  protected eventBus: EventBus | null = null;
   protected gameEngine: GameEngineInterface | null = null;
   
   /**
@@ -124,21 +123,30 @@ abstract class UIComponent {
   }
   
   /**
-   * Set event bus for component communication
-   * @param eventBus Event bus instance
-   */
-  public setEventBus(eventBus: EventBus): void {
-    this.eventBus = eventBus;
-  }
-  
-  /**
    * Set game engine reference
    * @param gameEngine Game engine instance
    */
   public setGameEngine(gameEngine: GameEngineInterface): void {
     this.gameEngine = gameEngine;
     this.gameState = gameEngine.getState();
-    this.eventBus = gameEngine.eventBus;
+  }
+  
+  /**
+   * Helper method to emit events through the game engine's event bus
+   * @param event Event name
+   * @param data Event data
+   */
+  protected emit(event: string, data: any): void {
+    this.gameEngine?.eventBus.emit(event, data);
+  }
+  
+  /**
+   * Helper method to subscribe to events through the game engine's event bus
+   * @param event Event name
+   * @param handler Event handler function
+   */
+  protected subscribe(event: string, handler: (data: any) => void): void {
+    this.gameEngine?.eventBus.subscribe(event, handler);
   }
   
   /**

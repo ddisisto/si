@@ -259,6 +259,15 @@ The roadmap will be updated as development progresses to reflect new priorities,
 - [ ] Remove unused code and redundant CSS
 - [ ] Ensure consistent component patterns across the codebase
 
+### Testing Infrastructure (2 weeks)
+- [ ] Set up Jest or Vitest test framework
+- [ ] Create test utilities for mocking (EventBus, GameState)
+- [ ] Write critical save/load integration tests
+- [ ] Add EventBus flow tests
+- [ ] Create GameReducer unit tests
+- [ ] Set up GitHub Actions for automated testing
+- [ ] Document testing patterns and best practices
+
 ### Release Preparation (2 weeks)
 - [ ] Final testing and bug fixing
 - [ ] Performance optimization

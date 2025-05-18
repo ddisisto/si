@@ -25,9 +25,8 @@ class GameLayout extends UIComponent {
    * Create a new game layout
    * @param options Configuration options
    */
-  constructor(options: GameLayoutOptions) {
+  constructor(_options?: GameLayoutOptions) {
     super('div', 'game-root');
-    this.eventBus = options.eventBus;
   }
   
   /**

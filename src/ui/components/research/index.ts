@@ -24,9 +24,7 @@ class ResearchTreeHeader extends UIComponent {
     const backButton = this.element.querySelector('#back-to-main');
     if (backButton) {
       backButton.addEventListener('click', () => {
-        if (this.eventBus) {
-          this.eventBus.emit('ui:back_to_main');
-        }
+        this.emit('ui:back_to_main', {});
       });
     }
   }

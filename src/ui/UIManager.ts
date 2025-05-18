@@ -6,21 +6,27 @@ import { GameState } from '../core/GameState';
 import { EventBus } from '../core';
 import UIComponent from './components/UIComponent';
 
+interface GameEngineInterface {
+  getState(): GameState;
+  eventBus: EventBus;
+}
+
 /**
  * Manages UI components and handles their lifecycle and updates
  */
 class UIManager {
   private components: Map<string, UIComponent> = new Map();
   private rootElement: HTMLElement | null = null;
-  private eventBus: EventBus;
   private gameState: Readonly<GameState> | null = null;
+  private gameEngine: GameEngineInterface | null = null;
   
   /**
    * Create a new UI manager
    * @param eventBus Event bus for component communication
    */
-  constructor(eventBus: EventBus) {
-    this.eventBus = eventBus;
+  constructor(_eventBus: EventBus) {
+    // We keep eventBus in constructor for compatibility but don't store it
+    // Components will get eventBus through gameEngine reference
   }
   
   /**
@@ -43,6 +49,19 @@ class UIManager {
   }
   
   /**
+   * Set the game engine reference
+   * @param gameEngine Game engine instance
+   */
+  public setGameEngine(gameEngine: GameEngineInterface): void {
+    this.gameEngine = gameEngine;
+    
+    // Update existing components with the game engine
+    this.components.forEach(component => {
+      component.setGameEngine(gameEngine);
+    });
+  }
+  
+  /**
    * Register a component with the UI manager
    * @param id Unique identifier for the component
    * @param component The component to register
@@ -53,9 +72,11 @@ class UIManager {
       // Store the component
       this.components.set(id, component);
       
-      // Set event bus for component
-      console.log(`UIManager: Setting EventBus for component ${id}`);
-      component.setEventBus(this.eventBus);
+      // Pass game engine (with event bus) to component if available
+      console.log(`UIManager: Setting GameEngine for component ${id}`);
+      if (this.gameEngine) {
+        component.setGameEngine(this.gameEngine);
+      }
       
       console.log(`Component registered: ${id}`);
       

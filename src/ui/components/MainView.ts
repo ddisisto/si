@@ -4,7 +4,6 @@
 
 import UIComponent from './UIComponent';
 import { ResearchTreeView, ResearchTreeHeader } from './research';
-import { EventBus } from '../../core';
 import GameLayout from './GameLayout';
 import ButtonShowcase from './ButtonShowcase';
 
@@ -27,33 +26,27 @@ class MainView extends UIComponent {
   }
   
   /**
-   * Set event bus and create child components
+   * Initialize child components and set up event subscriptions
    */
-  public setEventBus(eventBus: EventBus): void {
-    super.setEventBus(eventBus);
-    
+  private initializeComponents(): void {
     // Create research tree component
     this.researchTreeView = new ResearchTreeView();
-    this.researchTreeView.setEventBus(eventBus);
     
     // Create research tree header component
     this.researchTreeHeader = new ResearchTreeHeader();
-    this.researchTreeHeader.setEventBus(eventBus);
     
     // Create button showcase component
     this.buttonShowcase = new ButtonShowcase();
-    if (eventBus) {
-      this.buttonShowcase.setEventBus(eventBus);
-    }
     
-    // Also set game engine if we have it
+    // Set game engine if we have it
     if (this.gameEngine) {
       this.researchTreeView.setGameEngine(this.gameEngine);
       this.researchTreeHeader.setGameEngine(this.gameEngine);
+      this.buttonShowcase.setGameEngine(this.gameEngine);
     }
     
-    // Listen for back to main event
-    eventBus.subscribe('ui:back_to_main', () => {
+    // Subscribe to back to main event
+    this.subscribe('ui:back_to_main', () => {
       this.showResearchTree = false;
       this.showButtonShowcase = false;
       
@@ -86,6 +79,11 @@ class MainView extends UIComponent {
    */
   public setGameEngine(gameEngine: any): void {
     super.setGameEngine(gameEngine);
+    
+    // Initialize components if not already done
+    if (!this.researchTreeView && !this.researchTreeHeader && !this.buttonShowcase) {
+      this.initializeComponents();
+    }
     
     // Pass gameEngine to child components
     if (this.researchTreeView) {
