@@ -75,7 +75,7 @@ For detailed information about the state structure and management approach, see 
 
 Modular components that handle specific aspects of gameplay:
 
-1. **ResourceSystem** - Manages resources and their allocation
+1. **ResourceSystem** - Manages resources and their allocation (modularized into focused subsystems)
 2. **ResearchSystem** - Handles research tree and progression
 3. **DeploymentSystem** - Manages deployments and their effects
 4. **EventSystem** - Controls events and their resolution
@@ -260,6 +260,13 @@ Each component has:
   
   /systems
     ResourceSystem.ts
+    /resources
+      index.ts
+      ComputingManager.ts
+      DataManager.ts
+      ResourceCalculations.ts
+      ResourceEffects.ts
+      ResourceOperations.ts
     ResearchSystem.ts
     DeploymentSystem.ts
     EventSystem.ts
@@ -423,6 +430,16 @@ For implementation details, see [Implementation Plan](./implementation_plan.md).
 - Identify files likely to grow significantly over time and preemptively split them
 - Maintain clear separation between system logic and UI concerns
 - Group related functionality into cohesive modules
+
+### Modular System Architecture
+- **ResourceSystem** has been refactored into specialized subsystems:
+  - `ComputingManager` - Handles computing resource allocation/deallocation
+  - `DataManager` - Manages data resources, tiers, and specialized sets
+  - `ResourceCalculations` - Calculates metrics and influence growth
+  - `ResourceEffects` - Manages effects from deployments and research
+  - `ResourceOperations` - Handles spending and affordability checks
+- This pattern should be applied to other large systems (ResearchSystem, GameReducer)
+- Improves maintainability, testability, and code organization
 
 ### CSS Architecture
 - Remove redundant styles and unused CSS

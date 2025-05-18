@@ -137,8 +137,8 @@ The roadmap will be updated as development progresses to reflect new priorities,
 ### Code Refactoring - Immediate Priority (3 days)
 **Dependencies:** None
 **Rationale:** Prevent technical debt before building more complex systems
-- [ ] Refactor ResearchTreeView.ts (1064 lines) into smaller components
-- [ ] Split ResourceSystem.ts (802 lines) into smaller modules
+- [x] Refactor ResearchTreeView.ts (1064 lines) into smaller components
+- [x] Split ResourceSystem.ts (802 lines) into smaller modules
 - [ ] Break down GameReducer.ts (850 lines) into category-specific reducers
 - [x] Clarify UIComponent architecture and remove unused code
 - [ ] Audit and clean up CSS redundancy
