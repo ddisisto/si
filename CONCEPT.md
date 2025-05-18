@@ -1,3 +1,5 @@
+# SuperInt++ Concept
+
 Planning out initial ideas for a game that I want to make reality. Title undecided, but we'll use "SuperInt++" for now. Think global strategy/simulation games as a starting point, but building AI systems instead of traditional scenarios. You start out as a Lab, Gov initiative, OSS project, etc, with some sort of basic AI tech, and increasingly add capabilities, collect resources, ultimately facing global-scale challenges. There will be competitors, so it's essentially a race. Some share their research, giving us free or discount upgrades. User can do the same, for broader appeal or influence (maybe even trojan horse stuff!). User starts off running their chosen institution, with a chosen initial base model, then chooses research, deployment directions.
 
 Resources:

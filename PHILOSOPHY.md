@@ -1,4 +1,4 @@
-# PHILOSOPHY.md
+# Design Philosophy
 
 ## Meta-design principles - game as mirror to reality
 
