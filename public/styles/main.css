@@ -8,9 +8,6 @@
 /* Component-specific styles */
 @import 'components/index.css';
 
-/* Legacy components.css - gradually being migrated to component-specific files */
-@import 'components.css';
-
 /* Reset and base styles */
 *, *::before, *::after {
   box-sizing: border-box;

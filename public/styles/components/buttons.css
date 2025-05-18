@@ -202,5 +202,3 @@ button:disabled {
     transform: rotate(360deg);
   }
 }
-
-/* Legacy classes removed - use standardized button classes instead */

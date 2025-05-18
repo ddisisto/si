@@ -21,7 +21,6 @@
   gap: var(--spacing-sm);
 }
 
-/* Using standardized button classes - no specific styling needed */
 
 .save-info {
   font-size: var(--font-size-xs);
@@ -69,7 +68,6 @@
   margin-top: var(--spacing-md);
 }
 
-/* Using standardized button classes - no specific styling needed */
 
 /* Saved Games List */
 .saves-list {
@@ -103,7 +101,6 @@
   min-width: 150px;
 }
 
-/* Using standardized button classes - no specific styling needed */
 
 .no-saves {
   padding: var(--spacing-md);
