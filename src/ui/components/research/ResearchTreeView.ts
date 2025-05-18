@@ -76,6 +76,9 @@ class ResearchTreeView extends UIComponent {
     this.boundHandleToggleFilterPanel = this.handleToggleFilterPanel.bind(this);
     this.boundHandleToggleDropdown = this.handleToggleDropdown.bind(this);
     this.boundHandleSelectFilterOption = this.handleSelectFilterOption.bind(this);
+    
+    // Set initial zoom level to match "view all" default
+    this.zoomLevel = 0.5;
   }
   
   /**
@@ -96,8 +99,10 @@ class ResearchTreeView extends UIComponent {
     // Build the HTML for the research tree controls
     let html = `
       <div class="research-controls">
-        <button class="zoom-control view-all">View All</button>
-        <button class="filter-toggle" data-expanded="${this.isFilterPanelVisible}">
+        <button class="zoom-control view-all" title="Expand view and clear all filters">
+          <span class="expand-icon">👁️</span>
+        </button>
+        <button class="filter-toggle" data-expanded="${this.isFilterPanelVisible}" title="Filter options">
           <span class="filter-icon">⚙️</span>
         </button>
         <div class="stats">
@@ -496,13 +501,29 @@ class ResearchTreeView extends UIComponent {
   }
   
   /**
-   * Handle view all button click - zooms out to see the entire tree
+   * Handle view all button click - zooms out to see the entire tree and clears all filters
    */
   private handleViewAll(event: Event): void {
     event.stopPropagation();
+    
+    // Reset zoom and position
     this.zoomLevel = 0.5; // Zoomed out to see most of the tree
     this.viewportTranslateX = 0;
     this.viewportTranslateY = 0;
+    
+    // Reset all filters to show everything
+    Object.keys(this.categoryFilters).forEach(category => {
+      this.categoryFilters[category] = true;
+    });
+    
+    Object.keys(this.statusFilters).forEach(status => {
+      this.statusFilters[status] = true;
+    });
+    
+    // Re-render with reset filters
+    this.render();
+    
+    // Apply zoom and pan
     this.applyZoomAndPan();
   }
   

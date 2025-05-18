@@ -605,8 +605,8 @@
 }
 
 .zoom-control {
-  padding: var(--spacing-xs) var(--spacing-sm);
-  border-radius: var(--border-radius-sm);
+  padding: var(--spacing-xs);
+  border-radius: 50%;
   background-color: var(--color-overlay);
   color: var(--color-text);
   font-weight: bold;
@@ -617,11 +617,17 @@
   align-items: center;
   justify-content: center;
   transition: all var(--transition-fast);
+  width: 30px;
+  height: 30px;
 }
 
 .zoom-control:hover {
   background-color: var(--color-primary);
   color: var(--color-overlay);
+}
+
+.expand-icon {
+  font-size: 16px;
 }
 
 /* Add cursor style for touch devices */
