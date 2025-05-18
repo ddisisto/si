@@ -1,0 +1,154 @@
+/**
+ * Resource Styles for SuperInt++
+ * 
+ * This file contains styles for resource-related components:
+ * - Resource display
+ * - Resource progress bars
+ * - Resource value colors
+ * - Specific resource type styling
+ */
+
+/* Resource Display */
+.resource-section {
+  margin-bottom: var(--spacing-md);
+}
+
+.resource-section h3 {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  margin-bottom: var(--spacing-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.resource-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--spacing-xs) 0;
+}
+
+.resource-label {
+  color: var(--color-text);
+}
+
+.resource-value {
+  font-family: var(--font-family-mono);
+  font-weight: bold;
+  min-width: 60px;
+  text-align: right;
+}
+
+/* Resource Progress Bars */
+.resource-value-bar {
+  flex-grow: 1;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  margin-left: var(--spacing-md);
+}
+
+.progress-bar {
+  width: 100%;
+  height: 10px;
+  background-color: var(--color-overlay);
+  border-radius: var(--border-radius-sm);
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  transition: width var(--transition-medium);
+}
+
+.progress-low {
+  background-color: var(--color-danger);
+}
+
+.progress-medium {
+  background-color: var(--color-warning);
+}
+
+.progress-high {
+  background-color: var(--color-success);
+}
+
+.bar-value {
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-xs);
+  min-width: 50px;
+  color: var(--color-text-muted);
+}
+
+/* Resource Value Colors */
+.positive {
+  color: var(--color-success) !important;
+}
+
+.negative {
+  color: var(--color-danger) !important;
+}
+
+.neutral {
+  color: var(--color-warning) !important;
+}
+
+/* Computing Resources */
+.resource-section:nth-child(1) h3 {
+  color: var(--color-computing);
+}
+
+.resource-section:nth-child(1) .resource-value {
+  color: var(--color-computing);
+}
+
+.resource-section:nth-child(1) .progress-bar {
+  background-color: rgba(var(--color-computing-rgb, 137, 180, 250), 0.1);
+}
+
+.resource-section:nth-child(1) .progress-fill {
+  background-color: var(--color-computing);
+}
+
+/* Funding Resources */
+.resource-section:nth-child(2) h3 {
+  color: var(--color-funding);
+}
+
+.resource-section:nth-child(2) .resource-value {
+  color: var(--color-funding);
+}
+
+.resource-section:nth-child(2) .progress-bar {
+  background-color: rgba(var(--color-funding-rgb, 249, 226, 175), 0.1);
+}
+
+.resource-section:nth-child(2) .progress-fill {
+  background-color: var(--color-funding);
+}
+
+/* Influence Resources */
+.resource-section:nth-child(3) h3 {
+  color: var(--color-influence);
+}
+
+.resource-section:nth-child(3) .resource-value {
+  color: var(--color-influence);
+}
+
+.resource-section:nth-child(3) .progress-bar {
+  background-color: rgba(var(--color-influence-rgb, 203, 166, 247), 0.1);
+}
+
+.resource-section:nth-child(3) .progress-fill {
+  background-color: var(--color-influence);
+}
+
+/* Data Resources */
+.resource-section:nth-child(4) h3 {
+  color: var(--color-data);
+}
+
+.resource-section:nth-child(4) .resource-value {
+  color: var(--color-data);
+}
