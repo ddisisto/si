@@ -46,7 +46,7 @@ The roadmap will be updated as development progresses to reflect new priorities,
   - [ ] Balance alignment costs and effects
 
 ### Technical Planning
-- [x] Technical architecture design (docs/technical_architecture.md)
+- [x] Technical architecture design (ARCHITECTURE.md)
 - [x] Finalize project structure
 - [x] Define core data structures and interfaces
 - [x] Design state management approach (docs/state_management_design.md)

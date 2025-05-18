@@ -25,7 +25,7 @@ The game consists of several interconnected systems:
 - **ROADMAP.md** - Development plan and progress tracking (essential for prioritization)
 - **docs/** - Technical and design documentation:
   - **test_plan.md** - Testing strategy and standards
-  - technical_architecture.md - Architecture overview (review before implementation)
+  - **ARCHITECTURE.md** - Architecture overview (review before implementation) [moved to root]
   - state_management_design.md - Data flow and state structure
   - eventbus_design.md - EventBus system documentation
   - ui_component_system.md - UI component patterns and architecture

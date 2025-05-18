@@ -15,7 +15,7 @@ The game is in the initial implementation phase. We have completed:
 - High-level game concept and mechanics (CONCEPT.md, PLAN.md)
 - Philosophical approach to game design (PHILOSOPHY.md)
 - Detailed system design documents (in /docs)
-- Technical architecture plan (in /docs/technical_architecture.md)
+- Technical architecture plan (ARCHITECTURE.md)
 - State management design (in /docs/state_management_design.md)
 - Implementation roadmap (ROADMAP.md)
 - Project setup with TypeScript and build tools
