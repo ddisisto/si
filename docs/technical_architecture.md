@@ -100,10 +100,13 @@ The UI layer uses DOM elements exclusively, providing a responsive and accessibl
 
 #### UI Component Base Class
 
+The UIComponent base class is used for complex UI panels and views that need state management, lifecycle hooks, and event handling. Simple HTML elements like buttons should use plain HTML with CSS classes instead.
+
 ```typescript
 class UIComponent {
   protected element: HTMLElement;
   protected gameState: Readonly<GameState>;
+  protected gameEngine: GameEngineInterface;
   
   constructor(elementType: string, className?: string);
   public mount(parent: HTMLElement): void;
@@ -111,8 +114,18 @@ class UIComponent {
   public update(gameState: Readonly<GameState>): void;
   public render(): void;
   protected createTemplate(): string;
+  
+  // Helper methods for event handling
+  protected emit(event: string, data: any): void;
+  protected subscribe(event: string, handler: (data: any) => void): void;
 }
 ```
+
+**Component Guidelines:**
+- Use UIComponent for panels, views, and complex layouts
+- Use plain HTML for buttons: `<button class="btn-primary">Click</button>`
+- Avoid creating components for simple elements
+- See [UI Component System](./ui_component_system.md) for detailed guidelines
 
 #### UI Manager
 
@@ -129,6 +142,23 @@ class UIManager {
   public update(gameState: GameState): void;
 }
 ```
+
+### HTML/CSS Standards
+
+The UI uses semantic HTML with CSS classes for styling:
+
+1. **Buttons**: Use plain HTML buttons with standardized CSS classes
+   ```html
+   <button class="btn-primary">Primary Action</button>
+   <button class="btn-danger btn-small">Delete</button>
+   ```
+
+2. **CSS Organization**: Modular CSS files in `/public/styles/components/`
+   - `buttons.css` - Button styling system
+   - `panels.css` - Panel layouts
+   - `resources.css` - Resource display styles
+
+3. **No Component Overhead**: Simple elements don't need UIComponent wrappers
 
 ### Event Bus
 
