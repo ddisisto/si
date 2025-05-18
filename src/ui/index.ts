@@ -5,7 +5,6 @@
 // Export UI components
 import UIComponent from './components/UIComponent';
 import Panel from './components/Panel';
-import Button from './components/Button';
 import ResourcePanel from './components/ResourcePanel';
 import TurnControls from './components/TurnControls';
 import GameInfoPanel from './components/GameInfoPanel';
@@ -24,7 +23,6 @@ export {
   UIComponent,
   UIManager,
   Panel,
-  Button,
   ResourcePanel,
   TurnControls,
   GameInfoPanel,

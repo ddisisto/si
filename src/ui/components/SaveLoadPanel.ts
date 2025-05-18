@@ -110,8 +110,8 @@ class SaveLoadPanel extends UIComponent {
     
     return `
       <div class="save-load-buttons">
-        <button class="save-button">Save Game</button>
-        <button class="load-button">Load Game</button>
+        <button class="btn-success btn-small save-button">Save Game</button>
+        <button class="btn-info btn-small load-button">Load Game</button>
       </div>
       <div class="save-info">
         <div class="last-saved">${lastSavedText}</div>
@@ -139,8 +139,8 @@ class SaveLoadPanel extends UIComponent {
           <div class="save-item" data-save="${save.name}">
             <span class="save-name">${save.name}</span>
             <span class="save-date">${date}</span>
-            <button class="load-save-button" data-save="${save.name}">Load</button>
-            <button class="delete-save-button" data-save="${save.name}">Delete</button>
+            <button class="btn-info btn-small load-save-button" data-save="${save.name}">Load</button>
+            <button class="btn-danger btn-small delete-save-button" data-save="${save.name}">Delete</button>
           </div>
         `;
       });
@@ -151,7 +151,7 @@ class SaveLoadPanel extends UIComponent {
       <div class="load-dialog">
         <h3>Load Game</h3>
         ${savesList}
-        <button class="back-button">Back</button>
+        <button class="btn-secondary btn-small back-button">Back</button>
       </div>
     `;
   }
@@ -167,8 +167,8 @@ class SaveLoadPanel extends UIComponent {
           <label for="save-name">Save Name:</label>
           <input type="text" id="save-name" value="${this.saveNameInput || 'Game Save'}">
           <div class="save-buttons">
-            <button class="confirm-save-button">Save</button>
-            <button class="cancel-save-button">Cancel</button>
+            <button class="btn-success btn-small confirm-save-button">Save</button>
+            <button class="btn-secondary btn-small cancel-save-button">Cancel</button>
           </div>
         </div>
       </div>

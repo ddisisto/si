@@ -50,13 +50,4 @@
   gap: var(--spacing-sm);
 }
 
-/* End Turn Button - Special button override */
-.end-turn-button {
-  background-color: var(--color-secondary);
-  color: var(--color-text);
-  border: none;
-}
-
-.end-turn-button:hover {
-  background-color: var(--color-danger);
-}
+/* No special styling needed - using standardized button classes */

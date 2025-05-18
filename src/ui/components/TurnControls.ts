@@ -64,7 +64,7 @@ class TurnControls extends UIComponent {
         <div class="turn-phase">${this.formatPhase(phase)}</div>
       </div>
       <div class="turn-buttons">
-        <button class="end-turn-button">End Turn</button>
+        <button class="btn-danger end-turn-button">End Turn</button>
       </div>
     `;
   }
