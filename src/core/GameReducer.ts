@@ -17,7 +17,8 @@ import {
   CompetitorState, 
   SettingsState,
   DeploymentHistoryEntry,
-  ResolvedEvent
+  ResolvedEvent,
+  DataType
 } from '../types/core/GameState';
 
 /**
@@ -190,6 +191,31 @@ function resourceReducer(state: ResourceState, action: GameAction): ResourceStat
         openSource: Math.min(100, state.influence.openSource + (action.payload.influenceGrowth?.openSource || 0))
       };
       
+      // Generate data for each data type and apply quality decay
+      const updatedDataTypes = { ...state.data.types };
+      const MIN_QUALITY = 0.1; // Data never becomes completely unusable
+      
+      Object.values(DataType).forEach(type => {
+        const currentTypeData = updatedDataTypes[type];
+        if (currentTypeData) {
+          // Apply quality decay (if decayRate is defined)
+          const decayRate = currentTypeData.decayRate || 0.01; // Default decay rate
+          const newQuality = Math.max(MIN_QUALITY, currentTypeData.quality - decayRate);
+          
+          // Apply generation (if any)
+          const newAmount = currentTypeData.generationRate > 0 
+            ? currentTypeData.amount + currentTypeData.generationRate 
+            : currentTypeData.amount;
+          
+          updatedDataTypes[type] = {
+            ...currentTypeData,
+            amount: newAmount,
+            quality: newQuality,
+            lastUpdated: action.payload.turn
+          };
+        }
+      });
+      
       return {
         ...state,
         computing: {
@@ -233,6 +259,11 @@ function resourceReducer(state: ResourceState, action: GameAction): ResourceStat
               timestamp: Date.now()
             }
           ]
+        },
+        data: {
+          ...state.data,
+          types: updatedDataTypes
+          // Removed capacity tracking as data is a persistent asset now
         }
       };
       
@@ -289,6 +320,24 @@ function resourceReducer(state: ResourceState, action: GameAction): ResourceStat
       }
       
       return state;
+      
+    case 'UPDATE_DATA_TYPE':
+      // Update a specific data type's information
+      const { dataType, ...updates } = action.payload;
+      
+      return {
+        ...state,
+        data: {
+          ...state.data,
+          types: {
+            ...state.data.types,
+            [dataType as DataType]: {
+              ...state.data.types[dataType as DataType],
+              ...updates
+            }
+          }
+        }
+      };
     
     case 'SPEND_RESOURCES':
       // Handle spending multiple resource types at once

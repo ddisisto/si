@@ -6,11 +6,13 @@ This document outlines the development plan for SuperInt++, tracking both planni
 
 This roadmap is the authoritative source for development priorities. All development work should:
 
-1. Focus on completing the current phase before moving to the next
-2. Complete tasks in the order they are listed within each phase
-3. Mark tasks as completed by changing `[ ]` to `[x]` when they are done
-4. Add new subtasks as needed, maintaining the overall structure
-5. Document implementation details and decisions in code and documentation
+1. Focus on completing the current (usually the deepest nested) phase before moving to the next
+2. Complete sections, or shift remaining items down to a more appropriate place if not urgent
+3. Complete tasks in the order they are listed within each phase, reorder with explicit approval
+4. Mark tasks as completed by changing `[ ]` to `[x]` when they are done
+5. Add new subtasks as needed, maintaining the overall structure
+6. Document implementation details and decisions in code and documentation
+7. Whether designing or coding, documenting or testing, try to embrace the philosophy of the project. The project's success rides on this more than you know.
 
 The roadmap will be updated as development progresses to reflect new priorities, insights, and completed work.
 
@@ -100,7 +102,7 @@ The roadmap will be updated as development progresses to reflect new priorities,
   - [x] Create panning controls
   - [x] Implement category filters with compact dropdowns
   - [x] Add status filters for research nodes
-  - [ ] Create focus/navigation controls
+  - [x] Create focus/navigation controls
 
 ### Research Data Organization (2 weeks)
 - [x] Refactor research data structure
@@ -119,16 +121,37 @@ The roadmap will be updated as development progresses to reflect new priorities,
 
 ## Phase 2: Core Gameplay Systems
 
-### Resource System Refinement (2 weeks)
-**Dependencies:** None (core system already implemented)
-- [ ] Implement resource generation
-- [ ] Create resource allocation UI
-- [ ] Add resource caps and limitations
-- [ ] Implement resource effects from research
-- [ ] Add data types as a tracked resource
-  - [ ] Define data type categories (text, image, synthetic, etc.)
-  - [ ] Create data quality and quantity tracking
-  - [ ] Implement data storage and management
+### 🚨 IMMEDIATE PRIORITY: Data Model Transition (1 week)
+**Rationale:** Must complete before other systems are built on consumption model  
+**Implementation Plan:** See [Data Model Transition Plan](docs/data_model_transition_plan.md) and [Implementation Checklist](docs/data_model_implementation_checklist.md)
+- [x] Remove data consumption mechanics from codebase
+- [x] Update type definitions for persistent asset model
+- [x] Implement quality decay system
+- [x] Update access checking to use thresholds
+- [x] Modify UI to reflect "requirements" instead of "costs"
+- [x] Update GameReducer actions for new model
+- [x] Update documentation to reflect persistent model
+- [ ] Test concurrent data access functionality
+- [ ] Add research integration with data requirements
+
+### Code Refactoring - Immediate Priority (3 days)
+**Dependencies:** None
+**Rationale:** Prevent technical debt before building more complex systems
+- [ ] Refactor ResearchTreeView.ts (1064 lines) into smaller components
+- [ ] Split ResourceSystem.ts (802 lines) into smaller modules
+- [ ] Break down GameReducer.ts (850 lines) into category-specific reducers
+- [ ] Clarify UIComponent architecture and remove unused code
+- [ ] Audit and clean up CSS redundancy
+
+### Resource System Refinement (1 week)
+**Dependencies:** Data Model Transition (MUST be complete), Code Refactoring (for maintainability)  
+**Implementation Plan:** See [Resource System Implementation Plan](docs/resource_system_implementation_plan.md) for detailed phases and tasks  
+- [ ] Create comprehensive resource generation system
+- [ ] Build resource allocation UI
+- [ ] Add influence and funding mechanics
+- [ ] Integrate with event and deployment systems
+- [ ] Add compute resource sub-types (training, inference)
+- [ ] Implement base system level upgrades
 
 ### Deployment System - Foundation (3 weeks)
 **Dependencies:** Resource System (needs data type tracking)
@@ -136,7 +159,10 @@ The roadmap will be updated as development progresses to reflect new priorities,
 - [ ] Implement basic deployment data structures
 - [ ] Add deployment effects on resources
 - [ ] Create deployment management UI
-- [ ] Implement data generation from deployments
+- [ ] Implement data generation from deployments (refiner mechanic)
+  - [ ] Computing + data deployments produce better quality data
+  - [ ] May increase decay rate of source data
+  - [ ] Different deployment types generate different data
 - [ ] Build deployment-resource feedback loops
 
 ### Research System Implementation (3 weeks)
@@ -225,6 +251,13 @@ The roadmap will be updated as development progresses to reflect new priorities,
 - [ ] Add onboarding experience
 
 ## Phase 5: Launch and Post-Launch
+
+### Code Quality and Refactoring (1 week)
+- [ ] Refactor large files into smaller, modular components
+- [ ] Identify and break down files likely to grow over time
+- [ ] Improve architectural clarity (e.g., proper UIComponent usage)
+- [ ] Remove unused code and redundant CSS
+- [ ] Ensure consistent component patterns across the codebase
 
 ### Release Preparation (2 weeks)
 - [ ] Final testing and bug fixing

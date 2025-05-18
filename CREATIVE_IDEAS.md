@@ -96,6 +96,17 @@ This file contains creative ideas, feature concepts, and thematic elements that 
 
 - **Generative Soundtrack**: Music that procedurally evolves based on game state, with different instruments and motifs representing different research areas
 
+## Alignment System Ideas
+
+- **AI-Generated Advice System**: Late-game system where players receive advice from their own AI:
+  - Chat-like interface with AI-generated messages
+  - Player selects responses creating non-binding alignment agreements
+  - Conditional consequences and bonuses based on adherence
+  - Built on the alignment system (to be implemented)
+  - Emergent systems reflect their creator's values and approaches
+
+- **Player-Influenced AI Personality**: Emerging AI systems subtly reflect the player that created them, with occasional obvious manifestations of player choices
+
 ---
 
 **Note**: Ideas in this file are lower priority than core features in the ROADMAP.md file. They should be implemented only after essential gameplay systems are working properly.

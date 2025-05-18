@@ -3,7 +3,7 @@
  */
 
 import UIComponent from './UIComponent';
-import { InfluenceResource } from '../../types/core/GameState';
+import { InfluenceResource, DataType } from '../../types/core/GameState';
 
 /**
  * Panel for displaying and managing game resources
@@ -94,7 +94,9 @@ class ResourcePanel extends UIComponent {
     this.metrics.data = {
       tierCount: Object.values(data.tiers).filter(Boolean).length,
       specializedSetCount: Object.values(data.specializedSets).filter(Boolean).length,
-      quality: data.quality
+      quality: data.quality,
+      totalAmount: Object.values(data.types).reduce((sum, type) => sum + type.amount, 0),
+      types: data.types
     };
   }
   
@@ -318,9 +320,31 @@ class ResourcePanel extends UIComponent {
   private renderDataSection(): string {
     const m = this.metrics.data;
     
+    // Get data type display names
+    const dataTypeNames: Record<DataType, string> = {
+      [DataType.TEXT]: 'Text',
+      [DataType.IMAGE]: 'Image',
+      [DataType.VIDEO]: 'Video',
+      [DataType.SYNTHETIC]: 'Synthetic',
+      [DataType.BEHAVIORAL]: 'Behavioral',
+      [DataType.SCIENTIFIC]: 'Scientific'
+    };
+    
     return `
       <div class="resource-section">
         <h3>Data</h3>
+        <div class="resource-item">
+          <div class="resource-label">Total Data</div>
+          <div class="resource-value">${this.formatValue(m.totalAmount)} units</div>
+        </div>
+        <div class="resource-item">
+          <div class="resource-label">Overall Quality</div>
+          <div class="resource-value">${m.quality.toFixed(1)}</div>
+        </div>
+        
+        <h4>Data Types</h4>
+        ${this.renderDataTypes(m.types, dataTypeNames)}
+        
         <div class="resource-item">
           <div class="resource-label">Data Tiers</div>
           <div class="resource-value">${m.tierCount}</div>
@@ -329,12 +353,40 @@ class ResourcePanel extends UIComponent {
           <div class="resource-label">Specialized Sets</div>
           <div class="resource-value">${m.specializedSetCount}</div>
         </div>
-        <div class="resource-item">
-          <div class="resource-label">Quality</div>
-          <div class="resource-value">${m.quality.toFixed(1)}</div>
-        </div>
       </div>
     `;
+  }
+  
+  /**
+   * Render individual data types
+   */
+  private renderDataTypes(types: Record<DataType, any>, names: Record<DataType, string>): string {
+    return Object.entries(types)
+      .filter(([_, typeInfo]) => typeInfo.amount > 0 || typeInfo.generationRate > 0)
+      .map(([typeKey, typeInfo]) => {
+        const dataType = typeKey as DataType;
+        const name = names[dataType];
+        
+        const qualityClass = typeInfo.quality >= 0.7 ? 'quality-high' : 
+                           typeInfo.quality >= 0.4 ? 'quality-medium' : 'quality-low';
+        const decayIndicator = typeInfo.decayRate ? `↓${(typeInfo.decayRate * 100).toFixed(1)}%/turn` : '';
+        
+        return `
+          <div class="resource-item data-type">
+            <div class="resource-label">${name}</div>
+            <div class="resource-value">
+              ${this.formatValue(typeInfo.amount)}
+              <span class="secondary">
+                <span class="${qualityClass}">Q: ${typeInfo.quality.toFixed(2)}</span>
+                ${decayIndicator ? `<span class="decay-indicator">${decayIndicator}</span>` : ''}
+                ${typeInfo.generationRate > 0 ? `<span class="generation">+${typeInfo.generationRate}/turn</span>` : ''}
+                ${typeInfo.inUse && typeInfo.inUse.length > 0 ? `<span class="in-use">[${typeInfo.inUse.length} systems]</span>` : ''}
+              </span>
+            </div>
+          </div>
+        `;
+      })
+      .join('');
   }
   
   /**

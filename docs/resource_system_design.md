@@ -41,26 +41,30 @@ Represents raw computational capacity available to the player.
 
 ### 2. Data Access
 
-Represents the quality and quantity of data available for training and validation.
+Represents the persistent digital assets available for AI training, research, and deployment operations.
 
 **Key Characteristics:**
-- Tiered system (public, specialized, proprietary, surveillance)
-- Not consumed but may have usage restrictions
-- Quality matters as much as quantity
-- Some is permanent, some temporary
+- Persistent asset model (not consumed when used)
+- Six data types: text, image, video, synthetic, behavioral, scientific
+- Quality degrades over time (requires active maintenance)
+- Acquisition is the primary constraint (not storage)
+- Concurrent access (multiple systems can use same data)
+- Access requirements (minimum amount and quality thresholds)
 
 **Generation Sources:**
 - Initial organization assets
 - Partnerships and agreements
 - User data from deployments
-- Research breakthroughs
+- Research breakthroughs  
 - Special events
+- Active data collection operations
 
 **Usage:**
-- Required for specific research paths
-- Enhances deployment effectiveness
-- Improves model quality
-- Unlocks special capabilities
+- Research requires minimum data thresholds (amount + quality)
+- Deployments leverage data for improved effectiveness
+- Quality influences research speed and deployment efficiency
+- Multiple activities can access same data simultaneously
+- Data remains available unless lost to events
 
 ### 3. Influence
 
@@ -210,7 +214,7 @@ Represents financial resources available to the organization.
 - Comparative metrics vs. competitors
 - Alert indicators for critical levels
 
-## Implementation Approach
+## Resource Extensions\n\n### Compute Resource Subtypes (Future)\n\n- **Training Compute**: Optimized for model training tasks\n- **Inference Compute**: Optimized for deployment operations\n- **Specialized Hardware**: Quantum, neuromorphic, etc.\n- Unlocked through research progression\n- Different efficiency multipliers for different tasks\n\n### System Level Upgrades (Future)\n\n- **Infrastructure Improvements**: Base resource generation increases\n- **Efficiency Research**: Better resource utilization\n- **Advanced Architectures**: New resource generation patterns\n- Unlocked through specific research paths\n\n## Implementation Approach
 
 ### Data Structure
 
@@ -223,9 +227,10 @@ interface ResourceState {
     generation: number;
   };
   data: {
+    types: Record<DataType, DataTypeInfo>; // Data organized by type
     tiers: Record<string, boolean>; // tier ID -> access status
     specializedSets: Record<string, boolean>; // set ID -> access status
-    quality: number;
+    quality: number; // Overall data quality multiplier
   };
   influence: {
     academic: number;
@@ -241,6 +246,16 @@ interface ResourceState {
     reserves: number;
   };
 }
+
+interface DataTypeInfo {
+  amount: number;         // Quantity of this data type
+  quality: number;        // Quality rating (0-1)
+  decayRate: number;      // Quality decay per turn
+  sources: string[];      // Where this data comes from
+  generationRate: number; // How much is generated per turn
+  inUse: string[];        // What systems are currently using this data
+  lastUpdated: number;    // Turn when last updated
+}
 ```
 
 ### Resource System Class
@@ -253,11 +268,31 @@ class ResourceSystem {
   // Methods
   public allocateComputing(allocations: Record<string, number>): boolean;
   public generateResources(): void;
-  public canAfford(costs: ResourceCost): boolean;
-  public spend(costs: ResourceCost): boolean;
+  public canAfford(requirements: ResourceRequirements): boolean;
+  public checkDataAccess(requirements: DataRequirements): boolean;
+  public markDataInUse(dataType: DataType, userId: string): void;
+  public releaseDataUsage(dataType: DataType, userId: string): void;
+  public addDataType(type: DataType, amount: number, source: string): void;
+  public updateDataQuality(): void; // Apply quality decay and refresh
   public getResourceEffects(): ResourceEffects;
   public handleEvent(event: GameEvent): void;
   public getResourceState(): ResourceState;
+}
+
+interface ResourceRequirements {
+  computing?: number;
+  funding?: number;
+  influence?: Partial<Record<keyof InfluenceResource, number>>;
+  data?: {
+    requirements?: Partial<Record<DataType, DataRequirement>>;
+    tiers?: Record<string, boolean>;
+    specializedSets?: Record<string, boolean>;
+  };
+}
+
+interface DataRequirement {
+  minAmount: number;
+  minQuality: number;
 }
 ```
 

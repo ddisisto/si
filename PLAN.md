@@ -18,10 +18,13 @@ SuperInt++ is a strategic simulation game where players develop AI systems in a 
    - Allocation decisions create strategic tradeoffs
 
 2. **Data Access**
-   - Tiered system: public → specialized → proprietary → surveillance-level
+   - Persistent asset model (not consumed when used)
+   - Six data types: text, image, video, synthetic, behavioral, scientific
+   - Quality degrades over time (requires active maintenance)
+   - Tiered access: public → specialized → proprietary → surveillance-level
    - Required for R&D and deployments at minimum thresholds
-   - Not depleted through use (except during specific events)
-   - Categories: training data, validation data, real-world feedback
+   - Multiple systems can access same data concurrently
+   - Deployments can generate or refine data quality
 
 3. **Influence**
    - Subdivided into: Academic, Industry, Government, Public, OSS Community
@@ -47,12 +50,17 @@ SuperInt++ is a strategic simulation game where players develop AI systems in a 
 ## Research System
 
 ### Research Mechanics
-- Research progression tied to tick interval (accelerates over time)
-- Research speed affected by compute allocation and recursive improvements
+- Research progression based on turn system (not consumed resources)
+- Research speed affected by:
+  - Compute allocation
+  - Data quality and availability
+  - Deployment boosts (some deployments accelerate specific research)
+  - Recursive improvements from prior research
 - Organization approach settings:
   - Open/Closed research policy (affects influence gain and competitor benefits)
   - Risk appetite (faster progress but greater chance of negative events)
   - Ethical framework (affects alignment and public perception)
+- Research nodes require minimum data thresholds (amount + quality)
 
 ### Research Categories
 1. **Scaling**
@@ -120,16 +128,21 @@ SuperInt++ is a strategic simulation game where players develop AI systems in a 
 ## Game Mechanics
 
 1. **Research Tree Visualization**
-   - Interactive node-based visualization
-   - Clear progression paths
+   - Interactive node-based visualization with smooth zoom/pan
+   - Clear progression paths with directional arrows
    - Visual feedback for dependencies and prerequisites
-   - Unlocked vs. locked nodes with preview information
+   - Node status indicators (available, completed, in-progress, locked)
+   - Category-based filtering (Foundations, Capabilities, Infrastructure, etc.)
+   - Status filtering (show/hide completed, available, locked nodes)
+   - Custom positioning support for aesthetic tree layouts
 
-2. **Dynamic Tick System**
-   - Tick rate accelerates based on research progress
+2. **Dynamic Time System**
+   - Turn-based progression with time compression mechanics
+   - Time scale accelerates based on research progress (quarterly → monthly → weekly → daily)
    - Represents increasing pace of technological development
-   - Creates pressure as game progresses
-   - Affected by research choices and deployment decisions
+   - Creates tension between short-term and long-term planning
+   - Continuous compression rather than discrete jumps
+   - Affected by research breakthroughs and specific technologies
 
 3. **Events System**
    - Random events triggered by actions, thresholds, time
@@ -168,18 +181,31 @@ SuperInt++ is a strategic simulation game where players develop AI systems in a 
 
 **Alpha Phase (Initial Focus):**
 - Three main view implementations (R&D, Deployments, Alignment)
-- Resource tracking and allocation system
-- Research tree visualization with custom node positioning
-- Basic deployment mechanics
+- Resource tracking and allocation system (persistent data model)
+- Research tree visualization with:
+  - Category and status filters
+  - Smooth zoom and pan controls
+  - Node interaction and selection
+  - Custom positioning support
+- Basic deployment mechanics with data generation
 - Simple alignment tracking
+- Comprehensive save/load system
+- EventBus architecture for component communication
 
 **Beta Phase:**
-- Complete research tree implementation
-- Dynamic tick system
-- Full deployment management
-- Competitor AI systems
-- Comprehensive event system with choices
-- Global influence map
+- Complete research tree implementation with all node types
+- Dynamic time compression system
+- Full deployment management with:
+  - Data generation/refinement mechanics
+  - Risk/opportunity tracking
+  - Global influence visualization
+- Competitor AI systems with varied strategies
+- Comprehensive event system with:
+  - Research-triggered events
+  - Deployment-triggered events
+  - Time-based events
+  - Player choice impacts
+- Advanced alignment system with multiple dimensions
 
 **Polish Phase:**
 - UI refinement and visual effects

@@ -379,3 +379,23 @@ This approach follows our "Anti-maximization design" philosophy from PHILOSOPHY.
 6. Develop research tree visualization components
 
 For implementation details, see [Implementation Plan](./implementation_plan.md).
+
+## Architecture Refactoring Goals
+
+### UIComponent Architecture Clarification
+- Review and optimize UIComponent base class usage
+- Ensure consistent implementation across all UI components
+- Remove unused or redundant component code
+- Establish clear patterns for component lifecycle and state updates
+
+### Code Organization
+- Refactor large files (>300 lines) into smaller, focused modules
+- Identify files likely to grow significantly over time and preemptively split them
+- Maintain clear separation between system logic and UI concerns
+- Group related functionality into cohesive modules
+
+### CSS Architecture
+- Remove redundant styles and unused CSS
+- Ensure component-specific CSS is properly scoped
+- Maintain consistent naming conventions across stylesheets
+- Review and optimize CSS structure for long-term maintainability

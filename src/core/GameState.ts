@@ -4,7 +4,18 @@
  * Implements the immutable state tree design from state_management_design.md
  */
 
-import { GameMetaState, ResourceState, ResearchState, DeploymentState, EventState, WorldState, CompetitorState, SettingsState } from '../types/core/GameState';
+import { 
+  GameMetaState, 
+  ResourceState, 
+  ResearchState, 
+  DeploymentState, 
+  EventState, 
+  WorldState, 
+  CompetitorState, 
+  SettingsState,
+  DataType,
+  DataTypeInfo
+} from '../types/core/GameState';
 
 /**
  * Complete game state structure
@@ -75,6 +86,7 @@ function createInitialResourceState(): ResourceState {
       generationHistory: []
     },
     data: {
+      types: createInitialDataTypes(),
       tiers: { 'public': true },
       specializedSets: {},
       quality: 1.0,
@@ -98,6 +110,66 @@ function createInitialResourceState(): ResourceState {
       spendingHistory: []
     }
   };
+}
+
+/**
+ * Create initial data types structure
+ */
+function createInitialDataTypes(): Record<DataType, DataTypeInfo> {
+  const initialTypes: Record<DataType, DataTypeInfo> = {} as Record<DataType, DataTypeInfo>;
+  
+  // Initialize all data types with base values
+  Object.values(DataType).forEach(type => {
+    initialTypes[type] = {
+      amount: 0,
+      quality: 0.5,
+      decayRate: getDefaultDecayRate(type),
+      sources: [],
+      generationRate: 0,
+      inUse: [],
+      lastUpdated: 0
+    };
+  });
+  
+  // Academic organizations start with some text data
+  initialTypes[DataType.TEXT] = {
+    amount: 100,
+    quality: 0.7,
+    decayRate: 0.01,  // Slow decay for text data
+    sources: ['academic_library', 'public_web'],
+    generationRate: 10,
+    inUse: [],
+    lastUpdated: 0
+  };
+  
+  // Everyone starts with some public image data
+  initialTypes[DataType.IMAGE] = {
+    amount: 50,
+    quality: 0.5,
+    decayRate: 0.02,  // Medium decay for image data
+    sources: ['public_web'],
+    generationRate: 5,
+    inUse: [],
+    lastUpdated: 0
+  };
+  
+  return initialTypes;
+}
+
+/**
+ * Get default decay rate for a data type
+ */
+function getDefaultDecayRate(type: DataType): number {
+  const decayRates: Record<DataType, number> = {
+    [DataType.TEXT]: 0.01,       // Text data decays slowly
+    [DataType.IMAGE]: 0.02,      // Images decay at medium rate
+    [DataType.VIDEO]: 0.03,      // Video data decays faster
+    [DataType.SYNTHETIC]: 0.02,  // Synthetic data has medium decay
+    [DataType.BEHAVIORAL]: 0.04, // Behavioral data becomes stale quickly
+    [DataType.SCIENTIFIC]: 0.015 // Scientific data has slower decay
+  };
+  
+  return decayRates[type] || 0.02; // Default to medium decay
 }
 
 /**

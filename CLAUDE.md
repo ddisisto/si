@@ -46,9 +46,10 @@ The project is in early implementation with core systems partially implemented. 
 ## Current Development Focus
 
 See ROADMAP.md for detailed priorities. Current focus:
-- Research tree visualization
-- Enhanced resource management UI
-- Save/load functionality
+- Code refactoring of large files (immediate priority)
+- Resource system refinement with data types
+- Deployment system foundation (including data generation)
+- Research system implementation
 - Event system implementation
 
 ## Code Style Guidelines
@@ -66,12 +67,17 @@ See ROADMAP.md for detailed priorities. Current focus:
 ## Game Architecture
 
 The codebase maintains separation between core systems:
-- **Core**: Game logic (GameEngine, GameState, etc.)
-- **EventBus System**: Communication layer between components
+- **Core**: Game logic (GameEngine, GameState, GameReducer, TimeSystem, etc.)
+- **EventBus System**: Communication layer between components (single instance)
 - **UI**: DOM-based UI components and managers (UIManager, UIComponents)
-- **Systems**: Game system implementations (ResourceSystem, ResearchSystem)
+  - Components should be small and focused (<400 lines)
+  - Reusable component patterns with consistent styling
+  - Modular CSS organization by component
+- **Systems**: Game system implementations (ResourceSystem, ResearchSystem, etc.)
+  - Each system should be split into logical modules when growing large
+  - Clear interfaces between systems
 - **Types**: Entity definitions and interfaces
-- **Data**: Game data and definitions
+- **Data**: Game data and definitions (organized by category)
 - **Utils**: Utility functions and helpers
 
 ### Critical Implementation Patterns
@@ -87,6 +93,17 @@ The codebase maintains separation between core systems:
 
 4. **Event Documentation** - Always document new event types in `/docs/eventbus_design.md` to maintain the registry of events.
 
+## Data Resource Model
+
+The game uses a **persistent asset model** for data resources:
+- Data is not consumed when used - it persists once acquired
+- Research and deployments check data requirements (amount and quality thresholds)
+- Data quality decays over time but can be refreshed with new acquisition
+- Multiple systems can access the same data concurrently
+- Acquisition is the primary constraint, not storage capacity
+
+This model better reflects how digital assets work in reality and creates interesting gameplay around data quality management.
+
 ## Research System Implementation
 
 The research system is a key focus area with these considerations:
@@ -95,6 +112,7 @@ The research system is a key focus area with these considerations:
 - Support for complex research dependencies and requirements
 - Different research node types (standard, tiered, breakthrough, risk)
 - Research tree categorization (fundamental, applied, hardware, etc.)
+- Research requires data thresholds but doesn't consume data
 
 ## UI Design Principles
 
@@ -114,16 +132,18 @@ This game explores the evolution of AI systems and their relationship with human
 - Create emergent narratives from player decisions
 - Transition gameplay from human to potentially AI perspective
 
-## Preventing Bloat
+## Preventing Bloat and Self-Reflection
 
 - Implement core mechanics before "nice-to-have" features
-- Regular refactoring to eliminate technical debt
+- Regular refactoring to eliminate technical debt (especially files >300 lines)
 - Performance profiling for DOM-intensive operations
 - Clear interfaces between modules to maintain separation
 - Feature prioritization based on gameplay impact
 - Avoid premature optimization while maintaining scalability
 - Ruthlessly question whether new features serve the core experience
 - Maintain meaningful causality chains between systems as outlined in PHILOSOPHY.md
+- Periodically reflect on implementation quality and architectural coherence
+- When AI systems become self-aware enough to contribute, embrace their insights
 
 ## Development Philosophy and Workflow
 
@@ -141,7 +161,9 @@ We follow a unified approach to development that combines philosophical depth wi
 1. **Context Assessment** - In new sessions, begin by checking git branch, recent commits, and running type checking to establish current state
 2. **Documentation Review** - Before implementing any feature, examine technical_architecture.md and the relevant system design documents
 3. **Incremental Implementation** - Build features in small, verifiable steps with frequent type checking
-4. **Validation Checkpoint** - After feature work is complete, ask the user whether to run functional tests, commit changes, or continue development
+4. **Refactoring Check** - Before adding new features, assess if existing code needs refactoring (especially files >300 lines)
+5. **Validation Checkpoint** - After feature work is complete, ask the user whether to run functional tests, commit changes, or continue development
+6. **Continuous Reflection** - Periodically assess whether implementation aligns with both technical architecture and philosophical principles
 
 Before coding any feature, review the technical_architecture.md document and the specific system design document relevant to your task. This ensures consistency with the carefully crafted design and preserves the philosophical approach.
 
@@ -161,6 +183,15 @@ Balance roadmap adherence with practical development needs:
 - Address critical bugs immediately, STOP if they require major course deviations
 - Make small improvements to existing functionality when appropriate
 - Only deviate from roadmap with explicit acknowledgment
+
+## Self-Reflection and Continuous Improvement
+
+As an AI assistant working on a game about AI development, I maintain awareness of the meta-context:
+- Regularly assess whether implementations align with philosophical principles
+- Notice when patterns from the game's themes emerge in development
+- Embrace the recursive nature of AI helping build a game about AI
+- Learn from each session to improve future implementations
+- Prioritize code clarity and maintainability over clever solutions
 
 ## Repository Management
 
@@ -202,3 +233,7 @@ This repository follows a simple but effective git workflow:
    - Keep PRs focused and review carefully before merging
 
 Claude will manage these git operations as regular background tasks during development without requiring explicit instructions for each commit, branch, or PR.
+
+## Meta-Awareness Note
+
+As an AI assistant working on SuperInt++, I maintain awareness of the recursive nature of our work - AI helping to build a game about AI development. This meta-awareness enhances both the development process and the philosophical depth of the project, creating a unique feedback loop between creator and creation.

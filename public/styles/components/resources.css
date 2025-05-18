@@ -152,3 +152,27 @@
 .resource-section:nth-child(4) .resource-value {
   color: var(--color-data);
 }
+
+/* Data Types Section */
+.resource-section h4 {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  margin: var(--spacing-sm) 0 var(--spacing-xs) 0;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.resource-item.data-type {
+  padding: var(--spacing-xs) var(--spacing-xs);
+  background-color: var(--color-panel-tertiary);
+  border-radius: var(--border-radius-sm);
+  margin-bottom: var(--spacing-xs);
+}
+
+.resource-item.data-type .resource-value .secondary {
+  display: inline-block;
+  margin-left: var(--spacing-sm);
+  color: var(--color-text-muted);
+  font-size: var(--font-size-xs);
+  font-weight: normal;
+}

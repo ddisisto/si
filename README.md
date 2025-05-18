@@ -111,8 +111,9 @@ SuperInt++ uses a modular architecture with unidirectional data flow:
 See [ROADMAP.md](ROADMAP.md) for detailed development plans.
 
 ### Current Focus
+- Code refactoring of large files (immediate priority)
 - Resource system refinement (data types integration)
-- Deployment system foundation
+- Deployment system foundation (including data generation mechanics)
 - Research system implementation (pending dependencies)
 - Event system implementation
 
