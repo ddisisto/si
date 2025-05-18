@@ -19,31 +19,38 @@ This document outlines the detailed implementation plan for refining the resourc
 3. **Resource Generation**: Only basic implementation, missing sources from deployments
 
 ### ❌ Missing Implementation:
-1. **Resource Generation Sources**: Infrastructure, deployments, partnerships
-2. **Resource Allocation UI**: No interactive controls for allocation
-3. **Resource Caps and Scaling**: Basic structure but no progression mechanics
-4. **Data Type Categories**: No implementation of specific data types (text, image, synthetic)
-5. **Resource Interactions**: No synergy bonuses or conversion mechanics
-6. **Resource Balancing**: No implemented balance values or scaling
+1. **Data Persistent Asset Model**: Transition from consumption to persistent model
+2. **Quality Decay System**: Data quality degradation over time
+3. **Concurrent Data Access**: Multiple systems using same data
+4. **Resource Generation Sources**: Infrastructure, deployments, partnerships
+5. **Resource Allocation UI**: No interactive controls for allocation
+6. **Resource Interactions**: No synergy bonuses or conversion mechanics
+7. **Resource Balancing**: No implemented balance values or scaling
 
 ## Implementation Phases
 
-### Phase 1: Data Types as Tracked Resource (3-4 days)
+### Phase 1: Data Persistent Asset Model Implementation (3-4 days)
 
-#### 1.1 Define Data Type Categories
-- Create enum for data types (text, image, video, synthetic, behavioral, scientific)
-- Add data generation rates and quality metrics
-- Implement data storage capacity and management
+#### 1.1 Refactor Data Model Core
+- Remove `consumeDataType()` method from ResourceSystem
+- Update `canAfford()` to check requirements instead of consuming
+- Create `checkDataAccess()` method for threshold checking
+- Add `markDataInUse()` and `releaseDataUsage()` methods
+- Remove storage capacity constraints from data model
 
-#### 1.2 Data Acquisition Mechanics
-- Create data acquisition events and sources
-- Implement deployment-based data generation
-- Add data quality progression and degradation
+#### 1.2 Implement Quality Decay System
+- Add `decayRate` field to DataTypeInfo interface
+- Implement turn-based quality degradation in GENERATE_RESOURCES
+- Define minimum quality constants for each data type
+- Create quality refresh mechanics from new data acquisition
+- Add quality improvement through data curation
 
-#### 1.3 Update Resource UI
-- Expand data section to show types and quality
-- Add data type icons and tooltips
-- Create data acquisition history view
+#### 1.3 Update Data Access Mechanics
+- Create DataRequirement interface with minAmount and minQuality
+- Update ResourceRequirements to use persistent model
+- Implement concurrent access tracking with `inUse` array
+- Update UI to show "requires" instead of "costs"
+- Add visual indicators for data quality decay
 
 ### Phase 2: Resource Generation System (3-4 days)
 
@@ -116,7 +123,7 @@ This document outlines the detailed implementation plan for refining the resourc
 
 ## Technical Implementation Details
 
-### Data Types Structure
+### Data Types Structure (Persistent Model)
 ```typescript
 enum DataType {
   TEXT = 'text',
@@ -129,17 +136,25 @@ enum DataType {
 
 interface DataResource {
   types: Record<DataType, DataTypeInfo>;
-  totalCapacity: number;
-  usedCapacity: number;
-  quality: number;
+  quality: number; // Overall quality multiplier
   acquisitionHistory: DataAcquisition[];
+  tiers: Record<string, boolean>;
+  specializedSets: Record<string, boolean>;
 }
 
 interface DataTypeInfo {
   amount: number;
   quality: number;
+  decayRate: number;      // Quality loss per turn
   sources: string[];
   generationRate: number;
+  inUse: string[];        // Systems currently accessing this data
+  lastUpdated: number;    // Turn when last refreshed
+}
+
+interface DataRequirement {
+  minAmount: number;
+  minQuality: number;
 }
 ```
 
@@ -148,33 +163,52 @@ interface DataTypeInfo {
 generation = baseRate * organizationMultiplier * efficiencyMultiplier * researchBonus * infrastructureLevel
 ```
 
+### Data Quality Decay Formula
+```typescript
+newQuality = Math.max(MIN_QUALITY, currentQuality - decayRate)
+// MIN_QUALITY = 0.1 (data never becomes completely unusable)
+// decayRate varies by data type (0.01-0.05 per turn)
+```
+
+### Quality Refresh Mechanics
+- Adding new data of same type increases quality (weighted average)
+- Active curation can slow decay rate
+- Research output may generate high-quality synthetic data
+- Minimum quality threshold ensures data remains somewhat useful
+
 ### Allocation System
 - Computing: Percentage-based allocation to activities
 - Funding: Budget allocation to categories
 - Influence: Action-based spending
-- Data: Assignment to research/deployment slots
+- Data: Persistent asset, accessed by reference not allocation
 
 ## First Implementation Steps
 
-1. **Update GameState Types**
-   - Add DataType enum and related interfaces
-   - Expand ResourceState with new properties
-   - Update ResourceCost interface
+1. **Remove Consumption Model Code**
+   - Delete `consumeDataType()` method from ResourceSystem
+   - Remove data consumption from GameReducer SPEND_RESOURCES
+   - Update all references to data consumption
 
-2. **Implement Data Type System**
-   - Create data type generation mechanics
-   - Add data acquisition actions
-   - Update ResourceSystem to handle data types
+2. **Update Type Definitions**
+   - Add `decayRate` and `inUse` fields to DataTypeInfo
+   - Create DataRequirement interface
+   - Update ResourceRequirements to use new model
+   - Remove storage capacity fields
 
-3. **Update Resource Panel UI**
-   - Expand data section for type display
-   - Add allocation controls foundation
-   - Create generation breakdown view
+3. **Implement Quality Decay**
+   - Add quality decay to GENERATE_RESOURCES action
+   - Define MIN_QUALITY constants for each data type
+   - Create quality refresh logic in data acquisition
 
-4. **Implement Basic Generation**
-   - Add multiple generation sources
-   - Create generation rate calculations
-   - Update turn processing
+4. **Update Access Checking**
+   - Modify `canAfford()` for threshold checking
+   - Create `checkDataAccess()` method
+   - Implement concurrent access tracking
+
+5. **Update UI Components**
+   - Change "cost" to "requires" in all data-related displays
+   - Add quality indicators and decay warnings
+   - Update tooltips to explain persistent model
 
 ## References
 

@@ -119,15 +119,25 @@ The roadmap will be updated as development progresses to reflect new priorities,
 
 ## Phase 2: Core Gameplay Systems
 
-### Resource System Refinement (2 weeks)
-**Dependencies:** None (core system already implemented)  
+### 🚨 IMMEDIATE PRIORITY: Data Model Transition (1 week)
+**Rationale:** Must complete before other systems are built on consumption model  
+**Implementation Plan:** See [Data Model Transition Plan](docs/data_model_transition_plan.md) and [Implementation Checklist](docs/data_model_implementation_checklist.md)
+- [x] Remove data consumption mechanics from codebase
+- [x] Update type definitions for persistent asset model
+- [x] Implement quality decay system
+- [x] Update access checking to use thresholds
+- [x] Modify UI to reflect "requirements" instead of "costs"
+- [x] Update GameReducer actions for new model
+- [x] Update documentation to reflect persistent model
+- [ ] Test concurrent data access functionality
+- [ ] Add research integration with data requirements
+
+### Resource System Refinement (1 week)
+**Dependencies:** Data Model Transition (MUST be complete)  
 **Implementation Plan:** See [Resource System Implementation Plan](docs/resource_system_implementation_plan.md) for detailed phases and tasks  
-**Model Update:** Transitioning to persistent data model - see [Data Model Transition Plan](docs/data_model_transition_plan.md)
-- [x] Implement data types as tracked resource (Phase 1)
-- [ ] Transition data from consumption to persistent asset model
 - [ ] Create comprehensive resource generation system
 - [ ] Build resource allocation UI
-- [ ] Add resource caps and scaling mechanics
+- [ ] Add influence and funding mechanics
 - [ ] Integrate with event and deployment systems
 
 ### Deployment System - Foundation (3 weeks)

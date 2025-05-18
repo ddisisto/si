@@ -87,6 +87,17 @@ The codebase maintains separation between core systems:
 
 4. **Event Documentation** - Always document new event types in `/docs/eventbus_design.md` to maintain the registry of events.
 
+## Data Resource Model
+
+The game uses a **persistent asset model** for data resources:
+- Data is not consumed when used - it persists once acquired
+- Research and deployments check data requirements (amount and quality thresholds)
+- Data quality decays over time but can be refreshed with new acquisition
+- Multiple systems can access the same data concurrently
+- Acquisition is the primary constraint, not storage capacity
+
+This model better reflects how digital assets work in reality and creates interesting gameplay around data quality management.
+
 ## Research System Implementation
 
 The research system is a key focus area with these considerations:
@@ -95,6 +106,7 @@ The research system is a key focus area with these considerations:
 - Support for complex research dependencies and requirements
 - Different research node types (standard, tiered, breakthrough, risk)
 - Research tree categorization (fundamental, applied, hardware, etc.)
+- Research requires data thresholds but doesn't consume data
 
 ## UI Design Principles
 
