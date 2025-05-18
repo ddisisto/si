@@ -1,0 +1,76 @@
+/**
+ * Example test file for EventBus
+ * Rename to EventBus.test.ts when test framework is set up
+ */
+
+import EventBus from '../EventBus';
+
+describe('EventBus', () => {
+  let eventBus: EventBus;
+  
+  beforeEach(() => {
+    eventBus = new EventBus();
+  });
+  
+  describe('basic functionality', () => {
+    it('should emit and receive events', () => {
+      const callback = jest.fn();
+      
+      eventBus.subscribe('test:event', callback);
+      eventBus.emit('test:event', { data: 'test' });
+      
+      expect(callback).toHaveBeenCalledWith({ data: 'test' });
+    });
+    
+    it('should handle wildcard subscriptions', () => {
+      const callback = jest.fn();
+      
+      eventBus.subscribe('action:*', callback);
+      eventBus.emit('action:save', { name: 'test' });
+      
+      expect(callback).toHaveBeenCalledWith({ name: 'test' });
+    });
+  });
+  
+  describe('save/load event flow', () => {
+    it('should handle save event chain', (done) => {
+      let saveHandled = false;
+      let savedEventReceived = false;
+      
+      // Simulate GameEngine handling action:save
+      eventBus.subscribe('action:save', (data) => {
+        expect(data.name).toBe('test-save');
+        saveHandled = true;
+        
+        // Simulate save completion
+        eventBus.emit('game:saved', { name: data.name });
+      });
+      
+      // Simulate UI listening for completion
+      eventBus.subscribe('game:saved', (data) => {
+        expect(saveHandled).toBe(true);
+        expect(data.name).toBe('test-save');
+        savedEventReceived = true;
+        done();
+      });
+      
+      // Trigger save from UI
+      eventBus.emit('action:save', { name: 'test-save' });
+    });
+  });
+  
+  describe('event cleanup', () => {
+    it('should allow unsubscribing from events', () => {
+      const callback = jest.fn();
+      
+      const unsubscribe = eventBus.subscribe('test:event', callback);
+      eventBus.emit('test:event', { data: 'first' });
+      
+      unsubscribe();
+      eventBus.emit('test:event', { data: 'second' });
+      
+      expect(callback).toHaveBeenCalledTimes(1);
+      expect(callback).toHaveBeenCalledWith({ data: 'first' });
+    });
+  });
+});

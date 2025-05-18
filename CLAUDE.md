@@ -24,6 +24,7 @@ The game consists of several interconnected systems:
 - **PHILOSOPHY.md** - Core design principles emphasizing meaningful tensions and continuous systems
 - **ROADMAP.md** - Development plan and progress tracking (essential for prioritization)
 - **docs/** - Technical and design documentation:
+  - **test_plan.md** - Testing strategy and standards
   - technical_architecture.md - Architecture overview (review before implementation)
   - state_management_design.md - Data flow and state structure
   - eventbus_design.md - EventBus system documentation
