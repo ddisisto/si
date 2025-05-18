@@ -454,6 +454,40 @@
   overflow: hidden;
 }
 
+.filter-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  margin-bottom: var(--spacing-sm);
+}
+
+.filter-header h3 {
+  margin: 0;
+  font-size: var(--font-size-md);
+  color: var(--color-primary);
+}
+
+.close-filter {
+  font-size: var(--font-size-sm);
+  padding: var(--spacing-xs);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background-color: var(--color-overlay);
+  color: var(--color-text-muted);
+  border: none;
+  cursor: pointer;
+}
+
+.close-filter:hover {
+  background-color: var(--color-danger);
+  color: var(--color-text);
+}
+
 .filter-controls {
   display: flex;
   gap: var(--spacing-md);

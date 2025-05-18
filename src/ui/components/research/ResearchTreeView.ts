@@ -53,6 +53,7 @@ class ResearchTreeView extends UIComponent {
   private boundHandleToggleFilterPanel: (event: Event) => void;
   private boundHandleToggleDropdown: (event: Event) => void;
   private boundHandleSelectFilterOption: (event: Event) => void;
+  private boundHandleCloseFilter: (event: Event) => void;
   // Track which dropdowns are open
   private openDropdowns: Set<string> = new Set();
   
@@ -76,6 +77,7 @@ class ResearchTreeView extends UIComponent {
     this.boundHandleToggleFilterPanel = this.handleToggleFilterPanel.bind(this);
     this.boundHandleToggleDropdown = this.handleToggleDropdown.bind(this);
     this.boundHandleSelectFilterOption = this.handleSelectFilterOption.bind(this);
+    this.boundHandleCloseFilter = this.handleCloseFilter.bind(this);
     
     // Set initial zoom level to match "view all" default
     this.zoomLevel = 0.5;
@@ -113,6 +115,10 @@ class ResearchTreeView extends UIComponent {
       </div>
       <div class="filter-panel ${this.isFilterPanelVisible ? 'visible' : 'hidden'}">
         <div class="filter-controls">
+          <div class="filter-header">
+            <h3>Filters</h3>
+            <button class="close-filter" title="Close filters panel">✕</button>
+          </div>
           <div class="filter-dropdown">
             <label for="category-filter">Category:</label>
             <div class="dropdown-container">
@@ -474,6 +480,12 @@ class ResearchTreeView extends UIComponent {
       filterToggleButton.addEventListener('click', this.boundHandleToggleFilterPanel);
     }
     
+    // Bind close filter button event
+    const closeFilterButton = this.element.querySelector('.close-filter');
+    if (closeFilterButton) {
+      closeFilterButton.addEventListener('click', this.boundHandleCloseFilter);
+    }
+    
     // Bind dropdown toggle events
     const dropdownSelected = this.element.querySelectorAll('.dropdown-selected');
     dropdownSelected.forEach(dropdown => {
@@ -619,6 +631,23 @@ class ResearchTreeView extends UIComponent {
         document.removeEventListener('click', this.handleClickOutside.bind(this));
       }
     }
+  }
+  
+  /**
+   * Handle close filter button click
+   */
+  private handleCloseFilter(event: Event): void {
+    event.stopPropagation();
+    
+    // Close any open dropdowns
+    this.openDropdowns.clear();
+    
+    // Close the filter panel
+    this.isFilterPanelVisible = false;
+    this.render();
+    
+    // Remove document click listener
+    document.removeEventListener('click', this.handleClickOutside.bind(this));
   }
   
   /**
@@ -982,6 +1011,12 @@ class ResearchTreeView extends UIComponent {
     const filterToggleButton = this.element.querySelector('.filter-toggle');
     if (filterToggleButton) {
       filterToggleButton.removeEventListener('click', this.boundHandleToggleFilterPanel);
+    }
+    
+    // Remove close filter button event
+    const closeFilterButton = this.element.querySelector('.close-filter');
+    if (closeFilterButton) {
+      closeFilterButton.removeEventListener('click', this.boundHandleCloseFilter);
     }
     
     // Remove dropdown toggle events
