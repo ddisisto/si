@@ -117,51 +117,53 @@ The roadmap will be updated as development progresses to reflect new priorities,
   - [x] Add examples for different node types
   - [x] Create README for data organization
 
-### Custom Research Node Positioning (2 weeks)
-- [ ] Create positioning system
-  - [ ] Design position data structure
-  - [ ] Implement position saving in state
-  - [ ] Create default layout algorithm
-  - [ ] Add node coordinate system
-- [ ] Build positioning UI
-  - [ ] Create positioning mode toggle
-  - [ ] Implement drag-and-drop functionality
-  - [ ] Add position saving and loading
-  - [ ] Implement snap-to-grid option
-
 ## Phase 2: Core Gameplay Systems
 
-### Research System Implementation (3 weeks)
-- [ ] Implement research progress tracking
-- [ ] Create research completion effects
-- [ ] Add prerequisites checking
-- [ ] Implement resource costs
-- [ ] Create research notifications
-- [ ] Add data type requirements for research nodes
-- [ ] Implement research boost mechanics from deployments
-
 ### Resource System Refinement (2 weeks)
+**Dependencies:** None (core system already implemented)
 - [ ] Implement resource generation
 - [ ] Create resource allocation UI
 - [ ] Add resource caps and limitations
 - [ ] Implement resource effects from research
 - [ ] Add data types as a tracked resource
-- [ ] Create data quality and quantity tracking
+  - [ ] Define data type categories (text, image, synthetic, etc.)
+  - [ ] Create data quality and quantity tracking
+  - [ ] Implement data storage and management
 
-### Deployment System (4 weeks)
+### Deployment System - Foundation (3 weeks)
+**Dependencies:** Resource System (needs data type tracking)
 - [ ] Create deployment slot management
-- [ ] Implement deployment effects on resources
-- [ ] Add deployment visualization
+- [ ] Implement basic deployment data structures
+- [ ] Add deployment effects on resources
 - [ ] Create deployment management UI
 - [ ] Implement data generation from deployments
-- [ ] Add research category boost effects
+- [ ] Build deployment-resource feedback loops
+
+### Research System Implementation (3 weeks)
+**Dependencies:** Resource System (complete), Deployment System (foundation)
+- [ ] Implement research progress tracking
+- [ ] Create research completion effects
+- [ ] Add prerequisites checking
+- [ ] Implement resource costs (including data requirements)
+- [ ] Create research notifications
+- [ ] Add data type requirements for research nodes
+- [ ] Implement research boost mechanics from deployments
+
+### Deployment System - Advanced (1 week)
+**Dependencies:** Research System
+- [ ] Add research category boost effects from deployments
 - [ ] Create deployment-research feedback visualization
+- [ ] Implement deployment unlocking via research
+- [ ] Add deployment visualization on world map
 
 ### Basic Event System (3 weeks)
+**Dependencies:** Resource System, Research System, Deployment System
 - [ ] Implement event triggering framework
 - [ ] Create event resolution UI
 - [ ] Add basic event pool
 - [ ] Implement event effects on game state
+- [ ] Create deployment-triggered events
+- [ ] Add research-triggered events
 
 ## Phase 3: Expanded Gameplay Features
 
@@ -203,6 +205,7 @@ The roadmap will be updated as development progresses to reflect new priorities,
   - [x] Create UI component documentation
   - [x] Review element classes for alignment with styling
   - [x] Audit CSS for redundancy and unused styles
+- [ ] Custom research node positioning
 
 ### Audio Implementation (2 weeks)
 - [ ] Add sound effects
