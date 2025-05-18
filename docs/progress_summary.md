@@ -9,6 +9,14 @@
 - Created comprehensive documentation
 - Submitted PR #13
 
+### 2. EventBus Architecture Clarification ✅ (PR #15)
+- Completed architectural clarification for EventBus vs GameEngine patterns
+- Removed redundant setEventBus() method
+- Added helper methods (emit/subscribe) to UIComponent base class
+- Updated all components to use unified setGameEngine() approach
+- Improved event taxonomy documentation
+- Fixed all type errors and verified functionality
+
 ### Next Priorities (from ROADMAP.md)
 
 #### Immediate - Code Refactoring (Remaining)
