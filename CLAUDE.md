@@ -134,6 +134,13 @@ The codebase maintains separation between core systems:
 - **Systems**: Game system implementations (ResourceSystem, ResearchSystem, etc.)
   - Each system should be split into logical modules when growing large
   - Clear interfaces between systems
+  - **ResourceSystem** has been modularized as a reference pattern:
+    - `ComputingManager` - Computing resource operations
+    - `DataManager` - Data resource management
+    - `ResourceCalculations` - Metrics and calculations  
+    - `ResourceEffects` - Effect management
+    - `ResourceOperations` - Spending and affordability
+  - This modular pattern improves maintainability and should be applied to other large systems
 - **Types**: Entity definitions and interfaces
 - **Data**: Game data and definitions (organized by category)
 - **Utils**: Utility functions and helpers
