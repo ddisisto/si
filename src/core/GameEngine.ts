@@ -68,6 +68,18 @@ class GameEngine {
       // Process the action immediately (temporary - later may batch)
       this.processActions();
     });
+    
+    // Subscribe to save action
+    this.eventBus.subscribe('action:save', (data: any) => {
+      console.log(`GameEngine: Received action:save event with data:`, data);
+      if (data.name) {
+        this.saveGame(data.name);
+        // Emit the game:saved event that SaveLoadPanel listens for
+        this.eventBus.emit('game:saved', { name: data.name });
+      } else {
+        console.error('GameEngine: Save action missing name');
+      }
+    });
   }
   
   /**

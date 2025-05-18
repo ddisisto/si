@@ -170,6 +170,9 @@ class GameStateManager {
       });
       
       console.log(`GameStateManager: Game saved as "${name}"`);
+      
+      // Emit event to notify UI
+      this.eventBus.emit('game:saved', { name, timestamp: saveData.timestamp });
     } catch (error) {
       console.error('GameStateManager: Failed to save game:', error);
     }

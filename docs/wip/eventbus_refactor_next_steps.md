@@ -16,14 +16,19 @@ This document outlines the remaining work and considerations before merging the 
    - Created UI Component Best Practices in CLAUDE.md
    - Updated event taxonomy in eventbus_design.md
 
+3. **Bug Fixes**
+   - Fixed save functionality: GameEngine now properly handles `action:save` events
+   - Added missing `game:saved` event emission in both GameEngine and GameStateManager
+   - Save/Load UI now properly updates after save operations
+
 ## Pre-Merge Checklist
 
-- [ ] **Testing**
-  - [ ] Run full application test with `npm run dev`
-  - [ ] Test save/load functionality works correctly
-  - [ ] Verify research tree navigation
-  - [ ] Check turn controls functionality
-  - [ ] Confirm all UI events are properly handled
+- [x] **Testing**
+  - [x] Run full application test with `npm run dev`
+  - [x] Test save/load functionality works correctly (fixed missing event handling)
+  - [x] Verify research tree navigation
+  - [x] Check turn controls functionality
+  - [x] Confirm all UI events are properly handled
 
 - [ ] **Code Review**
   - [ ] Ensure no remaining references to direct eventBus access
