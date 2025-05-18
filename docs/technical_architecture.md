@@ -327,14 +327,19 @@ The rendering system uses a component-based approach:
 1. **Components** - Self-contained UI elements with HTML templates
 2. **Virtual DOM-like Updates** - Components only update when state changes
 3. **Event Delegation** - Events bubble up to parent components
-4. **CSS Styling** - Responsive design with CSS Grid and Flexbox
+4. **Standardized Component System** - Reusable, consistent UI elements
+5. **CSS Architecture** - Component-specific CSS files with shared design tokens
+6. **Responsive Design** - Adapts to different screen sizes with CSS Grid and Flexbox
 
 Key advantages:
 - **Accessibility** - Native DOM provides better accessibility
 - **Responsive Design** - Natural responsiveness without custom scaling
-- **Easier Development** - Standard HTML/CSS development patterns
+- **Consistency** - Standardized components ensure a cohesive UI experience
+- **Easier Development** - Standard HTML/CSS development patterns with reusable components
 - **Better Interactivity** - Native event handling and form controls
 - **Testability** - Components can be tested in isolation
+
+For detailed information about the UI component system, see [UI Component System](./ui_component_system.md).
 
 ## Saving and Loading
 

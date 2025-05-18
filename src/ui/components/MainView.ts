@@ -6,6 +6,7 @@ import UIComponent from './UIComponent';
 import { ResearchTreeView, ResearchTreeHeader } from './research';
 import { EventBus } from '../../core';
 import GameLayout from './GameLayout';
+import ButtonShowcase from './ButtonShowcase';
 
 /**
  * Primary view component for the main game area
@@ -13,7 +14,9 @@ import GameLayout from './GameLayout';
 class MainView extends UIComponent {
   private researchTreeView: ResearchTreeView | null = null;
   private researchTreeHeader: ResearchTreeHeader | null = null;
+  private buttonShowcase: ButtonShowcase | null = null;
   private showResearchTree: boolean = false;
+  private showButtonShowcase: boolean = false;
   private gameLayout: GameLayout | null = null;
   
   /**
@@ -37,17 +40,28 @@ class MainView extends UIComponent {
     this.researchTreeHeader = new ResearchTreeHeader();
     this.researchTreeHeader.setEventBus(eventBus);
     
+    // Create button showcase component
+    this.buttonShowcase = new ButtonShowcase();
+    if (eventBus) {
+      this.buttonShowcase.setEventBus(eventBus);
+    }
+    
     // Listen for back to main event
     eventBus.subscribe('ui:back_to_main', () => {
       this.showResearchTree = false;
+      this.showButtonShowcase = false;
       
-      // Unmount research tree before switching view
+      // Unmount components before switching view
       if (this.researchTreeHeader) {
         this.researchTreeHeader.unmount();
       }
       
       if (this.researchTreeView) {
         this.researchTreeView.unmount();
+      }
+      
+      if (this.buttonShowcase && this.buttonShowcase.getElement().parentElement) {
+        this.buttonShowcase.unmount();
       }
       
       this.render();
@@ -71,6 +85,12 @@ class MainView extends UIComponent {
       return ``;
     }
     
+    // Show button showcase if enabled
+    if (this.showButtonShowcase) {
+      // The ButtonShowcase component will be mounted directly to this container
+      return ``;
+    }
+    
     // Otherwise show the welcome/intro panel
     return `
       <div class="main-content">
@@ -79,7 +99,10 @@ class MainView extends UIComponent {
         <div class="main-section">
           <h3>Getting Started</h3>
           <p>Begin by allocating resources to research in the research tree. End your turn to see the results.</p>
-          <button id="show-research-tree" class="game-button primary">Open Research Tree</button>
+          <div class="action-buttons">
+            <button id="show-research-tree" class="game-button btn-primary btn-medium">Open Research Tree</button>
+            <button id="show-button-showcase" class="game-button btn-secondary btn-medium">UI Component Showcase</button>
+          </div>
         </div>
         <div class="main-section">
           <h3>Current Objectives</h3>
@@ -102,10 +125,15 @@ class MainView extends UIComponent {
     if (showResearchButton) {
       showResearchButton.addEventListener('click', () => {
         this.showResearchTree = true;
+        this.showButtonShowcase = false;
         
-        // First unmount any existing research tree component
+        // First unmount any existing components
         if (this.researchTreeView && this.researchTreeView.getElement().parentElement) {
           this.researchTreeView.unmount();
+        }
+        
+        if (this.buttonShowcase && this.buttonShowcase.getElement().parentElement) {
+          this.buttonShowcase.unmount();
         }
         
         // Mount the research tree header to the view title area
@@ -118,14 +146,38 @@ class MainView extends UIComponent {
         this.mountResearchTree();
       });
     }
+    
+    // Handle button showcase button click
+    const showButtonShowcaseButton = this.element.querySelector('#show-button-showcase');
+    if (showButtonShowcaseButton) {
+      showButtonShowcaseButton.addEventListener('click', () => {
+        this.showButtonShowcase = true;
+        this.showResearchTree = false;
+        
+        // First unmount any existing components
+        if (this.researchTreeView && this.researchTreeView.getElement().parentElement) {
+          this.researchTreeView.unmount();
+        }
+        
+        if (this.buttonShowcase && this.buttonShowcase.getElement().parentElement) {
+          this.buttonShowcase.unmount();
+        }
+        
+        // Then render the new container and mount the showcase
+        this.render();
+        this.mountButtonShowcase();
+      });
+    }
   }
   
   /**
-   * Mount the research tree after rendering
+   * Mount components after rendering
    */
   protected afterMount(): void {
     if (this.showResearchTree) {
       this.mountResearchTree();
+    } else if (this.showButtonShowcase) {
+      this.mountButtonShowcase();
     }
   }
   
@@ -146,6 +198,22 @@ class MainView extends UIComponent {
   }
   
   /**
+   * Mount the button showcase component
+   */
+  private mountButtonShowcase(): void {
+    if (this.buttonShowcase) {
+      // Mount directly to this.element
+      this.buttonShowcase.mount(this.element);
+      
+      if (this.gameState) {
+        this.buttonShowcase.update(this.gameState);
+      }
+    } else {
+      console.error('ButtonShowcase is not initialized');
+    }
+  }
+  
+  /**
    * Update all child components with new state
    */
   public update(gameState: Readonly<any>): void {
@@ -154,6 +222,11 @@ class MainView extends UIComponent {
     // Update research tree if mounted
     if (this.showResearchTree && this.researchTreeView) {
       this.researchTreeView.update(gameState);
+    }
+    
+    // Update button showcase if mounted
+    if (this.showButtonShowcase && this.buttonShowcase) {
+      this.buttonShowcase.update(gameState);
     }
   }
 }

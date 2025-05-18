@@ -343,41 +343,7 @@
   left: -15px;
 }
 
-/* Buttons */
-.game-button, button {
-  background-color: var(--color-surface);
-  color: var(--color-text);
-  border: 1px solid var(--color-primary);
-  border-radius: var(--border-radius-sm);
-  padding: var(--spacing-sm) var(--spacing-md);
-  font-weight: bold;
-  cursor: pointer;
-  transition: all var(--transition-fast);
-}
-
-.game-button:hover, button:hover {
-  background-color: var(--color-primary);
-  color: var(--color-overlay);
-}
-
-.game-button:active, button:active {
-  transform: translateY(1px);
-}
-
-.game-button:disabled, button:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.end-turn-button {
-  background-color: var(--color-secondary);
-  color: var(--color-text);
-  border: none;
-}
-
-.end-turn-button:hover {
-  background-color: var(--color-danger);
-}
+/* Button styles moved to buttons.css */
 
 /* Research Tree View */
 .research-tree-view {

@@ -3,6 +3,7 @@
  */
 
 @import 'variables.css';
+@import 'buttons.css';
 @import 'components.css';
 
 /* Reset and base styles */
