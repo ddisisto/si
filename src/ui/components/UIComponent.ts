@@ -5,15 +5,21 @@
 import { GameState } from '../../core/GameState';
 import { EventBus } from '../../core';
 
+interface GameEngineInterface {
+  getState(): GameState;
+  eventBus: EventBus;
+}
+
 /**
  * Abstract base class for UI components
  * Each component represents a self-contained UI element 
  * with its own DOM representation, state handling, and event binding
  */
 abstract class UIComponent {
-  protected element: HTMLElement;
+  public element: HTMLElement;
   protected gameState: Readonly<GameState> | null = null;
   protected eventBus: EventBus | null = null;
+  protected gameEngine: GameEngineInterface | null = null;
   
   /**
    * Create a new UI component
@@ -84,6 +90,7 @@ abstract class UIComponent {
       
       // Re-attach any event handlers
       this.bindEvents();
+      this.setupEvents();
     }
   }
   
@@ -92,6 +99,14 @@ abstract class UIComponent {
    * Override in subclasses to attach event listeners
    */
   protected bindEvents(): void {
+    // Can be overridden by subclasses
+  }
+  
+  /**
+   * Called after render to set up events
+   * Override in subclasses to attach event listeners
+   */
+  protected setupEvents(): void {
     // Can be overridden by subclasses
   }
   
@@ -114,6 +129,24 @@ abstract class UIComponent {
    */
   public setEventBus(eventBus: EventBus): void {
     this.eventBus = eventBus;
+  }
+  
+  /**
+   * Set game engine reference
+   * @param gameEngine Game engine instance
+   */
+  public setGameEngine(gameEngine: GameEngineInterface): void {
+    this.gameEngine = gameEngine;
+    this.gameState = gameEngine.getState();
+    this.eventBus = gameEngine.eventBus;
+  }
+  
+  /**
+   * Clean up any resources
+   * Override in subclasses to clean up event listeners, timers, etc.
+   */
+  public cleanup(): void {
+    // Can be overridden by subclasses
   }
 }
 
