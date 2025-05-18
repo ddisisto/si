@@ -17,6 +17,15 @@ The game consists of several interconnected systems:
 5. **Alignment System** - Relationships and value adherence tracking
 6. **EventBus System** - Infrastructure for component communication
 
+## Primary Workflow: Reconciliation
+
+**Always start with `/project:reconcile`** - this is your universal entry point for understanding project state and what needs attention.
+
+The project maintains alignment through a document hierarchy:
+**CONCEPT** → **PHILOSOPHY** → **PLAN** → **ARCHITECTURE** → **ROADMAP** → **README**
+
+Reconciliation is change-driven: start from recent commits, trace impacts upward through the hierarchy only as needed, then cascade updates downward. It adapts to context - sometimes updating docs, sometimes implementing features, sometimes refactoring code.
+
 ## Documentation Structure
 
 - **CONCEPT.md** - Original concept and brainstorming
@@ -148,6 +157,14 @@ The codebase maintains separation between core systems:
 4. **State Change Notifications** - When replacing state directly (e.g., when loading a saved game), ensure all listeners are notified properly through `notifyListeners()`.
 
 5. **Event Documentation** - Always document new event types in `/docs/eventbus_design.md` to maintain the registry of events.
+
+## Custom Commands
+
+The `.claude/commands/` directory contains workflow commands:
+- `reconcile.md` - Primary command for project state assessment and alignment
+- `work.md` - Pick new tasks from roadmap
+- `validate.md` - Test UI and check for errors
+- Others available for specific workflows
 
 ## Recent Learnings and Notes
 
