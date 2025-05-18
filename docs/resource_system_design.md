@@ -214,7 +214,7 @@ Represents financial resources available to the organization.
 - Comparative metrics vs. competitors
 - Alert indicators for critical levels
 
-## Implementation Approach
+## Resource Extensions\n\n### Compute Resource Subtypes (Future)\n\n- **Training Compute**: Optimized for model training tasks\n- **Inference Compute**: Optimized for deployment operations\n- **Specialized Hardware**: Quantum, neuromorphic, etc.\n- Unlocked through research progression\n- Different efficiency multipliers for different tasks\n\n### System Level Upgrades (Future)\n\n- **Infrastructure Improvements**: Base resource generation increases\n- **Efficiency Research**: Better resource utilization\n- **Advanced Architectures**: New resource generation patterns\n- Unlocked through specific research paths\n\n## Implementation Approach
 
 ### Data Structure
 

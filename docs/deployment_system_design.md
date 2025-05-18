@@ -132,6 +132,21 @@ Each deployment has:
 
 ## Risk and Opportunity System
 
+### Data Generation and Refinement
+
+Deployments can generate or refine data resources:
+
+**Data Generation:**
+- Some deployment types create new data as a byproduct
+- Generated data quality depends on deployment configuration
+- Computing allocation affects generation rate and quality
+
+**Data Refinement:**
+- Deployments can process existing data to improve quality
+- Requires computing resources and source data access
+- May accelerate decay rate of source data as it becomes obsolete
+- Creates higher-quality derivatives of existing data sets
+
 ### Risk Factors
 
 Deployments generate risks based on:
