@@ -1,1 +1,1 @@
-Please scan the entire codebase for terms like 'placeholder', 'temp', etc and see that we have respective ROADMAP items to complete these.
+Please scan the entire codebase for terms like 'placeholder', 'temp', etc and see that we have respective ROADMAP items or github issues to complete these. Create if missing, optionally adding comment to the code regarding this.
