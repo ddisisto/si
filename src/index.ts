@@ -11,7 +11,6 @@ import {
   MainView,
   SaveLoadPanel
 } from './ui';
-import { ResourceSystem } from './systems';
 
 /**
  * Initialize and start the game
@@ -25,10 +24,6 @@ function main() {
     
     // Get the event bus from the engine to ensure we're using a single instance
     const engineEventBus = gameEngine.getEventBus();
-    
-    // Register game systems using the engine's event bus
-    const resourceSystem = new ResourceSystem(gameEngine.getStateManager(), engineEventBus);
-    gameEngine.registerSystem(resourceSystem);
     
     // Initialize UI Manager with the engine's event bus
     const uiManager = new UIManager(engineEventBus);
@@ -92,14 +87,17 @@ function main() {
 
     // Initialize UI Manager
     uiManager.initialize(rootElement);
+    uiManager.setGameEngine(gameEngine);
 
     // Create and register game components
     const resourcePanel = new ResourcePanel();
-    const turnControls = new TurnControls(engineEventBus);
+    const turnControls = new TurnControls();
     const gameInfoPanel = new GameInfoPanel();
     const mainView = new MainView();
-    // Create SaveLoadPanel with the engine's event bus
-    const saveLoadPanel = new SaveLoadPanel({ eventBus: engineEventBus });
+    const saveLoadPanel = new SaveLoadPanel();
+    
+    // Set game engine on mainView so child components can access it
+    mainView.setGameEngine(gameEngine);
     
     // Register all components
     uiManager.registerComponent('resources', resourcePanel);

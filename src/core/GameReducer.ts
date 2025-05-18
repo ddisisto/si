@@ -487,11 +487,18 @@ function resourceReducer(state: ResourceState, action: GameAction): ResourceStat
 function researchReducer(state: ResearchState, action: GameAction): ResearchState {
   switch (action.type) {
     case 'UPDATE_RESEARCH_STATE':
+      console.log('GameReducer: Handling UPDATE_RESEARCH_STATE');
+      console.log('GameReducer: Payload contains', Object.keys(action.payload).length, 'keys');
+      if (action.payload.nodes) {
+        console.log('GameReducer: Payload nodes count:', Object.keys(action.payload.nodes).length);
+      }
       // Complete replacement of research state (for initialization/loading)
-      return {
+      const newState = {
         ...state,
         ...action.payload
       };
+      console.log('GameReducer: After update, nodes count:', Object.keys(newState.nodes).length);
+      return newState;
       
     case 'START_RESEARCH':
       const { nodeId, allocatedCompute, turn } = action.payload;

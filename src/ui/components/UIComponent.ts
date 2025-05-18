@@ -5,15 +5,20 @@
 import { GameState } from '../../core/GameState';
 import { EventBus } from '../../core';
 
+interface GameEngineInterface {
+  getState(): GameState;
+  eventBus: EventBus;
+}
+
 /**
  * Abstract base class for UI components
  * Each component represents a self-contained UI element 
  * with its own DOM representation, state handling, and event binding
  */
 abstract class UIComponent {
-  protected element: HTMLElement;
+  public element: HTMLElement;
   protected gameState: Readonly<GameState> | null = null;
-  protected eventBus: EventBus | null = null;
+  protected gameEngine: GameEngineInterface | null = null;
   
   /**
    * Create a new UI component
@@ -84,6 +89,7 @@ abstract class UIComponent {
       
       // Re-attach any event handlers
       this.bindEvents();
+      this.setupEvents();
     }
   }
   
@@ -92,6 +98,14 @@ abstract class UIComponent {
    * Override in subclasses to attach event listeners
    */
   protected bindEvents(): void {
+    // Can be overridden by subclasses
+  }
+  
+  /**
+   * Called after render to set up events
+   * Override in subclasses to attach event listeners
+   */
+  protected setupEvents(): void {
     // Can be overridden by subclasses
   }
   
@@ -109,11 +123,38 @@ abstract class UIComponent {
   }
   
   /**
-   * Set event bus for component communication
-   * @param eventBus Event bus instance
+   * Set game engine reference
+   * @param gameEngine Game engine instance
    */
-  public setEventBus(eventBus: EventBus): void {
-    this.eventBus = eventBus;
+  public setGameEngine(gameEngine: GameEngineInterface): void {
+    this.gameEngine = gameEngine;
+    this.gameState = gameEngine.getState();
+  }
+  
+  /**
+   * Helper method to emit events through the game engine's event bus
+   * @param event Event name
+   * @param data Event data
+   */
+  protected emit(event: string, data: any): void {
+    this.gameEngine?.eventBus.emit(event, data);
+  }
+  
+  /**
+   * Helper method to subscribe to events through the game engine's event bus
+   * @param event Event name
+   * @param handler Event handler function
+   */
+  protected subscribe(event: string, handler: (data: any) => void): void {
+    this.gameEngine?.eventBus.subscribe(event, handler);
+  }
+  
+  /**
+   * Clean up any resources
+   * Override in subclasses to clean up event listeners, timers, etc.
+   */
+  public cleanup(): void {
+    // Can be overridden by subclasses
   }
 }
 

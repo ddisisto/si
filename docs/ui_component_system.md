@@ -16,28 +16,43 @@ This document outlines the standardized UI component design system for SuperInt+
 
 ### Implementation Approach
 
-SuperInt++ uses a lightweight UI approach with standard HTML elements styled with CSS classes, combined with a minimal component architecture for organization. This approach:
+SuperInt++ uses a lightweight UI approach that distinguishes between:
 
-1. Minimizes complexity by leveraging the browser's native elements
-2. Maintains semantic HTML for accessibility
-3. Reduces JavaScript overhead
-4. Provides flexibility for component-specific customization
-5. Uses plain HTML buttons with CSS classes - no custom Button component
+1. **Complex UI Components** - Use UIComponent base class for panels, views, and stateful components
+2. **Simple HTML Elements** - Use plain HTML with CSS classes for buttons, labels, and other simple elements
+
+This approach:
+- Minimizes complexity by leveraging the browser's native elements
+- Maintains semantic HTML for accessibility
+- Reduces JavaScript overhead
+- Avoids over-engineering simple UI elements
+- Provides component structure only where needed
+
+### When to Use UIComponent
+
+**Use UIComponent for:**
+- Complex UI panels (ResourcePanel, SaveLoadPanel, MainView)
+- Components that need game state updates
+- Components with lifecycle requirements (mount/unmount)
+- Components requiring event handling and EventBus integration
+- Multi-element layouts with internal behavior
+
+**Use Plain HTML for:**
+- Buttons (use `<button class="btn-primary">`)
+- Simple labels and text elements
+- Basic containers without state management
+- Elements that don't need game state updates
+- Pure presentational elements
 
 ### Base Component Structure
 
-All UI components extend the base `UIComponent` class, which provides:
-
-- DOM element creation and lifecycle management
-- State management and rendering
-- Event binding
-- Template creation
+The `UIComponent` class provides structure for complex UI components:
 
 ```typescript
 abstract class UIComponent {
   protected element: HTMLElement;
   protected gameState: Readonly<GameState> | null;
-  protected eventBus: EventBus | null;
+  protected gameEngine: GameEngineInterface | null;
   
   constructor(elementType: string, className?: string);
   public mount(parent: HTMLElement): void;
@@ -46,8 +61,19 @@ abstract class UIComponent {
   public render(): void;
   protected abstract createTemplate(): string;
   protected bindEvents(): void;
+  
+  // Helper methods for event handling
+  protected emit(event: string, data: any): void;
+  protected subscribe(event: string, handler: (data: any) => void): void;
 }
 ```
+
+Key features:
+- DOM element creation and lifecycle management
+- Game state integration and automatic updates
+- Event binding and communication through GameEngine
+- Template-based rendering with HTML strings
+- Helper methods for EventBus access
 
 ### CSS Organization
 
@@ -68,9 +94,79 @@ CSS is organized by component type, with each component having its own CSS file:
   - `index.css` - Component style imports
 - `components.css` - Legacy component styles (being phased out)
 
+### Component Examples
+
+**Correct - Complex Panel Component:**
+```typescript
+class ResourcePanel extends UIComponent {
+  constructor() {
+    super('div', 'resource-panel');
+  }
+  
+  protected createTemplate(): string {
+    return `
+      <h3>Resources</h3>
+      <div class="resource-list">
+        <div>Computing: ${this.gameState?.resources.computing || 0}</div>
+        <div>Data: ${this.gameState?.resources.data || 0}</div>
+      </div>
+      <button class="btn-primary">Allocate Resources</button>
+    `;
+  }
+  
+  protected bindEvents(): void {
+    const button = this.element.querySelector('.btn-primary');
+    button?.addEventListener('click', () => {
+      this.emit('action:resource:allocate', {});
+    });
+  }
+}
+```
+
+**Incorrect - Over-engineered Button Component:**
+```typescript
+// DON'T DO THIS - Use plain HTML instead
+class Button extends UIComponent {
+  constructor(text: string, type: string) {
+    super('button', `btn-${type}`);
+    this.text = text;
+  }
+  
+  protected createTemplate(): string {
+    return this.text; // Unnecessary complexity
+  }
+}
+```
+
+**Correct - Simple Button Usage:**
+```html
+<!-- In any component's template -->
+<button class="btn-primary">Save Game</button>
+<button class="btn-danger">Delete Save</button>
+<button class="btn-secondary btn-small">Cancel</button>
+```
+
+### Anti-Patterns to Avoid
+
+1. **Creating UIComponent subclasses for simple elements**
+   - ❌ `class Button extends UIComponent`
+   - ✅ `<button class="btn-primary">Click</button>`
+
+2. **Deep component nesting for simple layouts**
+   - ❌ Multiple UIComponents for a simple form
+   - ✅ Single component with HTML template
+
+3. **State management for presentational elements**
+   - ❌ UIComponent for a loading spinner
+   - ✅ CSS animation with a simple div
+
+4. **Component overhead for static content**
+   - ❌ UIComponent for footer text
+   - ✅ Plain HTML in parent component
+
 ## Button System
 
-The button system uses standard HTML `<button>` elements with CSS classes for styling and variants.
+The button system uses standard HTML `<button>` elements with CSS classes for styling and variants. There is no Button component - just CSS classes applied to HTML buttons.
 
 ### Basic Usage
 

@@ -3,7 +3,6 @@
  */
 
 import UIComponent from './UIComponent';
-import { EventBus } from '../../core';
 
 /**
  * Component for controlling turn progression
@@ -14,16 +13,9 @@ class TurnControls extends UIComponent {
 
   /**
    * Create new turn controls
-   * @param eventBus Event bus for emitting turn events
    */
-  constructor(eventBus: EventBus) {
+  constructor(_eventBus?: any) {
     super('div', 'turn-controls');
-    this.eventBus = eventBus;
-    
-    // Subscribe to time and phase events
-    this.eventBus.subscribe('turn:start', this.updateTimeDisplay.bind(this));
-    this.eventBus.subscribe('phase:action', this.updateTimeDisplay.bind(this));
-    this.eventBus.subscribe('time:compression:changed', this.updateTimeDisplay.bind(this));
   }
   
   /**
@@ -74,7 +66,7 @@ class TurnControls extends UIComponent {
    */
   protected bindEvents(): void {
     // Add end turn button handler
-    const endTurnButton = this.element.querySelector('.end-turn-button');
+    const endTurnButton = this.element.querySelector('.btn-danger');
     if (endTurnButton) {
       // Remove any existing click handlers first to prevent duplicates
       endTurnButton.removeEventListener('click', this.handleEndTurn);
@@ -84,6 +76,16 @@ class TurnControls extends UIComponent {
     } else {
       console.warn('End turn button not found in DOM');
     }
+  }  
+  
+  /**
+   * Set up event subscriptions after game engine is set
+   */
+  protected afterMount(): void {
+    // Subscribe to time and phase events
+    this.subscribe('turn:start', this.updateTimeDisplay.bind(this));
+    this.subscribe('phase:action', this.updateTimeDisplay.bind(this));
+    this.subscribe('time:compression:changed', this.updateTimeDisplay.bind(this));
   }
   
   /**
@@ -132,9 +134,9 @@ class TurnControls extends UIComponent {
    * Handle end turn button click
    */
   private handleEndTurn = (): void => {
-    if (this.gameState && this.eventBus) {
+    if (this.gameState) {
       // Emit end turn event
-      this.eventBus.emit('turn:end', { 
+      this.emit('turn:end', { 
         turn: this.gameState.meta.turn,
         gameTime: this.gameState.meta.gameTime
       });

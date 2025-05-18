@@ -140,7 +140,7 @@ The roadmap will be updated as development progresses to reflect new priorities,
 - [ ] Refactor ResearchTreeView.ts (1064 lines) into smaller components
 - [ ] Split ResourceSystem.ts (802 lines) into smaller modules
 - [ ] Break down GameReducer.ts (850 lines) into category-specific reducers
-- [ ] Clarify UIComponent architecture and remove unused code
+- [x] Clarify UIComponent architecture and remove unused code
 - [ ] Audit and clean up CSS redundancy
 
 ### Resource System Refinement (1 week)
@@ -258,6 +258,15 @@ The roadmap will be updated as development progresses to reflect new priorities,
 - [ ] Improve architectural clarity (e.g., proper UIComponent usage)
 - [ ] Remove unused code and redundant CSS
 - [ ] Ensure consistent component patterns across the codebase
+
+### Testing Infrastructure (2 weeks)
+- [ ] Set up Jest or Vitest test framework
+- [ ] Create test utilities for mocking (EventBus, GameState)
+- [ ] Write critical save/load integration tests
+- [ ] Add EventBus flow tests
+- [ ] Create GameReducer unit tests
+- [ ] Set up GitHub Actions for automated testing
+- [ ] Document testing patterns and best practices
 
 ### Release Preparation (2 weeks)
 - [ ] Final testing and bug fixing

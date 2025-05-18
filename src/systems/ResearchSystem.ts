@@ -96,6 +96,9 @@ class ResearchSystem extends BaseSystem {
         .filter(node => node.prerequisites.length === 0)
         .map(node => node.id);
       
+      console.log('ResearchSystem: Preparing to dispatch UPDATE_RESEARCH_STATE with', Object.keys(nodeStates).length, 'nodes');
+      console.log('ResearchSystem: Available nodes:', availableNodes);
+      
       // Update research state in game state
       this.stateManager.dispatch({
         type: 'UPDATE_RESEARCH_STATE',
@@ -107,8 +110,15 @@ class ResearchSystem extends BaseSystem {
         }
       });
       
+      console.log('ResearchSystem: UPDATE_RESEARCH_STATE dispatched');
+      
       // Apply the initial statuses
+      console.log('ResearchSystem: Updating node statuses');
       this.updateNodeStatuses();
+      
+      // Check final state
+      const finalState = this.stateManager.getState();
+      console.log('ResearchSystem: After initialization, final nodes count:', Object.keys(finalState.research.nodes).length);
       
       // Emit event for UI updates
       this.eventBus.emit('research:initialized', {

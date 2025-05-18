@@ -15,7 +15,7 @@ class GameEngine {
   private gameLoop: number | null = null;
   private lastTimestamp = 0;
   private stateManager: GameStateManager;
-  private eventBus: EventBus;
+  public readonly eventBus: EventBus;
   private systems: System[] = [];
   private turnSystem: TurnSystem;
   private actionQueue: GameAction[] = [];
@@ -51,155 +51,177 @@ class GameEngine {
       }
     });
     
-    // Subscribe to save/load events
-    this.eventBus.subscribe('action:save', (data: any) => {
-      console.log(`GameEngine: Received action:save event with name: "${data.name}"`);
-      this.saveGame(data.name);
-      console.log(`GameEngine: Emitting game:saved event for "${data.name}"`);
-      this.eventBus.emit('game:saved', { name: data.name });
+    // Subscribe to action events
+    this.eventBus.subscribe('action:*', (data: any) => {
+      const eventName = 'action:*';
+      console.log(`GameEngine: Received action event "${eventName}" with data:`, data);
+      
+      // Create action from event data
+      const action: GameAction = {
+        type: eventName.replace('action:', '').toUpperCase(),
+        ...data
+      };
+      
+      console.log(`GameEngine: Queueing action: "${action.type}"`);
+      this.actionQueue.push(action);
+      
+      // Process the action immediately (temporary - later may batch)
+      this.processActions();
     });
     
-    this.eventBus.subscribe('action:load', (data: any) => {
-      console.log(`GameEngine: Received action:load event with name: "${data.name}"`);
-      console.log(`GameEngine: Current turn before load: ${this.stateManager.getState().meta.turn}`);
-      
-      const success = this.loadGame(data.name);
-      
-      if (success) {
-        console.log(`GameEngine: Load succeeded, new turn: ${this.stateManager.getState().meta.turn}`);
-        console.log(`GameEngine: Emitting game:loaded event for "${data.name}"`);
-        this.eventBus.emit('game:loaded', { name: data.name });
+    // Subscribe to save action
+    this.eventBus.subscribe('action:save', (data: any) => {
+      console.log(`GameEngine: Received action:save event with data:`, data);
+      if (data.name) {
+        this.saveGame(data.name);
+        // Emit the game:saved event that SaveLoadPanel listens for
+        this.eventBus.emit('game:saved', { name: data.name });
       } else {
-        console.error(`GameEngine: Failed to load game "${data.name}"`);
+        console.error('GameEngine: Save action missing name');
       }
     });
-    
-    console.log('Game Engine initialized');
   }
   
   /**
-   * Initialize the game and all systems
+   * Initialize the game engine
    */
   public initialize(): void {
-    // Initialize all registered systems
+    console.log('GameEngine: Starting initialization');
+    console.log('GameEngine: Systems to initialize:', this.systems.map(s => s.getName()));
+    
+    // Initialize all systems
     this.systems.forEach(system => {
+      console.log(`GameEngine: Initializing system ${system.getName()}`);
       system.initialize();
     });
     
-    console.log('Game Engine systems initialized');
+    // Log final state of research nodes
+    const finalState = this.stateManager.getState();
+    console.log('GameEngine: After initialization, research nodes:', Object.keys(finalState.research.nodes).length);
+    console.log('GameEngine: Research nodes:', finalState.research.nodes);
+    
+    // Send initialization event
+    this.eventBus.emit('engine:initialized');
   }
-
+  
   /**
    * Start the game loop
    */
   public start(): void {
-    if (this.gameLoop !== null) return;
-    
-    // Initialize systems if not already done
-    if (this.systems.some(system => !system.isInitialized())) {
-      this.initialize();
+    if (!this.gameLoop) {
+      console.log('Game Engine: Starting game loop');
+      this.lastTimestamp = performance.now();
+      this.gameLoop = requestAnimationFrame(this.update.bind(this));
     }
-    
-    // Start the first turn
-    this.turnSystem.startTurn();
-    
-    this.lastTimestamp = performance.now();
-    this.gameLoop = requestAnimationFrame(this.update.bind(this));
-    console.log('Game loop started');
   }
-
+  
+  /**
+   * Main update loop
+   */
+  private update(currentTimestamp: number): void {
+    const deltaTime = currentTimestamp - this.lastTimestamp;
+    this.lastTimestamp = currentTimestamp;
+    
+    // Update systems before processing actions
+    this.updateSystems(deltaTime);
+    
+    // Process any queued actions
+    this.processActions();
+    
+    // Broadcast the current game state to any listeners
+    this.eventBus.emit('state:updated', this.stateManager.getState());
+    
+    // Continue the game loop
+    this.gameLoop = requestAnimationFrame(this.update.bind(this));
+  }
+  
+  /**
+   * Process all queued actions
+   */
+  private processActions(): void {
+    while (this.actionQueue.length > 0) {
+      const action = this.actionQueue.shift();
+      if (action) {
+        console.log(`GameEngine: Dispatching action: "${action.type}"`);
+        this.stateManager.dispatch(action);
+      }
+    }
+  }
+  
   /**
    * Stop the game loop
    */
   public stop(): void {
-    if (this.gameLoop === null) return;
-    
-    cancelAnimationFrame(this.gameLoop);
-    this.gameLoop = null;
-    console.log('Game loop stopped');
-  }
-
-  /**
-   * Register a system with the game engine
-   */
-  public registerSystem(system: System): void {
-    this.systems.push(system);
-    
-    // Initialize the system if the engine is already running
-    if (this.gameLoop !== null && !system.isInitialized()) {
-      system.initialize();
+    if (this.gameLoop) {
+      console.log('Game Engine: Stopping game loop');
+      cancelAnimationFrame(this.gameLoop);
+      this.gameLoop = null;
     }
-    
-    console.log(`System registered: ${system.getName()}`);
   }
   
   /**
    * Get the current game state
+   * @returns The current game state
    */
-  public getState(): Readonly<GameState> {
+  public getState(): GameState {
     return this.stateManager.getState();
   }
   
   /**
    * Get the state manager
+   * @returns The state manager instance
    */
   public getStateManager(): GameStateManager {
     return this.stateManager;
   }
   
   /**
-   * Dispatch an action to update the game state
+   * Get the turn system
+   * @returns The turn system instance
    */
-  public dispatch(action: GameAction): void {
-    this.stateManager.dispatch(action);
+  public getTurnSystem(): TurnSystem {
+    return this.turnSystem;
   }
   
   /**
    * Get the event bus
+   * @returns The event bus instance
    */
   public getEventBus(): EventBus {
     return this.eventBus;
   }
   
   /**
-   * Get the turn system
+   * Register a new system
+   * @param system The system to register
    */
-  public getTurnSystem(): TurnSystem {
-    return this.turnSystem;
-  }
-
-  /**
-   * Main update loop
-   */
-  private update(timestamp: number): void {
-    const deltaTime = timestamp - this.lastTimestamp;
-    this.lastTimestamp = timestamp;
-
-    // Process any queued actions
-    this.processActions();
-    
-    // Update all systems
-    this.updateSystems(deltaTime);
-    
-    // Request next frame if game is still running
+  public registerSystem(system: System): void {
+    this.systems.push(system);
     if (this.gameLoop !== null) {
-      this.gameLoop = requestAnimationFrame(this.update.bind(this));
+      system.initialize();
     }
   }
   
   /**
-   * Process any actions in the queue
+   * Subscribe to state changes  
+   * @param listener Callback function that receives the new state
+   * @returns Unsubscribe function
    */
-  private processActions(): void {
-    if (this.actionQueue.length > 0) {
-      const actions = [...this.actionQueue];
-      this.actionQueue = [];
-      
-      actions.forEach(action => {
-        this.stateManager.dispatch(action);
-      });
-    }
+  public subscribe(listener: (state: GameState) => void): () => void {
+    console.log('GameEngine: Adding state subscription');
+    return this.stateManager.subscribe(listener);
   }
+  
+  /**
+   * Dispatch an action to the state manager
+   * @param action The action to dispatch
+   */
+  public dispatch(action: GameAction): void {
+    console.log(`GameEngine: Direct dispatch of action: "${action.type}"`);
+    this.stateManager.dispatch(action);
+  }
+  
+  
   
   /**
    * Update all registered systems

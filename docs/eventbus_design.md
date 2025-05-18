@@ -30,17 +30,22 @@ Events in the system are categorized by their purpose and naming convention:
 1. **Command Events** (`action:*`)
    - Request a change to game state
    - Flow: UI Components → Game Systems
-   - Examples: `action:save`, `action:load`, `action:queue`
+   - Examples: `action:save`, `action:load`, `action:queue`, `action:research:start`
 
 2. **State Change Events** (`game:*`)
    - Notify of completed state changes
    - Flow: Game Systems → UI Components
-   - Examples: `game:saved`, `game:loaded`, `game:stateChanged`
+   - Examples: `game:saved`, `game:loaded`, `game:state:updated`
 
-3. **System Events** (`*:*`)
-   - Coordinate game systems
+3. **UI Events** (`ui:*`)
+   - Inter-component communication
+   - Flow: Between UI Components
+   - Examples: `ui:panel:toggle`, `ui:view:change`, `ui:back_to_main`
+
+4. **System Events** (`turn:*`, `phase:*`)
+   - Coordinate game systems and timing
    - Flow: Between Game Systems
-   - Examples: `turn:start`, `turn:end`, `phase:changed`
+   - Examples: `turn:start`, `turn:end`, `phase:action`, `time:compression:changed`
 
 ### 1.3 Event Flow Diagram
 
@@ -81,13 +86,16 @@ Events in the system are categorized by their purpose and naming convention:
 | `action:save` | SaveLoadPanel | GameEngine | Request game save | `{ name: string }` |
 | `action:load` | SaveLoadPanel | GameEngine | Request game load | `{ name: string }` |
 | `action:queue` | UI Components | GameEngine | Queue a state action | `{ action: GameAction }` |
+| `action:research:start` | ResearchTreeView | GameEngine | Start research | `{ researchId: string }` |
 | `game:saved` | GameEngine | SaveLoadPanel | Notify save complete | `{ name: string }` |
 | `game:loaded` | GameEngine | SaveLoadPanel | Notify load complete | `{ name: string }` |
-| `stateChanged` | GameStateManager | Systems | Notify state update | `{ action, prevState, nextState }` |
+| `game:state:updated` | GameStateManager | Systems | Notify state update | `{ action, prevState, nextState }` |
 | `stateLoaded` | GameStateManager | Systems | Notify state replacement | `{ name: string }` |
+| `ui:back_to_main` | ResearchTreeHeader | MainView | Return to main view | `{}` |
 | `turn:start` | TurnSystem | Systems | Signal turn beginning | `{ turn, gameTime }` |
-| `turn:end` | TurnSystem | Systems | Signal turn completion | `{ turn, gameTime }` |
-| `phase:changed` | TurnSystem | Systems | Signal phase change | `{ phase }` |
+| `turn:end` | TurnControls | TurnSystem | Request turn end | `{ turn, gameTime }` |
+| `phase:action` | TurnSystem | UI Components | Signal action phase | `{ phase }` |
+| `time:compression:changed` | TimeSystem | UI Components | Time scale changed | `{ timeScale }` |
 
 ## 2. State Persistence System
 
@@ -209,18 +217,37 @@ this.eventBus.subscribe('action:save', (data) => {
   this.eventBus.emit('game:saved', { name: data.name });
 });
 
-// In SaveLoadPanel:
-constructor(options: SaveLoadPanelOptions) {
-  super('div', 'save-load-panel');
-  // Critical: Set eventBus from constructor params
-  this.eventBus = options.eventBus;
+// NEW PATTERN - Components access EventBus through GameEngine:
+abstract class UIComponent {
+  protected gameEngine: GameEngineInterface | null = null;
+  
+  // Helper methods for common patterns
+  protected emit(event: string, data: any): void {
+    this.gameEngine?.eventBus.emit(event, data);
+  }
+  
+  protected subscribe(event: string, handler: (data: any) => void): void {
+    this.gameEngine?.eventBus.subscribe(event, handler);
+  }
+  
+  public setGameEngine(gameEngine: GameEngineInterface): void {
+    this.gameEngine = gameEngine;
+    this.gameState = gameEngine.getState();
+  }
 }
 
-// In UI component when handling save action:
-handleSaveGame(): void {
-  if (this.eventBus) {
-    const saveName = this.saveNameInput || 'Game Save';
-    this.eventBus.emit('action:save', { name: saveName });
+// In UI component implementation:
+class SaveLoadPanel extends UIComponent {
+  protected afterMount(): void {
+    // Subscribe to events using helper method
+    this.subscribe('game:saved', this.refreshSavesList.bind(this));
+    this.subscribe('game:loaded', this.handleGameLoaded.bind(this));
   }
+  
+  private handleSaveGame = (): void => {
+    const saveName = this.saveNameInput || 'Game Save';
+    // Emit event using helper method
+    this.emit('action:save', { name: saveName });
+  };
 }
 ```
