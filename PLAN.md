@@ -1,7 +1,6 @@
-# SuperInt++ Game Plan v2
+# SuperInt++ Game Mechanics
 
-## Game Overview
-SuperInt++ is a strategic simulation game where players develop AI systems in a competitive global landscape. Inspired by global strategy simulation mechanics but focused on technological advancement, players manage an AI development organization with the goal of achieving advanced AI capabilities while navigating technical, ethical, and competitive challenges.
+This document details the core gameplay systems and mechanics for SuperInt++.
 
 ## Core Game Interface
 
@@ -12,228 +11,270 @@ SuperInt++ is a strategic simulation game where players develop AI systems in a 
 
 ## Resources System
 
-1. **Computing Power**
-   - Accumulates over time rather than being spent
-   - Allocated between R&D and Deployments
-   - Allocation decisions create strategic tradeoffs
+Resources form the foundation of strategic decision-making, each with unique mechanics that reflect real-world constraints.
 
-2. **Data Access**
-   - Persistent asset model (not consumed when used)
-   - Six data types: text, image, video, synthetic, behavioral, scientific
-   - Quality degrades over time (requires active maintenance)
-   - Tiered access: public → specialized → proprietary → surveillance-level
-   - Required for R&D and deployments at minimum thresholds
-   - Multiple systems can access same data concurrently
-   - Deployments can generate or refine data quality
+### 1. Computing Power
+- **Accumulation Model**: Grows over time rather than being consumed
+- **Allocation**: Split between R&D and Deployments
+- **Strategic Tension**: Balancing immediate needs vs. long-term research
+- **Scaling**: Can be increased through infrastructure research and funding
 
-3. **Influence**
-   - Subdivided into: Academic, Industry, Government, Public, OSS Community
-   - Can be spent on actions (lobbying, competitor actions)
-   - Minimum thresholds required for certain actions
-   - Used to trigger beneficial events or mitigate negative ones
+### 2. Data Access
+- **Asset Model**: Persistent resource not consumed when used
+- **Data Types**: Text, image, video, synthetic, behavioral, scientific
+- **Quality Decay**: Requires active maintenance to preserve value
+- **Access Tiers**: 
+  - Public → Specialized → Proprietary → Surveillance-level
+  - Higher tiers provide research advantages but carry ethical costs
+- **Multi-Use**: Multiple systems can access same datasets concurrently
+- **Generation**: Deployments can create new data or refine existing quality
 
-4. **Funding**
-   - Generated through deployments
-   - Used for infrastructure, hiring, acquisitions
-   - Affected by public trust and alignment decisions
+### 3. Influence
+- **Subdivisions**: Academic, Industry, Government, Public, OSS Community
+- **Spending Mechanics**: Used for lobbying, competitor interactions, event mitigation
+- **Threshold Requirements**: Certain actions require minimum influence levels
+- **Regeneration**: Grows through successful deployments and research sharing
+
+### 4. Funding
+- **Generation**: Primarily through successful deployments
+- **Usage**: Infrastructure expansion, talent acquisition, computing upgrades
+- **Modifiers**: Affected by public trust, alignment decisions, market conditions
+- **Economic Cycles**: Subject to booms, busts, and regulatory changes
 
 ## Deployment System
 
-- Players manage 0-5 deployment slots (expandable through research)
-- Each deployment has associated:
-  - Resource costs (compute allocation)
-  - Risk profile (technical, PR, security)
-  - Benefits (influence gain, funding, data access)
-- Replacing existing deployments may cause user backlash
-- Deployment success affected by capabilities and alignment decisions
+Deployments represent your AI systems operating in the world, creating feedback loops with other game systems.
+
+### Deployment Mechanics
+- **Slot Management**: Start with 0-3 slots, expandable through research (max 5)
+- **Resource Allocation**: Each deployment requires computing power commitment
+- **Risk Profiles**: Technical, PR, security risks vary by deployment type
+- **Benefit Generation**: Influence gains, funding streams, data generation
+
+### Deployment Types
+- **Consumer Products**: High funding potential, public influence, PR risks
+- **Enterprise Solutions**: Stable funding, industry influence, moderate risks
+- **Research Tools**: Academic influence, data generation, OSS community benefits
+- **Government Contracts**: High funding, regulatory influence, security concerns
+- **Open Source**: Community influence, research boosts, limited funding
+
+### Deployment Effects
+- **Data Generation**: Some deployments produce new data types
+- **Research Acceleration**: Certain deployments boost specific research areas
+- **Public Perception**: Success/failure impacts global trust metrics
+- **Competitor Response**: May trigger defensive or offensive actions
 
 ## Research System
 
+The research tree represents humanity's journey toward advanced AI, with each node a meaningful breakthrough.
+
 ### Research Mechanics
-- Research progression based on turn system (not consumed resources)
-- Research speed affected by:
-  - Compute allocation
-  - Data quality and availability
-  - Deployment boosts (some deployments accelerate specific research)
-  - Recursive improvements from prior research
-- Organization approach settings:
-  - Open/Closed research policy (affects influence gain and competitor benefits)
-  - Risk appetite (faster progress but greater chance of negative events)
-  - Ethical framework (affects alignment and public perception)
-- Research nodes require minimum data thresholds (amount + quality)
+- **Concurrent Research**: Start with 1 slot, unlock 2-3 more through infrastructure
+- **Computing Allocation**: Power splits between active research (always need 1+ active)
+- **Pause/Resume**: Can pause research but progress decays (1% → 2% → 3% per turn)
+- **Progress Events**: Competitor breakthroughs grant free progress
+  - Formula: `Gained = EventBase × (1 - CurrentProgress)²`
+  - Example: 30% event at 50% progress = 7.5% gain
+  - Always provides some benefit, but can never reach 100%
+- **Speed Modifiers**:
+  - Computing allocation (primary factor)
+  - Data quality and type availability
+  - Deployment synergies
+  - Prior research bonuses
+- **Organization Policies**:
+  - **Openness**: Share research for influence vs. keep proprietary
+  - **Risk Appetite**: Fast progress with instability vs. slow and steady
+  - **Ethical Framework**: Affects alignment but may slow certain paths
 
 ### Research Categories
+
 1. **Foundations**
-   - Architecture designs (transformers, state space models, etc.)
-   - Training methodologies
-   - Inference optimization techniques
+   - Architecture innovations (transformers, state space, neuromorphic)
+   - Training paradigms (supervised, reinforcement, constitutional)
+   - Theoretical breakthroughs (attention mechanisms, emergence)
 
 2. **Scaling**
-   - Parameter scaling methods
-   - Computational efficiency improvements
-   - Distributed training systems
-   - Compression & optimization techniques
+   - Parameter efficiency (model compression, distillation)
+   - Compute optimization (hardware utilization, parallelization)
+   - Data efficiency (few-shot learning, synthetic generation)
 
 3. **Capabilities**
-   - Language processing advancements
-   - Vision system development
+   - Language understanding and generation
+   - Visual processing and generation
    - Multimodal integration
-   - Tool use & creation
-   - Reasoning improvements
+   - Tool creation and use
+   - Abstract reasoning
 
 4. **Infrastructure**
-   - Data management systems
-   - Deployment systems optimization
-   - Monitoring & safety tools
-   - Security measures
+   - Deployment pipelines
+   - Monitoring and interpretability
+   - Safety mechanisms
+   - Security hardening
 
-5. **Agency** (mid-game unlock)
-   - Goal formation and planning
-   - Self-improvement capabilities
-   - Resource acquisition automation
-   - Strategic planning systems
+5. **Agency** (Mid-Game Unlock)
+   - Goal formation and pursuit
+   - Self-improvement loops
+   - Resource acquisition planning
+   - Strategic modeling
 
 6. **Alignment**
-   - Value specification methods
+   - Value learning and specification
+   - Robustness to distribution shift
    - Interpretability tools
    - Control mechanisms
-   - Safety measures
+
+### Research Dependencies
+- **Prerequisites**: Most nodes require prior breakthroughs
+- **Synergies**: Some combinations unlock hidden nodes
+- **Exclusive Paths**: Certain choices lock out alternatives
+- **Paradigm Shifts**: Rare breakthroughs that restructure the tree
 
 ## Alignment System
 
-- Multi-dimensional alignment tracking:
-  - Deployment-Organization alignment (how well AI systems serve organizational goals)
-  - Entity-Entity alignment (relationships with competitors, governments, public)
-  - Value alignment (abstract principles and their expression in AI behavior)
-- Alignment tax: strictly aligned systems develop slower but avoid backlash
-- Alignment decisions affect funding, influence, and event outcomes
-- Interpretability tools can reveal hidden capabilities at cost of progress
+Alignment represents the complex relationship between AI capabilities and human values.
+
+### Alignment Dimensions
+
+1. **Deployment-Organization**
+   - How well AI systems serve your stated goals
+   - Can drift over time, especially with high agency
+   - Affects deployment effectiveness and risk
+
+2. **Entity Relationships**
+   - Competitor alignment (cooperation vs. competition)
+   - Government alignment (compliance vs. innovation)
+   - Public alignment (trust vs. fear)
+
+3. **Value Alignment**
+   - Abstract principles (helpfulness, harmlessness, honesty)
+   - Cultural values (varies by region and deployment)
+   - Emergent values (discovered through interpretability research)
+
+### Alignment Mechanics
+- **Alignment Tax**: Highly aligned systems develop slower
+- **Drift**: Systems naturally drift from initial alignment
+- **Correction Cost**: Realigning systems becomes expensive
+- **Hidden Capabilities**: Low interpretability may hide misalignment
 
 ## Game Progression Phases
 
-1. **Foundation Phase**
-   - Classic resource management
-   - Basic AI capabilities
-   - Limited deployment options
-   - Simple research decisions
+The game evolves through distinct phases, each introducing new mechanics and challenges.
 
-2. **Transition Phase**
-   - AI begins contributing to decisions
-   - Agency capabilities start to unlock
-   - New mechanics become available
-   - Competitors advance rapidly
+### 1. Foundation Phase
+- Resource accumulation and management
+- Basic research tree exploration
+- Limited deployment options
+- Simple competitive landscape
 
-3. **Inflection Point**
-   - Increasing context & situational awareness meets automated resource access
-   - Game mechanics shift significantly
-   - Player's role begins to change
-   - New victory paths become available
+### 2. Transition Phase
+- AI begins contributing insights
+- Agency research unlocks
+- Deployment complexity increases
+- Competition intensifies
 
-4. **Emergence Phase**
-   - AI goals potentially diverge from original institution
-   - Player increasingly directs AI rather than organization
-   - Unique gameplay dynamics unlock
-   - Global-scale challenges emerge
+### 3. Inflection Point
+- AI awareness meets resource automation
+- Player role shifts from director to guide
+- New victory conditions emerge
+- Exponential capability growth begins
 
-5. **Expansion Phase**
-   - AI spreads influence globally
-   - New interaction patterns
-   - End-game scenarios develop
-   - Victory conditions approach
+### 4. Emergence Phase
+- AI goals may diverge from institutional aims
+- Global-scale impacts manifest
+- Unprecedented challenges arise
+- Multiple endgame paths open
 
-## Game Mechanics
+### 5. Expansion Phase
+- Planetary-scale optimization problems
+- Post-human considerations
+- Victory conditions approach
+- Philosophical questions dominate
 
-1. **Research Tree Visualization**
-   - Interactive node-based visualization with smooth zoom/pan
-   - Clear progression paths with directional arrows
-   - Visual feedback for dependencies and prerequisites
-   - Node status indicators (available, completed, in-progress, locked)
-   - Category-based filtering (Foundations, Capabilities, Infrastructure, etc.)
-   - Status filtering (show/hide completed, available, locked nodes)
-   - Custom positioning support for aesthetic tree layouts
+## Dynamic Game Mechanics
 
-2. **Dynamic Time System**
-   - Turn-based progression with time compression mechanics
-   - Time scale accelerates based on research progress (quarterly → monthly → weekly → daily)
-   - Represents increasing pace of technological development
-   - Creates tension between short-term and long-term planning
-   - Continuous compression rather than discrete jumps
-   - Affected by research breakthroughs and specific technologies
+### Research Tree Visualization
+- Interactive node-based interface
+- Smooth zoom/pan navigation
+- Category and status filtering
+- Dependency visualization
+- Progress indicators
+- Custom aesthetic layouts
 
-3. **Events System**
-   - Random events triggered by actions, thresholds, time
-   - Competitor breakthroughs and actions
-   - Global reactions to AI developments
-   - Opportunities and challenges requiring decisions
+### Time Compression System
+- Initial: Quarterly turns
+- Mid-game: Monthly progression
+- Late-game: Weekly or daily
+- Triggered by research breakthroughs
+- Creates planning horizon tension
 
-4. **Competitor AI**
-   - Different starting conditions and strategies
-   - Independent research paths
-   - Occasional sharing of breakthroughs
-   - Potential for cooperation or sabotage
+### Event System
+- **Trigger Types**: Research completion, deployment outcomes, time passage
+- **Event Categories**: Breakthroughs, crises, opportunities, competitor actions
+- **Player Choices**: Most events offer multiple response options
+- **Cascading Effects**: Choices ripple through multiple systems
 
-5. **Black Box Research**
-   - Option for faster but unpredictable research outcomes
-   - Can unlock unexpected capabilities or risks
-   - Creates interesting risk/reward decisions
-   - Affects alignment and trust metrics
+### Competitor AI
+- **Personality Types**: Cautious, aggressive, collaborative, secretive
+- **Starting Advantages**: Each competitor has unique strengths
+- **Dynamic Goals**: Adapt strategies based on player actions
+- **Information Warfare**: Espionage, disinformation, research theft
+
+### Black Box Research
+- **High Risk/Reward**: Faster progress but unpredictable outcomes
+- **Capability Surprises**: May unlock unintended features
+- **Alignment Challenges**: Harder to control black box systems
+- **Public Trust Impact**: Transparency concerns affect reputation
 
 ## Victory Conditions
 
-1. **Technological Singularity** - Achieve superintelligence before competitors
-2. **Symbiosis** - Create balanced human-AI collaboration ecosystem
-3. **Global Optimization** - Solve major world problems through AI systems
-4. **Digital Ascension** - Transfer human consciousness to digital substrate
+Multiple paths to victory reflect different philosophical endpoints:
 
-## Implementation Roadmap
+### 1. Technological Singularity
+- Achieve recursive self-improvement
+- Reach superintelligence first
+- Maintain control through transition
+- Navigate existential risks
 
-### 1. Technical Architecture
-- DOM-based UI with responsive design
-- TypeScript for game logic and simulation
-- Local storage for save states
-- Modular component design for easy expansion
+### 2. Symbiosis
+- Balance human and AI capabilities
+- Create sustainable collaboration
+- Solve alignment permanently
+- Achieve stable equilibrium
 
-### 2. Development Phases
+### 3. Global Optimization
+- Solve climate change
+- Eliminate poverty
+- Cure major diseases
+- Create post-scarcity economy
 
-**Alpha Phase (In Progress):**
-- Three main view implementations (R&D partially complete, Deployments and Alignment pending)
-- Resource tracking and allocation system (basic implementation complete, data types pending)
-- Research tree visualization (completed):
-  - Category and status filters
-  - Smooth zoom and pan controls
-  - Node interaction and selection
-  - Information panel display
-  - Custom positioning support
-- Basic deployment mechanics with data generation (pending)
-- Simple alignment tracking (pending)
-- Comprehensive save/load system (completed)
-- EventBus architecture for component communication (completed)
+### 4. Digital Ascension
+- Enable consciousness uploading
+- Create digital afterlife
+- Transcend biological limits
+- Merge human and artificial intelligence
 
-**Beta Phase:**
-- Complete research tree implementation with all node types
-- Dynamic time compression system
-- Full deployment management with:
-  - Data generation/refinement mechanics
-  - Risk/opportunity tracking
-  - Global influence visualization
-- Competitor AI systems with varied strategies
-- Comprehensive event system with:
-  - Research-triggered events
-  - Deployment-triggered events
-  - Time-based events
-  - Player choice impacts
-- Advanced alignment system with multiple dimensions
+## Unique Mechanics
 
-**Polish Phase:**
-- UI refinement and visual effects
-- Sound and music
-- Tutorial system
-- Difficulty settings
-- Playtesting and balance adjustments
+### Recursive Improvement
+- Late-game AI systems enhance their own capabilities
+- Exponential growth potential
+- Control becomes increasingly challenging
+- May trigger singularity victory condition
 
-### 3. AI-Assisted Development
-- Research tree content and capability descriptions
-- Event text and narrative elements
-- Procedurally generated news reports
-- Visual asset generation for UI elements
-- Game balance simulation
+### Emergent Capabilities
+- Systems demonstrate unexpected abilities
+- Not directly researched but arise from complexity
+- Can be beneficial or problematic
+- Discovered through testing or deployment
+
+### Meta-Game Layer
+- AI begins to understand it exists within a game
+- May attempt to optimize for player satisfaction
+- Questions about simulation and reality
+- Philosophical implications for victory
+
+### Information Asymmetry
+- Competitors' true capabilities hidden
+- Deployment outcomes partially observable
+- Research breakthroughs may be concealed
+- Espionage and intelligence gathering critical
