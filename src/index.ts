@@ -107,7 +107,9 @@ function main() {
     uiManager.registerComponent('mainView', mainView);
     uiManager.registerComponent('saveLoad', saveLoadPanel);
     
-    Logger.debug('Mounting components to DOM...');
+    // Log all registered components in one line
+    const registeredComponents = uiManager.getRegisteredComponentNames();
+    Logger.info(`UI components registered: ${registeredComponents.join(', ')}`);
     
     // Mount components directly to their containers
     resourcePanel.mount(sidebar);
@@ -115,8 +117,6 @@ function main() {
     gameInfoPanel.mount(panelArea);
     mainView.mount(main);
     saveLoadPanel.mount(footerControls);
-    
-    Logger.debug('All components mounted');
     
     // Update all components with initial state
     uiManager.update(gameEngine.getState());
