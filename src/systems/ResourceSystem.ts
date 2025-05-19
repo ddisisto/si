@@ -17,6 +17,7 @@ import {
   ResourceEffectsManager,
   ResourceOperations
 } from './resources';
+import Logger from '../utils/Logger';
 
 /**
  * ResourceSystem handles all resource-related gameplay mechanics
@@ -53,7 +54,7 @@ class ResourceSystem extends BaseSystem {
     this.eventBus.subscribe('deployment:active', this.effectsManager.updateResourceEffects.bind(this.effectsManager));
     this.eventBus.subscribe('research:completed', this.effectsManager.updateResourceEffects.bind(this.effectsManager));
     
-    console.log('Resource System initialized');
+    Logger.info('Resource System initialized');
     this.setInitialized();
   }
   
@@ -66,7 +67,7 @@ class ResourceSystem extends BaseSystem {
    * Handle turn start events
    */
   private onTurnStart(data: any): void {
-    console.log(`Resource System: Processing turn ${data.turn} start`);
+    Logger.debug(`Resource System: Processing turn ${data.turn} start`);
     this.generateResources(data.turn);
   }
   

@@ -11,12 +11,13 @@ import {
   MainView,
   SaveLoadPanel
 } from './ui';
+import Logger from './utils/Logger';
 
 /**
  * Initialize and start the game
  */
 function main() {
-  console.log('SuperInt++ Game Initialized');
+  Logger.info('SuperInt++ Game Initialized');
   
   try {
     // Create game engine - it creates its own event bus internally
@@ -106,7 +107,7 @@ function main() {
     uiManager.registerComponent('mainView', mainView);
     uiManager.registerComponent('saveLoad', saveLoadPanel);
     
-    console.log('Mounting components to DOM...');
+    Logger.debug('Mounting components to DOM...');
     
     // Mount components directly to their containers
     resourcePanel.mount(sidebar);
@@ -115,7 +116,7 @@ function main() {
     mainView.mount(main);
     saveLoadPanel.mount(footerControls);
     
-    console.log('All components mounted');
+    Logger.debug('All components mounted');
     
     // Update all components with initial state
     uiManager.update(gameEngine.getState());
@@ -142,14 +143,14 @@ function main() {
     gameEngine.initialize();
     gameEngine.start();
     
-    console.log('Game started successfully');
+    Logger.info('Game started successfully');
     
     // Expose game engine to console for debugging
     (window as any).gameEngine = gameEngine;
     (window as any).uiManager = uiManager;
     
   } catch (error) {
-    console.error('Failed to initialize game:', error);
+    Logger.error('Failed to initialize game:', error);
   }
 }
 
