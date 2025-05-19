@@ -207,6 +207,63 @@ class EventBus {
 
 **Critical Implementation Note:** The application must use a single shared EventBus instance throughout all components to ensure proper communication.
 
+### Logging Strategy
+
+The application follows a centralized logging approach that leverages the EventBus for most logging needs:
+
+#### Core Principles
+
+1. **EventBus-Centric Logging** - Most game activity is logged through EventBus event emissions
+   - EventBus logs all events when debug mode is enabled
+   - Provides natural audit trail and event chains
+   - Reduces code clutter in individual systems
+
+2. **Direct Logger Usage** - Use Logger directly only for:
+   - System initialization/shutdown
+   - Error conditions not propagated via events
+   - Performance metrics not tied to events
+   - Debug-only logging during development
+   - Warnings about invalid states before they become events
+
+3. **Avoid Redundant Logging**
+   - Don't log event emissions in systems (EventBus handles this)
+   - Don't log event handling unless adding unique context
+   - Use event data for context rather than separate log statements
+
+#### Implementation Guidelines
+
+```typescript
+// GOOD: Let EventBus handle event logging
+this.eventBus.emit('research:completed', { nodeId, turn });
+
+// BAD: Redundant logging
+Logger.info('Research completed for node:', nodeId);
+this.eventBus.emit('research:completed', { nodeId, turn });
+
+// GOOD: Log initialization
+Logger.info('ResourceSystem initialized');
+
+// GOOD: Log errors not handled by events
+try {
+  // operation
+} catch (error) {
+  Logger.error('Failed to process data:', error);
+}
+
+// GOOD: Debug logging during development
+if (this.debugMode) {
+  Logger.debug('Complex calculation result:', result);
+}
+```
+
+#### Configuration
+
+- **Production**: EventBus debug mode disabled, minimal logging
+- **Development**: EventBus debug mode enabled, full event logging
+- **Testing**: Configurable logging levels per test suite
+
+See [EventBus System Design](./eventbus_design.md) for detailed logging and debugging features.
+
 ## Data Flow
 
 1. **Input** - User interactions captured by DOM events

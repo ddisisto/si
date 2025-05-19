@@ -8,20 +8,45 @@ The event system facilitates decoupled communication between components through 
 
 ### 1.1 Event Bus Design
 
-The EventBus follows a publish-subscribe pattern:
+The EventBus follows a publish-subscribe pattern with enhanced debugging and error handling capabilities:
 - Components **subscribe** to events they want to receive
 - Components **publish** events to notify others of changes
 - All communication flows through a **SINGLE shared EventBus instance**
+- **Enhanced features** include event chaining, health monitoring, and debug mode
 
 ```typescript
 class EventBus {
-  private listeners: Map<string, EventCallback[]>;
+  private listeners: Map<string, ListenerInfo[]>;
+  private eventHistory: EventContext[] = [];
+  private eventChain: string[] = [];
+  private options: EventBusOptions;
   
-  public subscribe(eventType: string, callback: EventCallback): void;
+  constructor(options: EventBusOptions) {
+    this.options = {
+      debugMode: process.env.NODE_ENV === 'development',
+      enableEventChaining: true,
+      maxListenersPerEvent: 20,
+      ...options
+    };
+  }
+  
+  public subscribe(eventType: string, callback: EventCallback, source?: string): void;
   public unsubscribe(eventType: string, callback: EventCallback): void;
-  public emit(eventType: string, data: any = {}): void;
+  public emit(eventType: string, data: any = {}, source?: string): void;
+  public getHealthStatus(): EventHealthStatus;
+  public getEventHistory(limit?: number): EventContext[];
+  public setDebugMode(enabled: boolean): void;
 }
 ```
+
+#### Enhanced Features:
+
+1. **Event Chaining**: Tracks cascade of events to debug complex interactions
+2. **Health Monitoring**: Reports listener counts, warnings, and performance metrics
+3. **Debug Mode**: Detailed logging when enabled, minimal overhead in production
+4. **Event History**: Stores recent events for debugging and analysis
+5. **Error Context**: Rich error information with event chains and sources
+6. **Source Tracking**: Optional source identifiers for better debugging
 
 ### 1.2 Event Type Categories
 
@@ -186,17 +211,90 @@ interface SaveGameData {
 
 Each save is stored with key `si_save_{name}` where `name` is the user-provided name or `autosave` for automatic saves.
 
-## 3. Best Practices
+## 3. Detailed Event Flows
 
-### 3.1 Event Communication
+### 3.1 Research System Event Flow
+
+```
+User Action → ResearchTreeView → EventBus → ResearchSystem → State Update → UI Update
+
+1. action:start_research
+   Payload: { nodeId: string, allocatedCompute: number }
+   Flow: ResearchTreeView → ResearchSystem
+   
+2. resource:allocate
+   Payload: { resource: 'computing', target: 'research:nodeId', amount: number }
+   Flow: ResearchSystem → ResourceSystem
+   
+3. research:started
+   Payload: { nodeId, node, allocatedCompute, turn }
+   Flow: ResearchSystem → UI Components
+   
+4. research:progress (on each turn)
+   Payload: { nodeId, previousProgress, newProgress, increment, computeAllocated, turn }
+   Flow: ResearchSystem → UI Components
+   
+5. research:completed
+   Payload: { nodeId, node, turn, totalCompleted }
+   Flow: ResearchSystem → UI Components + Other Systems
+```
+
+### 3.2 Resource System Event Flow
+
+```
+1. turn:start
+   Payload: { turn, gameTime }
+   Flow: TurnSystem → ResourceSystem
+   
+2. resources:updated
+   Payload: { resources, previousResources }
+   Flow: ResourceSystem → UI Components
+   
+3. resource:allocate / resource:deallocate
+   Payload: { resource, target, amount }
+   Flow: Various Systems → ResourceSystem
+   
+4. resource:spend
+   Payload: { resource, amount, purpose }
+   Flow: Various Systems → ResourceSystem
+```
+
+### 3.3 Turn System Event Flow
+
+```
+1. turn:end (user initiated)
+   Payload: { turn, gameTime }
+   Flow: TurnControls → TurnSystem
+   
+2. turn:ending
+   Payload: { turn, gameTime }
+   Flow: TurnSystem → All Systems
+   
+3. phase:changed
+   Payload: { phase }
+   Flow: TurnSystem → UI Components
+   
+4. turn:start
+   Payload: { turn, gameTime, formattedDate }
+   Flow: TurnSystem → All Systems
+   
+5. phase:action
+   Payload: { timeScale, formattedDate }
+   Flow: TurnSystem → UI Components
+```
+
+## 4. Best Practices
+
+### 4.1 Event Communication
 
 1. **Use existing event types** when possible
 2. **Document new events** in this registry when created
 3. **Verify event subscriptions** exist before emitting events
 4. **Never create multiple EventBus instances**
-5. **Add logging** for event emission and reception during development
+5. **Use source identifiers** for better debugging
+6. **Handle errors gracefully** in event handlers
 
-### 3.2 State Persistence
+### 4.2 State Persistence
 
 1. **Validate save data** when loading to prevent corruption
 2. **Provide clear feedback** to users about save/load operations
@@ -204,7 +302,65 @@ Each save is stored with key `si_save_{name}` where `name` is the user-provided 
 4. **Use meaningful save names** in auto-generated situations
 5. **Implement data migrations** as the save format evolves
 
-## 4. Implementation Example
+## 5. Debugging and Monitoring
+
+### 5.1 EventBus Health Check
+
+The GameEngine provides a health status method that exposes EventBus metrics:
+
+```typescript
+const healthStatus = gameEngine.getHealthStatus();
+console.log(healthStatus.eventBus);
+// Output: { totalEvents, totalListeners, eventCounts, warnings }
+```
+
+### 5.2 Debug Mode
+
+Enable debug mode for detailed event flow logging:
+
+```typescript
+// Enable debug mode
+gameEngine.eventBus.setDebugMode(true);
+
+// Or configure in GameEngine constructor for development
+new EventBus({
+  debugMode: process.env.NODE_ENV === 'development',
+  enableEventChaining: true,
+  maxListenersPerEvent: 20
+});
+```
+
+### 5.3 Event History
+
+View recent events for debugging:
+
+```typescript
+// Get last 50 events
+const history = gameEngine.eventBus.getEventHistory(50);
+
+// Get current event chain (shows cascade)
+const chain = gameEngine.eventBus.getCurrentEventChain();
+```
+
+### 5.4 Common Debugging Scenarios
+
+1. **Event Not Received**
+   - Check EventBus instance is shared
+   - Verify subscription timing
+   - Enable debug mode to trace event flow
+   - Check event type spelling
+
+2. **Multiple Events Triggered**
+   - Review event chains in history
+   - Check for circular event dependencies
+   - Use source identifiers to trace origin
+
+3. **Performance Issues**
+   - Monitor listener counts in health status
+   - Check for memory leaks in event history
+   - Review event chain depth for cascades
+
+## 6. Implementation Example
 
 ```typescript
 // In GameEngine constructor:
@@ -212,7 +368,7 @@ this.eventBus = new EventBus();
 
 // Subscribe to save/load events
 this.eventBus.subscribe('action:save', (data) => {
-  console.log(`GameEngine: Received action:save event with name: "${data.name}"`);
+  Logger.info(`GameEngine: Received action:save event with name: "${data.name}"`);
   this.saveGame(data.name);
   this.eventBus.emit('game:saved', { name: data.name });
 });

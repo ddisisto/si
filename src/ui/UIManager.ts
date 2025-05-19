@@ -5,6 +5,7 @@
 import { GameState } from '../core/GameState';
 import { EventBus } from '../core';
 import UIComponent from './components/UIComponent';
+import Logger from '../utils/Logger';
 
 interface GameEngineInterface {
   getState(): GameState;
@@ -42,10 +43,10 @@ class UIManager {
       loading.remove();
     }
     
-    console.log('UIManager initialized with root element:', rootElement);
-    
     // Add a class to the root element to indicate it's been initialized
     rootElement.classList.add('ui-initialized');
+    
+    Logger.info('UIManager initialized');
   }
   
   /**
@@ -73,16 +74,13 @@ class UIManager {
       this.components.set(id, component);
       
       // Pass game engine (with event bus) to component if available
-      console.log(`UIManager: Setting GameEngine for component ${id}`);
       if (this.gameEngine) {
         component.setGameEngine(this.gameEngine);
       }
       
-      console.log(`Component registered: ${id}`);
-      
       // If we have a root element and this is the layout, mount it
       if (this.rootElement && id === 'layout') {
-        console.log('Mounting layout to root element');
+        // Mount layout to root element
         
         // Replace the existing content with our layout
         this.rootElement.innerHTML = '';
@@ -94,7 +92,7 @@ class UIManager {
         }
       }
     } catch (error) {
-      console.error(`Error registering component ${id}:`, error);
+      Logger.error(`Error registering component ${id}:`, error);
     }
   }
   
@@ -103,13 +101,6 @@ class UIManager {
    * @param gameState Current game state
    */
   public update(gameState: Readonly<GameState>): void {
-    const prevTurn = this.gameState?.meta.turn;
-    const newTurn = gameState.meta.turn;
-    
-    if (prevTurn !== newTurn) {
-      console.log(`UIManager: Updating components with new state, turn changed from ${prevTurn} to ${newTurn}`);
-    }
-    
     this.gameState = gameState;
     
     // Update all registered components
@@ -124,6 +115,13 @@ class UIManager {
    */
   public getComponent(id: string): UIComponent | undefined {
     return this.components.get(id);
+  }
+  
+  /**
+   * Get names of all registered components
+   */
+  public getRegisteredComponentNames(): string[] {
+    return Array.from(this.components.keys());
   }
   
   /**

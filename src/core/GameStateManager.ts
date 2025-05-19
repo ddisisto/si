@@ -6,6 +6,7 @@
 
 import { GameState, createInitialState } from './GameState';
 import EventBus from './EventBus';
+import Logger from '../utils/Logger';
 
 export interface GameAction {
   type: string;
@@ -43,13 +44,13 @@ class GameStateManager {
    * @param action The action to dispatch
    */
   public dispatch(action: GameAction): void {
-    console.log(`GameStateManager: Dispatching action ${action.type}`, action.payload);
+    Logger.debug(`GameStateManager: Dispatching action ${action.type}`, action.payload);
     const prevState = this.state;
     this.state = this.reducer(this.state, action);
     
     // Notify listeners only if state has changed
     if (prevState !== this.state) {
-      console.log(`GameStateManager: State changed after ${action.type}`);
+      Logger.debug(`GameStateManager: State changed after ${action.type}`);
       this.notifyListeners(prevState, this.state, action);
       
       // Emit state change event on the event bus
@@ -59,7 +60,7 @@ class GameStateManager {
         nextState: this.state
       });
     } else {
-      console.log(`GameStateManager: No state change after ${action.type}`);
+      Logger.debug(`GameStateManager: No state change after ${action.type}`);
     }
   }
   
@@ -110,7 +111,7 @@ class GameStateManager {
       try {
         listener(prevState, nextState, action);
       } catch (error) {
-        console.error('Error in state change listener:', error);
+        Logger.error('Error in state change listener:', error);
       }
     });
   }
@@ -120,7 +121,7 @@ class GameStateManager {
    */
   public saveState(name: string = 'default'): void {
     try {
-      console.log(`GameStateManager: Saving game as "${name}"`);
+      Logger.info(`GameStateManager: Saving game as "${name}"`);
       
       const gameTime = this.state.meta.gameTime;
       const turn = this.state.meta.turn;
@@ -139,7 +140,7 @@ class GameStateManager {
       };
       
       // Log save data details before saving
-      console.log(`GameStateManager: Save data details:
+      Logger.debug(`GameStateManager: Save data details:
         - Turn: ${turn}
         - Date: ${gameTime.year} Q${gameTime.quarter} (${gameTime.month}/${gameTime.day})
         - Timestamp: ${new Date(saveData.timestamp).toLocaleString()}
@@ -148,7 +149,7 @@ class GameStateManager {
       
       // Convert to JSON and check size
       const jsonData = JSON.stringify(saveData);
-      console.log(`GameStateManager: Save data size: ${(jsonData.length / 1024).toFixed(2)} KB`);
+      Logger.debug(`GameStateManager: Save data size: ${(jsonData.length / 1024).toFixed(2)} KB`);
       
       // Actually save to localStorage
       localStorage.setItem(`si_save_${name}`, jsonData);
@@ -156,9 +157,9 @@ class GameStateManager {
       // Check if it was actually saved
       const savedItem = localStorage.getItem(`si_save_${name}`);
       if (savedItem) {
-        console.log(`GameStateManager: Successfully verified save in localStorage`);
+        Logger.debug(`GameStateManager: Successfully verified save in localStorage`);
       } else {
-        console.warn(`GameStateManager: Failed to verify save in localStorage`);
+        Logger.warn(`GameStateManager: Failed to verify save in localStorage`);
       }
       
       // Update last saved timestamp
@@ -169,12 +170,12 @@ class GameStateManager {
         }
       });
       
-      console.log(`GameStateManager: Game saved as "${name}"`);
+      Logger.info(`GameStateManager: Game saved as "${name}"`);
       
       // Emit event to notify UI
       this.eventBus.emit('game:saved', { name, timestamp: saveData.timestamp });
     } catch (error) {
-      console.error('GameStateManager: Failed to save game:', error);
+      Logger.error('GameStateManager: Failed to save game:', error);
     }
   }
   
@@ -183,21 +184,21 @@ class GameStateManager {
    */
   public loadState(name: string = 'default'): boolean {
     try {
-      console.log(`GameStateManager: Attempting to load game "${name}"`);
+      Logger.info(`GameStateManager: Attempting to load game "${name}"`);
       
       // Check localStorage for the save
       const saveData = localStorage.getItem(`si_save_${name}`);
       if (!saveData) {
-        console.warn(`GameStateManager: No save found with name "${name}"`);
+        Logger.warn(`GameStateManager: No save found with name "${name}"`);
         return false;
       }
       
-      console.log(`GameStateManager: Found save data, size: ${(saveData.length / 1024).toFixed(2)} KB`);
+      Logger.debug(`GameStateManager: Found save data, size: ${(saveData.length / 1024).toFixed(2)} KB`);
       
       // Parse the data
       try {
         const parsedData = JSON.parse(saveData);
-        console.log(`GameStateManager: Successfully parsed save data:
+        Logger.debug(`GameStateManager: Successfully parsed save data:
           - Version: ${parsedData.version}
           - Timestamp: ${new Date(parsedData.timestamp).toLocaleString()}
           - Turn: ${parsedData.meta?.turn}
@@ -208,7 +209,7 @@ class GameStateManager {
         
         // Replace state
         this.state = parsedData.gameState;
-        console.log(`GameStateManager: State successfully replaced`);
+        Logger.debug(`GameStateManager: State successfully replaced`);
         
         // Notify listeners about the state change
         this.notifyListeners(prevState, this.state, { 
@@ -218,14 +219,14 @@ class GameStateManager {
         
         // Notify about complete state replacement via event bus
         this.eventBus.emit('stateLoaded', { name });
-        console.log(`GameStateManager: Game loaded from "${name}"`);
+        Logger.info(`GameStateManager: Game loaded from "${name}"`);
         return true;
       } catch (parseError) {
-        console.error('GameStateManager: Failed to parse save data:', parseError);
+        Logger.error('GameStateManager: Failed to parse save data:', parseError);
         return false;
       }
     } catch (error) {
-      console.error('GameStateManager: Failed to load game:', error);
+      Logger.error('GameStateManager: Failed to load game:', error);
       return false;
     }
   }

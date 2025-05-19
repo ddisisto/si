@@ -3,6 +3,7 @@
  */
 
 import UIComponent from './UIComponent';
+import Logger from '../../utils/Logger';
 
 interface SaveLoadPanelOptions {
   eventBus?: any;
@@ -44,20 +45,16 @@ class SaveLoadPanel extends UIComponent {
     this.saves = [];
     
     try {
-      console.log('SaveLoadPanel: Refreshing saves list...');
-      console.log(`SaveLoadPanel: localStorage contains ${localStorage.length} items`);
+      // Check localStorage for saved games
       
       // Get all keys from localStorage that start with si_save_
       for (let i = 0; i < localStorage.length; i++) {
         const key = localStorage.key(i);
-        console.log(`SaveLoadPanel: Checking localStorage key: ${key}`);
-        
         if (key && key.startsWith('si_save_')) {
           const saveData = localStorage.getItem(key);
           if (saveData) {
             const parsed = JSON.parse(saveData);
             const saveName = key.replace('si_save_', '');
-            console.log(`SaveLoadPanel: Found save: ${saveName}, timestamp: ${new Date(parsed.timestamp).toLocaleString()}`);
             
             this.saves.push({
               name: saveName,
@@ -69,12 +66,12 @@ class SaveLoadPanel extends UIComponent {
       
       // Sort saves by timestamp (newest first)
       this.saves.sort((a, b) => b.timestamp - a.timestamp);
-      console.log(`SaveLoadPanel: Found ${this.saves.length} total saves`);
+      // Sort and display saves
       
       // Re-render to show updated saves list
       this.render();
     } catch (error) {
-      console.error('Error loading saves list:', error);
+      Logger.error('Error loading saves list:', error);
     }
   }
   
@@ -283,9 +280,7 @@ class SaveLoadPanel extends UIComponent {
     const saveName = button.getAttribute('data-save');
     
     if (saveName) {
-      console.log(`SaveLoadPanel: Loading save "${saveName}"`);
       this.emit('action:load', { name: saveName });
-      console.log(`SaveLoadPanel: Emitted action:load event for "${saveName}"`);
     }
   };
   
@@ -298,11 +293,11 @@ class SaveLoadPanel extends UIComponent {
     
     if (saveName) {
       try {
-        console.log(`SaveLoadPanel: Deleting save "${saveName}"`);
+        Logger.info(`SaveLoadPanel: Deleting save "${saveName}"`);
         localStorage.removeItem(`si_save_${saveName}`);
         this.refreshSavesList();
       } catch (error) {
-        console.error(`Error deleting save ${saveName}:`, error);
+        Logger.error(`Error deleting save ${saveName}:`, error);
       }
     }
   };
@@ -312,9 +307,7 @@ class SaveLoadPanel extends UIComponent {
    */
   private handleSaveGame = (): void => {
     const saveName = this.saveNameInput || 'Game Save';
-    console.log(`SaveLoadPanel: Saving game as "${saveName}"`);
     this.emit('action:save', { name: saveName });
-    console.log(`SaveLoadPanel: Emitted action:save event for "${saveName}"`);
     this.handleHideDialog();
   };
   
@@ -323,7 +316,6 @@ class SaveLoadPanel extends UIComponent {
    */
   private handleAutoSaveToggle = (event: Event): void => {
     const checkbox = event.target as HTMLInputElement;
-    console.log(`SaveLoadPanel: Setting auto-save to ${checkbox.checked}`);
     this.emit('action:queue', {
       action: {
         type: 'UPDATE_SETTINGS',
@@ -332,9 +324,7 @@ class SaveLoadPanel extends UIComponent {
         }
       }
     });
-    
-    console.log(`SaveLoadPanel: Emitted action:queue for UPDATE_SETTINGS with autoSave=${checkbox.checked}`);
-    console.log(`SaveLoadPanel: Auto-save ${checkbox.checked ? 'enabled' : 'disabled'}`);
+    // Auto-save change will be logged by EventBus
   };
 }
 

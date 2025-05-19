@@ -54,6 +54,7 @@ export interface GameMetaState {
   startDate: Date;                // When the game was started
   lastSaved: Date | null;         // Last save timestamp
   turnHistory?: TurnHistoryEntry[]; // Record of turn progression
+  version: number;                // State version for tracking updates
 }
 
 /**

@@ -8,6 +8,7 @@ import { BaseSystem } from './System';
 import GameStateManager from './GameStateManager';
 import EventBus from './EventBus';
 import { GameTime, TurnHistoryEntry } from '../types/core/GameState';
+import Logger from '../utils/Logger';
 
 /**
  * TimeSystem implements the dynamic time scaling mechanics
@@ -43,7 +44,7 @@ class TimeSystem extends BaseSystem {
     this.eventBus.subscribe('research:complete', this.onResearchComplete.bind(this));
     this.eventBus.subscribe('research:breakthrough', this.onResearchBreakthrough.bind(this));
     
-    console.log('Time System initialized');
+    Logger.info('Time System initialized');
     this.setInitialized();
   }
   

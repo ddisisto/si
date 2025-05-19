@@ -11,12 +11,13 @@ import {
   MainView,
   SaveLoadPanel
 } from './ui';
+import Logger from './utils/Logger';
 
 /**
  * Initialize and start the game
  */
 function main() {
-  console.log('SuperInt++ Game Initialized');
+  Logger.info('SuperInt++ Game Initialized');
   
   try {
     // Create game engine - it creates its own event bus internally
@@ -106,7 +107,9 @@ function main() {
     uiManager.registerComponent('mainView', mainView);
     uiManager.registerComponent('saveLoad', saveLoadPanel);
     
-    console.log('Mounting components to DOM...');
+    // Log all registered components in one line
+    const registeredComponents = uiManager.getRegisteredComponentNames();
+    Logger.info(`UI components registered: ${registeredComponents.join(', ')}`);
     
     // Mount components directly to their containers
     resourcePanel.mount(sidebar);
@@ -114,8 +117,6 @@ function main() {
     gameInfoPanel.mount(panelArea);
     mainView.mount(main);
     saveLoadPanel.mount(footerControls);
-    
-    console.log('All components mounted');
     
     // Update all components with initial state
     uiManager.update(gameEngine.getState());
@@ -132,24 +133,21 @@ function main() {
       uiManager.update(nextState);
     });
     
-    // Subscribe to turn end events from UI
-    engineEventBus.subscribe('turn:end', (data: any) => {
-      // Call the turn system's endTurn method
-      gameEngine.getTurnSystem().endTurn(data);
-    });
+    // The TurnSystem now subscribes to turn:end events directly,
+    // so we don't need this manual subscription anymore
     
     // Initialize and start the game
     gameEngine.initialize();
     gameEngine.start();
     
-    console.log('Game started successfully');
+    Logger.info('Game started successfully');
     
     // Expose game engine to console for debugging
     (window as any).gameEngine = gameEngine;
     (window as any).uiManager = uiManager;
     
   } catch (error) {
-    console.error('Failed to initialize game:', error);
+    Logger.error('Failed to initialize game:', error);
   }
 }
 

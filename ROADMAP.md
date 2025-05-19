@@ -112,25 +112,33 @@ The roadmap will be updated as development progresses to reflect new priorities,
 
 ## Phase 2: Core Gameplay Systems
 
-### 🚨 IMMEDIATE PRIORITY: EventBus & Logging Improvements (1 week)
-**Rationale:** Essential infrastructure before building more complex systems  
-**No dependencies - can start immediately**
-- [ ] Improve EventBus error handling and debugging
-  - [ ] Add comprehensive error context to event dispatches
-  - [ ] Implement event chain tracing for debugging
-  - [ ] Add development mode with verbose event logging
-  - [ ] Create EventBus health check tools
-- [ ] Consolidate logging approach
-  - [ ] Replace `console.log` with Logger consistently
-  - [ ] Add log levels to filter noise in production
-  - [ ] Create log configuration system
-  - [ ] Add performance timing to key operations
-  - [ ] Implement log persistence for debugging
-- [ ] Document event flows
-  - [ ] Create comprehensive EventBus flow diagrams
-  - [ ] Document all existing events in eventbus_design.md
-  - [ ] Add inline documentation to event emitters/listeners
-  - [ ] Create debugging guide for event-related issues
+### ✅ COMPLETED: EventBus & Logging Improvements
+**Completed in 1 week**
+- [x] Improve EventBus error handling and debugging
+  - [x] Add comprehensive error context to event dispatches
+  - [x] Implement event chain tracing for debugging  
+  - [x] Add development mode with verbose event logging
+  - [x] Create EventBus health check tools
+- [x] Consolidate logging approach
+  - [x] Replace `console.log` with Logger consistently
+  - [x] Add log levels to filter noise in production
+  - [x] Create log configuration system
+  - [x] Add performance timing to key operations
+  - [x] Implement log persistence for debugging
+- [x] Document event flows  
+  - [x] Document all existing events in eventbus_design.md
+  - [x] Add inline documentation to event emitters/listeners
+  - [x] Create debugging guide for event-related issues
+  - [x] Add EventBus-centric logging strategy to ARCHITECTURE.md
+
+### 🚨 CRITICAL BUG: Turn End Research Processing Error (2 days)
+**Error:** "Cannot read properties of undefined (reading 'computeAllocated')"  
+**Impact:** Turn processing fails when research nodes have undefined computed values
+**Dependencies:** None - can fix immediately
+- [ ] Debug research node state on turn:end event
+- [ ] Fix undefined computeAllocated reference  
+- [ ] Add defensive checks for node properties
+- [ ] Test turn processing with active research
 
 ### Resource System Refinement (1 week)
 **Dependencies:** EventBus improvements (for better event handling)  
@@ -300,7 +308,8 @@ These tasks require functioning systems to balance properly and will be addresse
 - [ ] Fine-tune resource economy
 
 ## Next Steps
-1. Start with EventBus improvements and logging consolidation
-2. Move to Resource System refinement after infrastructure improvements
-3. Build Deployment System foundation on improved resource system
-4. Implement Research System with full data type support
+1. ✅ COMPLETED: EventBus improvements and logging consolidation
+2. Fix critical turn end research processing error (blocking turn progression)
+3. Move to Resource System refinement after critical bug fix
+4. Build Deployment System foundation on improved resource system
+5. Implement Research System with full data type support

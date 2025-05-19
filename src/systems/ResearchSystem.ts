@@ -15,6 +15,7 @@ import {
 } from '../types/Research';
 import researchNodes from '../data/ResearchData';
 import { ResourceCost } from '../types/systems/ResourceCost';
+import Logger from '../utils/Logger';
 
 /**
  * ResearchSystem handles all research-related gameplay mechanics
@@ -43,7 +44,7 @@ class ResearchSystem extends BaseSystem {
     // Initialize research state with data from ResearchData
     this.initializeResearchState();
     
-    console.log('Research System initialized');
+    Logger.info('Research System initialized');
     this.setInitialized();
   }
   
@@ -61,7 +62,7 @@ class ResearchSystem extends BaseSystem {
     
     // Check if we need to initialize research nodes
     if (Object.keys(gameResearch.nodes).length === 0) {
-      console.log('ResearchSystem: Initializing research nodes from data');
+      Logger.debug('ResearchSystem: Initializing research nodes from data');
       
       // Create node states from research data
       const nodeStates: Record<string, GameResearchNode> = {};
@@ -96,8 +97,8 @@ class ResearchSystem extends BaseSystem {
         .filter(node => node.prerequisites.length === 0)
         .map(node => node.id);
       
-      console.log('ResearchSystem: Preparing to dispatch UPDATE_RESEARCH_STATE with', Object.keys(nodeStates).length, 'nodes');
-      console.log('ResearchSystem: Available nodes:', availableNodes);
+      Logger.debug('ResearchSystem: Preparing to dispatch UPDATE_RESEARCH_STATE with', Object.keys(nodeStates).length, 'nodes');
+      Logger.debug('ResearchSystem: Available nodes:', availableNodes);
       
       // Update research state in game state
       this.stateManager.dispatch({
@@ -110,15 +111,15 @@ class ResearchSystem extends BaseSystem {
         }
       });
       
-      console.log('ResearchSystem: UPDATE_RESEARCH_STATE dispatched');
+      Logger.debug('ResearchSystem: UPDATE_RESEARCH_STATE dispatched');
       
       // Apply the initial statuses
-      console.log('ResearchSystem: Updating node statuses');
+      Logger.debug('ResearchSystem: Updating node statuses');
       this.updateNodeStatuses();
       
       // Check final state
       const finalState = this.stateManager.getState();
-      console.log('ResearchSystem: After initialization, final nodes count:', Object.keys(finalState.research.nodes).length);
+      Logger.debug('ResearchSystem: After initialization, final nodes count:', Object.keys(finalState.research.nodes).length);
       
       // Emit event for UI updates
       this.eventBus.emit('research:initialized', {
@@ -135,7 +136,7 @@ class ResearchSystem extends BaseSystem {
    * Handle turn start events
    */
   private onTurnStart(data: any): void {
-    console.log(`Research System: Processing turn ${data.turn} start`);
+    Logger.debug(`Research System: Processing turn ${data.turn} start`);
     this.progressActiveResearch(data.turn);
   }
   
@@ -167,7 +168,7 @@ class ResearchSystem extends BaseSystem {
       const node = research.nodes[nodeId];
       
       if (!node || node.status !== ResearchStatus.IN_PROGRESS) {
-        console.warn(`Research node ${nodeId} marked as active but not in progress`);
+        Logger.warn(`Research node ${nodeId} marked as active but not in progress`);
         return;
       }
       
@@ -264,7 +265,7 @@ class ResearchSystem extends BaseSystem {
     const node = state.research.nodes[nodeId];
     
     if (!node || node.status === 'COMPLETED' || node.status === 'completed') {
-      console.warn(`Cannot complete research ${nodeId}: not found or already completed`);
+      Logger.warn(`Cannot complete research ${nodeId}: not found or already completed`);
       return;
     }
     
@@ -456,17 +457,17 @@ class ResearchSystem extends BaseSystem {
     
     // Validate the request
     if (!node) {
-      console.warn(`Cannot start research: Node ${nodeId} not found`);
+      Logger.warn(`Cannot start research: Node ${nodeId} not found`);
       return false;
     }
     
     if (node.status !== 'UNLOCKED' && node.status !== 'available') {
-      console.warn(`Cannot start research: Node ${nodeId} is not available (status: ${node.status})`);
+      Logger.warn(`Cannot start research: Node ${nodeId} is not available (status: ${node.status})`);
       return false;
     }
     
     if (allocatedCompute <= 0) {
-      console.warn(`Cannot start research: Invalid compute allocation ${allocatedCompute}`);
+      Logger.warn(`Cannot start research: Invalid compute allocation ${allocatedCompute}`);
       return false;
     }
     
@@ -510,12 +511,12 @@ class ResearchSystem extends BaseSystem {
     
     // Validate the request
     if (!node) {
-      console.warn(`Cannot cancel research: Node ${nodeId} not found`);
+      Logger.warn(`Cannot cancel research: Node ${nodeId} not found`);
       return false;
     }
     
     if (node.status !== 'IN_PROGRESS' && node.status !== 'in_progress') {
-      console.warn(`Cannot cancel research: Node ${nodeId} is not in progress`);
+      Logger.warn(`Cannot cancel research: Node ${nodeId} is not in progress`);
       return false;
     }
     
@@ -557,17 +558,17 @@ class ResearchSystem extends BaseSystem {
     
     // Validate the request
     if (!node) {
-      console.warn(`Cannot allocate compute: Node ${nodeId} not found`);
+      Logger.warn(`Cannot allocate compute: Node ${nodeId} not found`);
       return false;
     }
     
     if (node.status !== 'IN_PROGRESS' && node.status !== 'in_progress') {
-      console.warn(`Cannot allocate compute: Node ${nodeId} is not in progress`);
+      Logger.warn(`Cannot allocate compute: Node ${nodeId} is not in progress`);
       return false;
     }
     
     if (amount <= 0) {
-      console.warn(`Cannot allocate compute: Invalid amount ${amount}`);
+      Logger.warn(`Cannot allocate compute: Invalid amount ${amount}`);
       return false;
     }
     

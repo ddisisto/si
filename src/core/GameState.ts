@@ -67,7 +67,8 @@ function createInitialMetaState(): GameMetaState {
     organization: 'ACADEMIC',
     startDate: new Date(),
     lastSaved: null,
-    turnHistory: []
+    turnHistory: [],
+    version: 1 // Initialize version
   };
 }
 
