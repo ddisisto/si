@@ -160,6 +160,19 @@ export function researchReducer(state: ResearchState, action: GameAction): Resea
       // This functionality would need to be implemented differently
       return state;
       
+    case 'UPDATE_RESEARCH_STATE':
+      const { nodes, activeResearch: updatedActiveResearch, completed: updatedCompleted, unlocked } = action.payload;
+      
+      Logger.debug('Updating research state with', Object.keys(nodes).length, 'nodes');
+      
+      return {
+        ...state,
+        nodes: nodes,
+        activeResearch: updatedActiveResearch || state.activeResearch,
+        completed: updatedCompleted || state.completed,
+        unlocked: unlocked || state.unlocked
+      };
+      
     default:
       return state;
   }
