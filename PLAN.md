@@ -63,25 +63,41 @@ SuperInt++ is a strategic simulation game where players develop AI systems in a 
 - Research nodes require minimum data thresholds (amount + quality)
 
 ### Research Categories
-1. **Scaling**
-   - Architecture improvements
-   - Frameworks development
+1. **Foundations**
+   - Architecture designs (transformers, state space models, etc.)
+   - Training methodologies
+   - Inference optimization techniques
+
+2. **Scaling**
+   - Parameter scaling methods
+   - Computational efficiency improvements
+   - Distributed training systems
    - Compression & optimization techniques
-   - Parameter scaling
 
-2. **Capability**
-   - Modality expansion (text → multimodal)
+3. **Capabilities**
+   - Language processing advancements
+   - Vision system development
+   - Multimodal integration
    - Tool use & creation
-   - Interface improvements
-   - Data gathering systems
-   - Domain specialization
+   - Reasoning improvements
 
-3. **Agency** (mid-game unlock)
-   - Situational awareness
+4. **Infrastructure**
+   - Data management systems
+   - Deployment systems optimization
+   - Monitoring & safety tools
+   - Security measures
+
+5. **Agency** (mid-game unlock)
+   - Goal formation and planning
    - Self-improvement capabilities
-   - Goal-setting abilities
-   - Resource acquisition
-   - Planning & strategy
+   - Resource acquisition automation
+   - Strategic planning systems
+
+6. **Alignment**
+   - Value specification methods
+   - Interpretability tools
+   - Control mechanisms
+   - Safety measures
 
 ## Alignment System
 
@@ -172,25 +188,26 @@ SuperInt++ is a strategic simulation game where players develop AI systems in a 
 ## Implementation Roadmap
 
 ### 1. Technical Architecture
-- HTML5 Canvas with responsive design
+- DOM-based UI with responsive design
 - TypeScript for game logic and simulation
 - Local storage for save states
 - Modular component design for easy expansion
 
 ### 2. Development Phases
 
-**Alpha Phase (Initial Focus):**
-- Three main view implementations (R&D, Deployments, Alignment)
-- Resource tracking and allocation system (persistent data model)
-- Research tree visualization with:
+**Alpha Phase (In Progress):**
+- Three main view implementations (R&D partially complete, Deployments and Alignment pending)
+- Resource tracking and allocation system (basic implementation complete, data types pending)
+- Research tree visualization (completed):
   - Category and status filters
   - Smooth zoom and pan controls
   - Node interaction and selection
+  - Information panel display
   - Custom positioning support
-- Basic deployment mechanics with data generation
-- Simple alignment tracking
-- Comprehensive save/load system
-- EventBus architecture for component communication
+- Basic deployment mechanics with data generation (pending)
+- Simple alignment tracking (pending)
+- Comprehensive save/load system (completed)
+- EventBus architecture for component communication (completed)
 
 **Beta Phase:**
 - Complete research tree implementation with all node types

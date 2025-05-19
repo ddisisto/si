@@ -22,9 +22,13 @@ The game is in the initial implementation phase. We have completed:
 - Core game engine with event bus and state management
 - Resource system infrastructure
 - Turn-based progression system
-- Basic UI component architecture
+- DOM-based UI component architecture
+- Research tree visualization with category and status filters
+- Interactive node selection and information panels
+- Smooth zoom and pan controls for research tree navigation
+- Modular research data organization with validation
 
-The next phase focuses on implementing the research tree visualization system, followed by expanded resource management and deployment systems.
+The next phase focuses on expanding resource management, deployment systems, and core gameplay mechanics.
 
 ## Key Game Systems
 
@@ -46,7 +50,6 @@ SuperInt++ consists of several interconnected systems:
 - **CLAUDE.md** - Implementation guidelines and project context
 - **docs/** - Technical and design documentation:
   - **Core Architecture:**
-    - technical_architecture.md - Technical architecture overview
     - state_management_design.md - State management approach
     - eventbus_design.md - Event bus system documentation
     - ui_component_system.md - UI component architecture
@@ -119,23 +122,24 @@ SuperInt++ uses a modular architecture with unidirectional data flow:
 See [ROADMAP.md](ROADMAP.md) for detailed development plans.
 
 ### Current Focus
-- Code refactoring of large files (immediate priority)
-- Resource system refinement (data types integration)
+- EventBus and logging improvements (infrastructure hardening)
+- Resource system refinement with data types integration
 - Deployment system foundation (including data generation mechanics)
-- Research system implementation (pending dependencies)
+- Research system mechanics implementation (progress tracking, costs)
 - Event system implementation
 
 ### Recently Completed
 - Core state management system
 - Resource tracking fundamentals
 - Turn-based progression mechanics
-- Basic UI component architecture
+- DOM-based UI component architecture
 - Comprehensive save/load functionality
 - EventBus communication system
 - Research tree visualization with category and status filters
-- Node interaction system with selection and status indicators
+- Node interaction system with selection and information panels
 - Smooth zoom and pan controls for research tree navigation
 - Modular research data organization and validation
+- Code modularization (ResearchTreeView, ResourceSystem, GameReducer)
 
 ## Contributing
 
