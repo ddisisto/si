@@ -6,16 +6,13 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 SuperInt++ is a strategic simulation game about AI development and its consequences. Players manage an AI development organization, research new capabilities, deploy AI systems, and navigate the complex societal, ethical, and competitive landscape of advanced AI.
 
+## Important Guidelines
+
+**Before making any changes**: Be familiar with *all* foundational docs in project root (CONCEPT, PHILOSOPHY, PLAN, ARCHITECTURE, ROADMAP). Exception only for very specific, narrow user requests where CLAUDE.md familiarity may suffice.
+
 ## Key Game Systems
 
-The game consists of several interconnected systems:
-
-1. **Research System** - Tech tree for AI capability development
-2. **Resource System** - Management of Computing, Data, Influence, and Funding
-3. **Deployment System** - Applied AI systems with effects and risks
-4. **Game Events** - In-game occurrences that require player decisions
-5. **Alignment System** - Relationships and value adherence tracking
-6. **EventBus System** - Infrastructure for component communication
+See [PLAN.md](PLAN.md) for detailed system descriptions and [README.md](README.md#key-game-systems) for overview.
 
 ## Primary Workflow: Reconciliation
 
@@ -28,30 +25,16 @@ Reconciliation is change-driven: start from recent commits, trace impacts upward
 
 ## Documentation Structure
 
+See [README.md](README.md#documentation-structure) for complete documentation hierarchy. Key files:
 - **CONCEPT.md** - Original concept and brainstorming
 - **PLAN.md** - Game mechanics and system overview
 - **PHILOSOPHY.md** - Core design principles emphasizing meaningful tensions and continuous systems
 - **ROADMAP.md** - Development plan and progress tracking (essential for prioritization)
-- **docs/** - Technical and design documentation:
-  - **test_plan.md** - Testing strategy and standards
-  - **ARCHITECTURE.md** - Architecture overview (review before implementation) [moved to root]
-  - state_management_design.md - Data flow and state structure
-  - eventbus_design.md - EventBus system documentation
-  - ui_component_system.md - UI component patterns and architecture
-  - **design/** - System design documents:
-    - research_tree_design.md - Research progression system
-    - resource_system_design.md - Resource mechanics
-    - game_events_design.md - Event triggers and resolution
-    - deployment_system_design.md - AI system deployment
-    - alignment_system_design.md - Value tracking and consequences
-    - deployment_research_integration.md - Integration design between systems
-    - resource_system_implementation_plan.md - Resource system development roadmap
-  - **wip/** - Work in progress tracking:
-    - research_tree_implementation_plan.md - Research tree implementation status
+- **ARCHITECTURE.md** - Technical architecture (in root directory)
 
 ## Current Status
 
-The project is in early implementation with core systems partially implemented. We've completed the event bus, state management, resource system foundations, and turn-based progression.
+See [README.md](README.md#current-development-status) for current status and [ROADMAP.md](ROADMAP.md) for detailed progress tracking.
 
 ## Build/Test Commands
 
@@ -62,12 +45,7 @@ The project is in early implementation with core systems partially implemented. 
 
 ## Current Development Focus
 
-See ROADMAP.md for detailed priorities. Current focus:
-- Code refactoring of large files (immediate priority)
-- Resource system refinement with data types
-- Deployment system foundation (including data generation)
-- Research system implementation
-- Event system implementation
+See [ROADMAP.md](ROADMAP.md) for detailed priorities and [README.md](README.md#current-focus) for current focus areas.
 
 ## Code Style Guidelines
 
@@ -124,46 +102,23 @@ See ROADMAP.md for detailed priorities. Current focus:
 
 ## Game Architecture
 
-The codebase maintains separation between core systems:
+See [ARCHITECTURE.md](ARCHITECTURE.md) for detailed architecture documentation. Key points:
+
 - **Core**: Game logic (GameEngine, GameState, GameReducer, TimeSystem, etc.)
 - **EventBus System**: Communication layer between components (single instance)
-- **UI**: DOM-based UI components and managers (UIManager, UIComponents)
-  - Components should be small and focused (<400 lines)
-  - Reusable component patterns with consistent styling
-  - Modular CSS organization by component
-- **Systems**: Game system implementations (ResourceSystem, ResearchSystem, etc.)
-  - Each system should be split into logical modules when growing large
-  - Clear interfaces between systems
-  - **ResourceSystem** has been modularized as a reference pattern:
-    - `ComputingManager` - Computing resource operations
-    - `DataManager` - Data resource management
-    - `ResourceCalculations` - Metrics and calculations  
-    - `ResourceEffects` - Effect management
-    - `ResourceOperations` - Spending and affordability
-  - This modular pattern improves maintainability and should be applied to other large systems
+- **UI**: DOM-based UI components (<400 lines each, see [ui_component_system.md](docs/ui_component_system.md))
+- **Systems**: Game system implementations - modularize when >400 lines (ResourceSystem is reference pattern)
 - **Types**: Entity definitions and interfaces
-- **Data**: Game data and definitions (organized by category)
+- **Data**: Game data organized by category
 - **Utils**: Utility functions and helpers
 
 ### Critical Implementation Patterns
 
-1. **Single EventBus Instance** - Always use the GameEngine's EventBus instance throughout the application. Multiple EventBus instances will break event communication.
-
-2. **Unified Component Architecture**:
-   - All UI components extend UIComponent base class
-   - Components receive GameEngine reference via `setGameEngine()`
-   - EventBus access is through GameEngine reference only
-   - Use helper methods `emit()` and `subscribe()` for event communication
-
-3. **Event Flow Patterns**:
-   - Command events (`action:*`) - UI to Game Core (requests for state changes)
-   - State change events (`game:*`) - Game Core to UI (notifications of completed changes)
-   - UI events (`ui:*`) - Inter-component communication
-   - System events (`turn:*`, `phase:*`) - Between Game Systems (coordination)
-
-4. **State Change Notifications** - When replacing state directly (e.g., when loading a saved game), ensure all listeners are notified properly through `notifyListeners()`.
-
-5. **Event Documentation** - Always document new event types in `/docs/eventbus_design.md` to maintain the registry of events.
+1. **Single EventBus Instance** - Always use the GameEngine's EventBus instance (see [eventbus_design.md](docs/eventbus_design.md))
+2. **Unified Component Architecture** - Components extend UIComponent, receive GameEngine reference
+3. **Event Flow Patterns** - Command (`action:*`), State (`game:*`), UI (`ui:*`), System (`turn:*`)  
+4. **State Change Notifications** - Use `notifyListeners()` when replacing state directly
+5. **Event Documentation** - Document new events in `/docs/eventbus_design.md`
 
 ## Custom Commands
 
@@ -174,6 +129,7 @@ The `.claude/commands/` directory contains workflow commands:
 - Others available for specific workflows
 
 ## Recent Learnings and Notes
+[Append new learnings here - this section remains last in the file]
 
 - At some point, we should use our lovely browser tools to scan /r/MachineLearning, /r/ArtificialIntelligence, /r/singularity, /r/accelerate, etc (.../top/month in each case), to get ideas. The comments there are often very enlightening, and show varied perspectives we may consider
 - In general, you must be familiar with *all* foundational docs in project root before touching anything. Exception for this if the user has requested something very specific and narrow, in which case familiarity with just CLAUDE.md may suffice.
