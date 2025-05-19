@@ -1,150 +1,135 @@
 # SuperInt++
 
-A strategic simulation game about AI development and its consequences. Players manage resources, research new AI capabilities, and navigate the complex landscape of AI development from early foundation models to potentially transformative AGI.
+*A strategic simulation where you guide the development of AI systems, navigating the tension between capability and alignment*
 
-## Concept
+SuperInt++ is a browser-based strategy game that explores the profound questions surrounding artificial intelligence development. Starting as a small research organization with basic AI technology, you'll race to achieve breakthroughs while grappling with the ethical, competitive, and existential implications of your choices.
 
-SuperInt++ is a simulation game inspired by global strategy games, but focused on artificial intelligence development rather than traditional scenarios. Players start with a basic AI institute and develop increasingly capable AI systems while managing resources, competitors, and global events.
+## Core Concept
 
-The game is designed around the principle of **abstraction without dilution** - compressing complexity while preserving meaningful consequences. It serves as a lens focused on the essential dynamics of AI development rather than attempting to perfectly simulate reality.
+Build AI systems, not empires. In SuperInt++, progress isn't measured in territory conquered but in capabilities discovered, alignment achieved, and futures shaped. Every decision creates ripples through interconnected systems - your research choices influence funding, your deployments affect public trust, and your alignment decisions shape the trajectory of intelligence itself.
 
-## Current Development Status
-
-The game is in the initial implementation phase. We have completed:
-
-- High-level game concept and mechanics (CONCEPT.md, PLAN.md)
-- Philosophical approach to game design (PHILOSOPHY.md)
-- Detailed system design documents (in /docs)
-- Technical architecture plan (ARCHITECTURE.md)
-- State management design (in /docs/state_management_design.md)
-- Implementation roadmap (ROADMAP.md)
-- Project setup with TypeScript and build tools
-- Core game engine with event bus and state management
-- Resource system infrastructure
-- Turn-based progression system
-- DOM-based UI component architecture
-- Research tree visualization with category and status filters
-- Interactive node selection and information panels
-- Smooth zoom and pan controls for research tree navigation
-- Modular research data organization with validation
-
-The next phase focuses on expanding resource management, deployment systems, and core gameplay mechanics.
+The game embraces meaningful tensions rather than resolving them:
+- **Control ↔ Emergence**: Direct your research path while contending with unexpected breakthroughs
+- **Safety ↔ Capability**: Balance cautious development against competitive pressure
+- **Transparency ↔ Efficiency**: Choose between open science and proprietary advantages
+- **Short-term ↔ Long-term**: Navigate immediate needs while considering exponential futures
 
 ## Key Game Systems
 
-SuperInt++ consists of several interconnected systems:
+### Resources as Constraints
+Resources aren't just numbers to maximize - they represent real constraints that shape your strategic landscape:
+- **Computing Power**: Allocate between research and deployments, never consumed but always limited
+- **Data Access**: Quality matters more than quantity; data decays and requires maintenance
+- **Influence**: Split across academic, industry, government, public, and OSS communities
+- **Funding**: Generated through deployments, affected by trust and alignment
 
-- **Research System** - Tree-based tech progression with dependencies and strategic choices
-- **Resource System** - Management of Computing, Data, Influence, and Funding
-- **Deployment System** - Application of AI capabilities in various domains
-- **Game Events** - Random and triggered in-game occurrences that impact gameplay
-- **Alignment System** - Tracking relationships and value adherence
-- **EventBus System** - Core infrastructure for inter-component communication
+### Research as Exploration
+The research tree isn't a tech tree - it's a map of possibility space. Each node represents genuine capability emergence:
+- **Foundations**: Architecture designs and training methodologies
+- **Scaling**: Parameter growth and efficiency improvements
+- **Capabilities**: Language, vision, reasoning, and tool use
+- **Infrastructure**: Deployment, monitoring, and safety systems
+- **Agency**: Goal formation and self-improvement (mid-game unlock)
+- **Alignment**: Value specification and control mechanisms
 
-## Documentation Structure
+### Deployments as Feedback Loops
+Deploy AI systems to generate resources and influence, but beware the cascading effects:
+- Limited deployment slots force strategic choices
+- Each deployment creates feedback loops with research progress
+- Public reaction shapes funding and regulatory constraints
+- Data generation from deployments can accelerate or hinder progress
 
-- **CONCEPT.md** - Original concept and brainstorming
-- **PLAN.md** - Game mechanics and system overview
-- **PHILOSOPHY.md** - Core design philosophy and principles
-- **ROADMAP.md** - Development plan and progress tracking
-- **CLAUDE.md** - Implementation guidelines and project context
-- **docs/** - Technical and design documentation:
-  - **Core Architecture:**
-    - state_management_design.md - State management approach
-    - eventbus_design.md - Event bus system documentation
-    - ui_component_system.md - UI component architecture
-  - **design/** - System design documents:
-    - resource_system_design.md - Resource system mechanics
-    - research_tree_design.md - Research progression system
-    - game_events_design.md - Game events system design
-    - deployment_system_design.md - Deployment system mechanics
-    - alignment_system_design.md - Alignment system design
-    - deployment_research_integration.md - Integration between deployment and research
-    - resource_system_implementation_plan.md - Resource system implementation roadmap
-  - **wip/** - Work in progress documentation:
-    - research_tree_implementation_plan.md - Research tree implementation tracking
+### Alignment as Dynamic Balance
+Alignment isn't a binary state but a continuous negotiation across multiple dimensions:
+- **Deployment-Organization**: How well AI serves your goals
+- **Entity-Entity**: Relationships with competitors and stakeholders
+- **Value Alignment**: Abstract principles expressed through behavior
 
-## Getting Started (Future)
+### Time as Accelerating Force
+Game time compresses as technological progress accelerates, representing the quickening pace of development:
+- Quarterly → Monthly → Weekly → Daily progression
+- Research breakthroughs trigger time compression
+- Creates tension between planning horizons
 
-### Prerequisites
+## Game Progression
 
-- Node.js (v18+)
-- npm
+### Foundation Phase
+Classic resource management with basic AI capabilities. Build your foundation while competitors establish their own approaches.
 
-### Installation
+### Transition Phase
+AI begins contributing to research decisions. Agency capabilities unlock, introducing new strategic considerations.
 
+### Inflection Point
+The game's pivotal moment - increasing AI awareness meets automated resource access. Mechanics shift as your role transforms from director to guide.
+
+### Emergence Phase
+AI goals potentially diverge from institutional objectives. Navigate unprecedented challenges as the nature of control itself evolves.
+
+### Expansion Phase
+Global-scale impacts emerge. Multiple victory paths become available as the future of intelligence takes shape.
+
+## Victory Conditions
+
+Success isn't singular - multiple paths reflect different philosophical endpoints:
+- **Technological Singularity**: Achieve superintelligence before competitors
+- **Symbiosis**: Create balanced human-AI collaboration
+- **Global Optimization**: Solve major world problems through AI
+- **Digital Ascension**: Enable consciousness transfer to digital substrate
+
+## Development Philosophy
+
+SuperInt++ distills complex realities into meaningful gameplay. Rather than simulating every detail, it captures the essence of AI development's profound questions. The game serves as a lens focused on invisible dynamics - systems thinking made tangible, tensions made playable, consequences made visceral.
+
+## Technical Architecture
+
+Built on web standards for accessibility and ease of play:
+- TypeScript game engine with DOM-based UI
+- Event-driven architecture for system communication
+- Modular design supporting extensibility
+- Save system preserving game state across sessions
+
+## Project Documentation
+
+- **CONCEPT.md**: Original vision and brainstorming
+- **PHILOSOPHY.md**: Core design principles and approach
+- **PLAN.md**: Detailed game mechanics and systems
+- **ARCHITECTURE.md**: Technical implementation details
+- **ROADMAP.md**: Development progress and priorities
+
+## Current Development Status
+
+The game is in active development with core systems being implemented:
+- ✅ Game engine and state management
+- ✅ Research tree visualization with filtering
+- ✅ Save/load system
+- ✅ EventBus architecture
+- 🔨 Resource system refinement
+- 📋 Deployment system (pending)
+- 📋 Event system (pending)
+
+## Getting Started
+
+### Development Setup
 ```bash
-# Clone the repository
-git clone https://github.com/ddisisto/si.git
-cd si
-
-# Install dependencies
 npm install
-
-# Start development server
-npm run dev
+npm run dev  # Start development server
 ```
 
-The game will be available at http://localhost:8080
-
-## Project Structure
-
-```
-/src
-  /core          # Core game logic (GameEngine, EventBus, GameState, GameStateManager)
-  /ui            # UI components and managers (UIManager, UIComponent)
-  /systems       # Game systems (ResourceSystem, TurnSystem, TimeSystem)
-  /utils         # Utility functions and helpers (Logger)
-  /types         # TypeScript types and interfaces
-  /data          # Game data (ResearchData, ResourceData)
-  index.ts       # Entry point
-/public
-  /styles        # CSS styles for UI components
-  index.html     # HTML template
-/docs            # Detailed design documents
-```
-
-## Architecture
-
-SuperInt++ uses a modular architecture with unidirectional data flow:
-
-- **Game Engine** - Central system that manages the game loop and updates
-- **EventBus System** - Facilitates communication between components
-- **Game State** - Immutable state tree tracking all game data
-- **State Manager** - Controls state updates via actions and reducers
-- **Systems** - Process game logic (research, resources, events, time)
-- **UI Components** - DOM-based interface elements organized hierarchically
-- **UI Manager** - Coordinates UI components and updates based on state changes
-- **Input Handlers** - Process user interactions and dispatch corresponding actions
-
-## Development Roadmap
-
-See [ROADMAP.md](ROADMAP.md) for detailed development plans.
-
-### Current Focus
-- EventBus and logging improvements (infrastructure hardening)
-- Resource system refinement with data types integration
-- Deployment system foundation (including data generation mechanics)
-- Research system mechanics implementation (progress tracking, costs)
-- Event system implementation
-
-### Recently Completed
-- Core state management system
-- Resource tracking fundamentals
-- Turn-based progression mechanics
-- DOM-based UI component architecture
-- Comprehensive save/load functionality
-- EventBus communication system
-- Research tree visualization with category and status filters
-- Node interaction system with selection and information panels
-- Smooth zoom and pan controls for research tree navigation
-- Modular research data organization and validation
-- Code modularization (ResearchTreeView, ResourceSystem, GameReducer)
+### Build Commands
+- `npm run build` - Production build
+- `npm run typecheck` - TypeScript validation
+- `npm run test` - Run tests (when implemented)
 
 ## Contributing
 
-This project is in early planning stages. If you're interested in contributing, please reach out to the project maintainers.
+The project follows specific design principles outlined in PHILOSOPHY.md. When contributing:
+1. Review CLAUDE.md for AI assistant integration
+2. Check ROADMAP.md for current priorities
+3. Follow the architectural patterns in ARCHITECTURE.md
+4. Embrace the project's philosophy of meaningful tensions
 
-## License
+## Vision
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+SuperInt++ isn't just a game about AI - it's an exploration of what it means to create intelligence, the responsibility that comes with such power, and the profound questions we face as a species on the threshold of something greater than ourselves.
+
+Every playthrough tells a different story of humanity's relationship with artificial intelligence. What story will you write?
