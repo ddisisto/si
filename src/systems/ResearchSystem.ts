@@ -136,14 +136,17 @@ class ResearchSystem extends BaseSystem {
    * Handle turn start events
    */
   private onTurnStart(data: any): void {
-    Logger.debug(`Research System: Processing turn ${data.turn} start`);
-    this.progressActiveResearch(data.turn);
+    // Research progress is now handled at turn end
+    Logger.debug(`Research System: Turn ${data.turn} started`);
   }
   
   /**
    * Handle turn ending events
    */
   private onTurnEnding(data: any): void {
+    // Progress active research nodes
+    this.progressActiveResearch(data.turn);
+    
     // Update research boosts for next turn
     this.updateResearchBoosts(data);
   }
@@ -218,7 +221,8 @@ class ResearchSystem extends BaseSystem {
   private calculateResearchProgress(node: GameResearchNode): number {
     // Base progress is proportional to allocated compute
     const computeCost = node.computeCost || 100; // Default if not specified
-    let progress = node.computeAllocated / computeCost;
+    const computeAllocated = node.computeAllocated || 0; // Defensive check
+    let progress = computeAllocated / computeCost;
     
     // Apply category boosts if we have a string category
     const category = node.category as string;

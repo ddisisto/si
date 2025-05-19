@@ -9,6 +9,7 @@
 
 import { ResearchState, ResearchStatus, ResearchNode } from '../types/core/GameState';
 import { GameAction } from './GameStateManager';
+import Logger from '../utils/Logger';
 
 /**
  * Research reducer for research tree state management
@@ -51,17 +52,30 @@ export function researchReducer(state: ResearchState, action: GameAction): Resea
       };
       
     case 'UPDATE_RESEARCH_PROGRESS':
-      const { nodeId: progressNodeId, progress, computing } = action.payload;
+      const { progressUpdates } = action.payload;
+      
+      // Update progress for all nodes
+      const updatedNodes = Object.entries(progressUpdates).reduce((acc, [nodeId, newProgress]) => {
+        const node = state.nodes[nodeId];
+        if (!node) {
+          Logger.warn(`Trying to update progress for non-existent node: ${nodeId}`);
+          return acc;
+        }
+        
+        return {
+          ...acc,
+          [nodeId]: {
+            ...node,
+            progress: newProgress as number
+          }
+        };
+      }, {} as Record<string, ResearchNode>);
       
       return {
         ...state,
         nodes: {
           ...state.nodes,
-          [progressNodeId]: {
-            ...state.nodes[progressNodeId],
-            progress,
-            computeAllocated: (state.nodes[progressNodeId].computeAllocated || 0) + computing
-          }
+          ...updatedNodes
         }
       };
       

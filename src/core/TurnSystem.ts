@@ -156,15 +156,6 @@ class TurnSystem extends BaseSystem {
     this.setPhase('RESOLUTION');
     this.eventBus.emit('phase:resolution', {});
     
-    // Process research progress
-    this.stateManager.dispatch({ 
-      type: 'UPDATE_RESEARCH_PROGRESS', 
-      payload: { 
-        turn: this.getCurrentTurn(),
-        gameTime: this.stateManager.getState().meta.gameTime
-      } 
-    });
-    
     // Apply deployment effects
     this.stateManager.dispatch({ 
       type: 'APPLY_DEPLOYMENT_EFFECTS', 
