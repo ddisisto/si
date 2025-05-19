@@ -4,6 +4,7 @@
 
 import UIComponent from './UIComponent';
 import { EventBus } from '../../core';
+import Logger from '../../utils/Logger';
 
 interface GameLayoutOptions {
   eventBus: EventBus;
@@ -78,7 +79,7 @@ class GameLayout extends UIComponent {
       // Add a class to indicate the layout is ready
       this.element.classList.add('layout-initialized');
     } catch (error) {
-      console.error('Error in GameLayout.afterMount:', error);
+      Logger.error('Error in GameLayout.afterMount:', error);
     }
   }
   
@@ -105,7 +106,7 @@ class GameLayout extends UIComponent {
               header.appendChild(this.viewTitleElement);
             }
           } else {
-            console.error('Header element not found');
+            Logger.error('Header element not found');
             return;
           }
         }
@@ -113,7 +114,7 @@ class GameLayout extends UIComponent {
       
       component.mount(this.viewTitleElement);
     } catch (error) {
-      console.error('Error mounting to view title:', error);
+      Logger.error('Error mounting to view title:', error);
     }
   }
 
@@ -135,7 +136,7 @@ class GameLayout extends UIComponent {
           if (header) {
             header.appendChild(this.headerElement);
           } else {
-            console.error('Header element not found');
+            Logger.error('Header element not found');
             return;
           }
         }
@@ -143,7 +144,7 @@ class GameLayout extends UIComponent {
       
       component.mount(this.headerElement);
     } catch (error) {
-      console.error('Error mounting to header:', error);
+      Logger.error('Error mounting to header:', error);
     }
   }
   
@@ -158,14 +159,14 @@ class GameLayout extends UIComponent {
         this.sidebarElement = this.element.querySelector('.game-sidebar');
         
         if (!this.sidebarElement) {
-          console.error('Sidebar element not found');
+          Logger.error('Sidebar element not found');
           return;
         }
       }
       
       component.mount(this.sidebarElement);
     } catch (error) {
-      console.error('Error mounting to sidebar:', error);
+      Logger.error('Error mounting to sidebar:', error);
     }
   }
   
@@ -180,14 +181,14 @@ class GameLayout extends UIComponent {
         this.mainElement = this.element.querySelector('.game-main');
         
         if (!this.mainElement) {
-          console.error('Main element not found');
+          Logger.error('Main element not found');
           return;
         }
       }
       
       component.mount(this.mainElement);
     } catch (error) {
-      console.error('Error mounting to main area:', error);
+      Logger.error('Error mounting to main area:', error);
     }
   }
   
@@ -202,14 +203,14 @@ class GameLayout extends UIComponent {
         this.panelAreaElement = this.element.querySelector('.game-panel-area');
         
         if (!this.panelAreaElement) {
-          console.error('Panel area element not found');
+          Logger.error('Panel area element not found');
           return;
         }
       }
       
       component.mount(this.panelAreaElement);
     } catch (error) {
-      console.error('Error mounting to panel area:', error);
+      Logger.error('Error mounting to panel area:', error);
     }
   }
   
@@ -231,7 +232,7 @@ class GameLayout extends UIComponent {
           if (footer) {
             footer.appendChild(this.footerElement);
           } else {
-            console.error('Footer element not found');
+            Logger.error('Footer element not found');
             return;
           }
         }
@@ -239,7 +240,7 @@ class GameLayout extends UIComponent {
       
       component.mount(this.footerElement);
     } catch (error) {
-      console.error('Error mounting to footer:', error);
+      Logger.error('Error mounting to footer:', error);
     }
   }
   

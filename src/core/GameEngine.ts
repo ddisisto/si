@@ -4,7 +4,7 @@
 
 import { System } from './System';
 import GameStateManager from './GameStateManager';
-import EventBus, { EventBusOptions } from './EventBus';
+import EventBus from './EventBus';
 import { GameAction } from './GameStateManager';
 import { gameReducer } from './reducers';
 import { createInitialState, GameState } from './GameState';

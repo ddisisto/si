@@ -167,7 +167,9 @@ class EventBus {
     const listeners = this.listeners.get(eventType);
     if (listeners) {
       let errorCount = 0;
-      listeners.forEach((listenerInfo, index) => {
+      const listenersArray = Array.from(listeners);
+      for (let index = 0; index < listenersArray.length; index++) {
+        const listenerInfo = listenersArray[index];
         try {
           listenerInfo.callback(data);
         } catch (error) {
@@ -185,12 +187,12 @@ class EventBus {
           Logger.error(`EventBus: Error in listener for '${eventType}':`, errorContext);
           
           // Don't let one bad listener break the chain
-          if (errorCount > listeners.length / 2) {
-            Logger.error(`EventBus: Too many errors (${errorCount}/${listeners.length}) for '${eventType}', stopping emission`);
+          if (errorCount > listenersArray.length / 2) {
+            Logger.error(`EventBus: Too many errors (${errorCount}/${listenersArray.length}) for '${eventType}', stopping emission`);
             break;
           }
         }
-      });
+      }
     }
     
     // Clean up event chain

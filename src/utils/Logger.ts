@@ -267,4 +267,4 @@ class Logger {
 }
 
 export default Logger.getInstance();
-export { LogLevel, LogConfig, LogEntry };
+export { LogConfig, LogEntry };

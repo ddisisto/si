@@ -5,6 +5,7 @@
 import { GameState } from '../core/GameState';
 import { EventBus } from '../core';
 import UIComponent from './components/UIComponent';
+import Logger from '../utils/Logger';
 
 interface GameEngineInterface {
   getState(): GameState;
@@ -94,7 +95,7 @@ class UIManager {
         }
       }
     } catch (error) {
-      console.error(`Error registering component ${id}:`, error);
+      Logger.error(`Error registering component ${id}:`, error);
     }
   }
   

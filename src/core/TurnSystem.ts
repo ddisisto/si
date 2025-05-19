@@ -72,7 +72,6 @@ class TurnSystem extends BaseSystem {
    */
   public endTurn(data: any = {}): void {
     const currentTurn = this.getCurrentTurn();
-    Logger.info(`TurnSystem: Ending turn ${currentTurn}`, data);
     
     this.setPhase('END');
     this.eventBus.emit('turn:ending', { 
@@ -84,20 +83,13 @@ class TurnSystem extends BaseSystem {
     this.processTurnEnd();
     
     // Advance to next turn
-    Logger.debug(`TurnSystem: Advancing to turn ${currentTurn + 1}`);
     this.stateManager.dispatch({ 
       type: 'ADVANCE_TURN', 
       payload: {} 
     });
     
-    // Start new turn
+    // Start new turn (will be logged by EventBus)
     this.startTurn();
-    
-    // Log new turn info
-    const newTurn = this.getCurrentTurn();
-    const timeScale = this.timeSystem.getTimeScaleDescription();
-    const gameDate = this.timeSystem.formatGameDate();
-    Logger.info(`TurnSystem: Started turn ${newTurn} (${gameDate}, ${timeScale} turns)`);
   }
   
   /**
@@ -133,10 +125,7 @@ class TurnSystem extends BaseSystem {
     // Auto-save at the beginning of the turn if enabled (after turn state has been updated)
     // This ensures that when loading, we'll be at the same turn number the player was at
     if (this.stateManager.getState().settings.autoSave) {
-      Logger.info(`TurnSystem: Auto-save is enabled, saving game to "autosave" slot at start of turn ${this.getCurrentTurn()}`);
       this.stateManager.saveState('autosave');
-    } else {
-      Logger.debug(`TurnSystem: Auto-save is disabled, skipping auto-save at turn start`);
     }
     
     // Generate resources at turn start
