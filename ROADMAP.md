@@ -134,12 +134,12 @@ The roadmap will be updated as development progresses to reflect new priorities,
 ### Resource System Refinement (1 week)
 **Dependencies:** EventBus improvements (for better event handling)  
 **Implementation Plan:** See [Resource System Implementation Plan](docs/design/resource_system_implementation_plan.md) for detailed phases and tasks  
-- [ ] Create comprehensive resource generation system
-- [ ] Build resource allocation UI
-- [ ] Add influence and funding mechanics
-- [ ] Integrate with event and deployment systems
+- [ ] Phase 1: Expand generation sources (infrastructure, deployments, partnerships)
+- [ ] Phase 2: Build allocation UI with sliders and visual feedback
+- [ ] Phase 3: Implement resource caps and exponential scaling
+- [ ] Implement data quality decay mechanics (0.01-0.05 per turn)
 - [ ] Add compute resource sub-types (training, inference)
-- [ ] Implement base system level upgrades
+- [ ] Create resource generation formula: `base × org × efficiency × research × infrastructure`
 
 ### Deployment System - Foundation (3 weeks)
 **Dependencies:** Resource System (needs data type tracking)
@@ -155,12 +155,14 @@ The roadmap will be updated as development progresses to reflect new priorities,
 
 ### Research System Implementation (3 weeks)
 **Dependencies:** Resource System (complete), Deployment System (foundation)
-- [ ] Fix research tree visual display (nodes loaded but not rendering)
 - [ ] Implement research progress tracking
 - [ ] Create research completion effects
 - [ ] Add prerequisites checking
 - [ ] Implement resource costs (including data requirements)
 - [ ] Create research notifications
+- [ ] Add research pause/resume with decay mechanics (1-3% per turn)
+- [ ] Implement concurrent research slot management (1-3 slots)
+- [ ] Create computing allocation UI for active research
 - [ ] Add data type requirements for research nodes
 - [ ] Implement research boost mechanics from deployments
 
@@ -300,9 +302,30 @@ These tasks require functioning systems to balance properly and will be addresse
 - [ ] Fine-tune resource economy
 
 ## Next Steps
-1. ✅ COMPLETED: EventBus improvements and logging consolidation
-2. ✅ FIXED: Critical turn end research processing error
-3. ✅ FIXED: Research nodes not loading into game state (visual display issue remains)
-4. Move to Resource System refinement implementation
-5. Build Deployment System foundation on improved resource system
-6. Implement Research System with full data type support
+1. [CRITICAL] Fix research tree visual display (debug why nodes don't render despite being loaded)
+   - Priority: CRITICAL - Blocks all research system development
+   - Check ResearchTreeView render logic for node positioning/visibility
+   - Verify SVG container and node coordinates
+   - Test with dev server to isolate rendering issue
+2. Complete Research System mechanics per PLAN.md specs:
+   - Implement progress decay when paused (1% → 2% → 3% per turn)
+   - Add concurrent research slot management (start with 1, unlock up to 3)
+   - Create computing allocation UI between active research
+   - Add data type requirements for research nodes (per resource system design)
+   - Implement deployment-research boost mechanics
+   - Add competitor breakthrough free progress: `Gained = EventBase × (1 - CurrentProgress)²`
+3. Begin Resource System refinement per implementation plan:
+   - Phase 1: Expand generation sources (infrastructure, deployments, partnerships)
+   - Phase 2: Build allocation UI with sliders and visual feedback
+   - Implement data quality decay formula: `newQuality = max(0.1, currentQuality - decayRate)`
+   - Add resource generation formula: `base × org × efficiency × research × infrastructure`
+4. Start Deployment System foundation per design doc:
+   - Create slot management (1-2 start, max 5-7 via research)
+   - Build basic deployment data structures with computing allocation
+   - Implement data generation/refinement mechanics
+   - Link deployments to resource generation streams
+5. Integrate systems and update docs:
+   - Document all event flows in eventbus_design.md
+   - Create test utilities for GameState and EventBus mocking
+   - Add inline documentation for complex formulas
+   - Update ARCHITECTURE.md with new modular patterns
