@@ -3,7 +3,6 @@
  */
 
 import UIComponent from './UIComponent';
-import Logger from '../../utils/Logger';
 
 /**
  * Component for controlling turn progression
