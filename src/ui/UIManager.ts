@@ -101,11 +101,6 @@ class UIManager {
    * @param gameState Current game state
    */
   public update(gameState: Readonly<GameState>): void {
-    const prevTurn = this.gameState?.meta.turn;
-    const newTurn = gameState.meta.turn;
-    
-    // Update occurs every turn, no need to log
-    
     this.gameState = gameState;
     
     // Update all registered components
