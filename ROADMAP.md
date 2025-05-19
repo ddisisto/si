@@ -131,14 +131,15 @@ The roadmap will be updated as development progresses to reflect new priorities,
   - [x] Create debugging guide for event-related issues
   - [x] Add EventBus-centric logging strategy to ARCHITECTURE.md
 
-### 🚨 CRITICAL BUG: Turn End Research Processing Error (2 days)
+### ✅ FIXED: Turn End Research Processing Error
+**Fixed in:** [PR #19](https://github.com/ddisisto/si/pull/19)  
 **Error:** "Cannot read properties of undefined (reading 'computeAllocated')"  
 **Impact:** Turn processing fails when research nodes have undefined computed values
-**Dependencies:** None - can fix immediately
-- [ ] Debug research node state on turn:end event
-- [ ] Fix undefined computeAllocated reference  
-- [ ] Add defensive checks for node properties
-- [ ] Test turn processing with active research
+**Resolution:** 
+- [x] Debug research node state on turn:end event
+- [x] Fix undefined computeAllocated reference  
+- [x] Add defensive checks for node properties
+- [x] Test turn processing with active research
 
 ### Resource System Refinement (1 week)
 **Dependencies:** EventBus improvements (for better event handling)  
@@ -309,7 +310,8 @@ These tasks require functioning systems to balance properly and will be addresse
 
 ## Next Steps
 1. ✅ COMPLETED: EventBus improvements and logging consolidation
-2. Fix critical turn end research processing error (blocking turn progression)
-3. Move to Resource System refinement after critical bug fix
-4. Build Deployment System foundation on improved resource system
-5. Implement Research System with full data type support
+2. ✅ FIXED: Critical turn end research processing error
+3. Investigate and fix research nodes not loading issue
+4. Move to Resource System refinement implementation
+5. Build Deployment System foundation on improved resource system
+6. Implement Research System with full data type support

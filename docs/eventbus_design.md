@@ -233,6 +233,7 @@ User Action → ResearchTreeView → EventBus → ResearchSystem → State Updat
 4. research:progress (on each turn)
    Payload: { nodeId, previousProgress, newProgress, increment, computeAllocated, turn }
    Flow: ResearchSystem → UI Components
+   Note: Triggered during turn:ending event, UPDATE_RESEARCH_PROGRESS action is dispatched internally
    
 5. research:completed
    Payload: { nodeId, node, turn, totalCompleted }
