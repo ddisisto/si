@@ -71,6 +71,18 @@ interface GameState {
 
 For detailed information about the state structure and management approach, see [State Management Design](./state_management_design.md).
 
+#### State Reducers
+
+State updates are handled through modular reducers following the same pattern as systems:
+
+- **Modular Structure** - Reducers are organized in `src/core/reducers/`
+- **Root Reducer** - `gameReducer` combines all sub-reducers
+- **Focused Reducers** - Each state slice has its own reducer
+- **Resource Reducer** - Further split into computing, funding, influence, and data sub-modules
+- **Small Reducers** - Simple state slices use single-file reducers
+
+For implementation details, see [Reducer Organization](docs/reducer_organization.md).
+
 ### Systems
 
 Modular components that handle specific aspects of gameplay:

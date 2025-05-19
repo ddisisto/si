@@ -9,7 +9,7 @@ import GameStateManager from './GameStateManager';
 import { GameAction } from './GameStateManager';
 import TurnSystem from './TurnSystem';
 import TimeSystem from './TimeSystem';
-import { gameReducer } from './GameReducer';
+import { gameReducer } from './reducers';
 import { GameState, createInitialState } from './GameState';
 
 export {
