@@ -15,9 +15,8 @@ Reconciliation is state-aware: it reads the project's current position and sugge
 
 ## Change-Driven Reconciliation Process
 
-### Step 1: Identify What Changed
+### Step 1: Identify What Changed Recently
 ```bash
-# Start from recent changes, not arbitrary oldest/newest
 git log --oneline -10 -- "*.md" "src/**" "docs/**"
 ```
 
