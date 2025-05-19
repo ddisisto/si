@@ -176,3 +176,4 @@ The `.claude/commands/` directory contains workflow commands:
 ## Recent Learnings and Notes
 
 - At some point, we should use our lovely browser tools to scan /r/MachineLearning, /r/ArtificialIntelligence, /r/singularity, /r/accelerate, etc (.../top/month in each case), to get ideas. The comments there are often very enlightening, and show varied perspectives we may consider
+- In general, you must be familiar with *all* foundational docs in project root before touching anything. Exception for this if the user has requested something very specific and narrow, in which case familiarity with just CLAUDE.md may suffice.
