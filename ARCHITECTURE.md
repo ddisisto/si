@@ -1,20 +1,20 @@
 # Technical Architecture
 
-This document outlines the technical architecture for SuperInt++, defining the structure, components, and design patterns for implementation.
+This document outlines the technical architecture for SuperInt++, defining core structure, components, and design patterns.
 
 ## Overview
 
-SuperInt++ is built using TypeScript with a DOM-based UI for all game elements. The architecture follows modular design principles with clear separation of concerns, immutable state management, and event-driven communication between systems.
+SuperInt++ is built using TypeScript with a DOM-based UI. The architecture follows modular design principles with clear separation of concerns, immutable state management, and event-driven communication between systems.
 
 ## Architecture Principles
 
 1. **Separation of Concerns** - Clear boundaries between systems
-2. **Single Responsibility** - Each component has one primary purpose
+2. **Single Responsibility** - Each component has one primary purpose  
 3. **Immutable Game State** - State changes through controlled actions
 4. **Event-Driven Communication** - Systems communicate via events
 5. **Testable Design** - Components designed for unit testing
 6. **Progressive Enhancement** - Core game works first, polish added later
-7. **Continuous Over Categorical** - Favor gradients and spectrums over binary states, reflecting the philosophical approach of the project
+7. **Continuous Over Categorical** - Favor gradients and spectrums over binary states
 
 ## Technology Stack
 
@@ -24,13 +24,22 @@ SuperInt++ is built using TypeScript with a DOM-based UI for all game elements. 
 - **Testing**: Jest
 - **Linting/Formatting**: ESLint, Prettier
 
-## Core Architecture Components
+## Data Flow
+
+```
+User Input → DOM Events → Actions → GameState → Systems → UI Update
+                                        ↑                 |
+                                        └-----------------┘
+                                        (System-generated actions)
+```
+
+## Core Components
 
 ### Game Engine
 
-Central coordinator for the game, managing:
+Central coordinator managing:
 - Game loop
-- System updates
+- System updates  
 - State management
 - Event coordination
 
@@ -43,294 +52,44 @@ class GameEngine {
   
   public initialize(): void;
   public start(): void;
-  public pause(): void;
-  public resume(): void;
   public update(deltaTime: number): void;
   public getState(): Readonly<GameState>;
   public dispatch(action: GameAction): void;
-  private applyAction(action: GameAction): void;
 }
 ```
 
-### Game State
+### Game State & Reducers
 
-Centralized state storage for all game data, structured as a hierarchical tree of immutable objects:
-
-```typescript
-interface GameState {
-  readonly meta: GameMetaState;           // Game-wide metadata
-  readonly resources: ResourceState;      // Resource tracking 
-  readonly research: ResearchState;       // Research tree state
-  readonly deployments: DeploymentState;  // Deployed AI systems
-  readonly events: EventState;            // Event queue and history
-  readonly world: WorldState;             // World map and regions
-  readonly competitors: CompetitorState;  // AI competitors
-  readonly settings: SettingsState;       // Game settings
-}
-```
-
-For detailed information about the state structure and management approach, see [State Management Design](./state_management_design.md).
-
-#### State Reducers
-
-State updates are handled through modular reducers following the same pattern as systems:
-
-- **Modular Structure** - Reducers are organized in `src/core/reducers/`
-- **Root Reducer** - `gameReducer` combines all sub-reducers
-- **Focused Reducers** - Each state slice has its own reducer
-- **Resource Reducer** - Further split into computing, funding, influence, and data sub-modules
-- **Small Reducers** - Simple state slices use single-file reducers
-
-For implementation details, see [Reducer Organization](docs/reducer_organization.md).
+- **State**: Centralized storage as hierarchical tree of immutable objects
+- **Reducers**: Modular functions handling state updates
+- See [State Management Design](docs/state_management_design.md) and [Reducer Organization](docs/reducer_organization.md)
 
 ### Systems
 
-Modular components that handle specific aspects of gameplay:
+Modular components handling specific gameplay aspects:
 
-1. **ResourceSystem** - Manages resources and their allocation (modularized into focused subsystems)
+1. **ResourceSystem** - Manages resources and allocation (modularized)
 2. **ResearchSystem** - Handles research tree and progression
-3. **DeploymentSystem** - Manages deployments and their effects
-4. **EventSystem** - Controls events and their resolution
+3. **DeploymentSystem** - Manages deployments and effects
+4. **EventSystem** - Controls events and resolution
 5. **WorldSystem** - Manages global map and influence
-6. **CompetitorSystem** - Handles AI competitors
+6. **CompetitorSystem** - Handles AI competitors  
 7. **TimeSystem** - Controls game time progression
 
-System base interface:
-```typescript
-interface System {
-  initialize(): void;
-  update(deltaTime: number): void;
-  handleAction(action: GameAction): void;
-  getName(): string;
-  isInitialized(): boolean;
-}
-```
-
-#### System Modularization Pattern
-
-As systems grow beyond ~400 lines, they should be refactored into focused subsystems. The ResourceSystem provides a reference implementation:
-
-- **Main System Class** (ResourceSystem.ts):
-  - Coordinates subsystems
-  - Handles EventBus subscriptions 
-  - Delegates operations to specific managers
-  - Maintains public interface
-
-- **Subsystem Modules** (resources/ directory):
-  - **ComputingManager** - Handles computing resource allocations
-  - **DataManager** - Manages data types and access
-  - **ResourceCalculations** - Pure calculation functions
-  - **ResourceEffects** - Effect aggregation and application
-  - **ResourceOperations** - High-level operations (spending, affordability)
-
-Each subsystem receives StateManager and EventBus references and focuses on a single responsibility. This pattern improves maintainability, testing, and code organization.
-
-### UI Architecture (DOM-based)
-
-The UI layer uses DOM elements exclusively, providing a responsive and accessible interface:
-
-#### UI Component Base Class
-
-The UIComponent base class is used for complex UI panels and views that need state management, lifecycle hooks, and event handling. Simple HTML elements like buttons should use plain HTML with CSS classes instead.
-
-```typescript
-class UIComponent {
-  protected element: HTMLElement;
-  protected gameState: Readonly<GameState>;
-  protected gameEngine: GameEngineInterface;
-  
-  constructor(elementType: string, className?: string);
-  public mount(parent: HTMLElement): void;
-  public unmount(): void;
-  public update(gameState: Readonly<GameState>): void;
-  public render(): void;
-  protected createTemplate(): string;
-  
-  // Helper methods for event handling
-  protected emit(event: string, data: any): void;
-  protected subscribe(event: string, handler: (data: any) => void): void;
-}
-```
-
-**Component Guidelines:**
-- Use UIComponent for panels, views, and complex layouts
-- Use plain HTML for buttons: `<button class="btn-primary">Click</button>`
-- Avoid creating components for simple elements
-- See [UI Component System](./ui_component_system.md) for detailed guidelines
-
-#### UI Manager
-
-Coordinates UI components and user interaction:
-
-```typescript
-class UIManager {
-  private components: Map<string, UIComponent>;
-  private rootElement: HTMLElement;
-  private eventBus: EventBus;
-  
-  public initialize(rootElement: HTMLElement): void;
-  public registerComponent(id: string, component: UIComponent): void;
-  public update(gameState: GameState): void;
-}
-```
-
-### HTML/CSS Standards
-
-The UI uses semantic HTML with CSS classes for styling:
-
-1. **Buttons**: Use plain HTML buttons with standardized CSS classes
-   ```html
-   <button class="btn-primary">Primary Action</button>
-   <button class="btn-danger btn-small">Delete</button>
-   ```
-
-2. **CSS Organization**: Modular CSS files in `/public/styles/components/`
-   - `buttons.css` - Button styling system
-   - `panels.css` - Panel layouts
-   - `resources.css` - Resource display styles
-
-3. **No Component Overhead**: Simple elements don't need UIComponent wrappers
+Systems over ~400 lines should be refactored into focused subsystems. See ResourceSystem implementation in `src/systems/resources/` for reference pattern.
 
 ### Event Bus
 
-Facilitates communication between systems through a centralized event bus. For detailed documentation on the event system and communication patterns, see [EventBus System Design](./eventbus_design.md).
+Central communication hub with enhanced debugging and error handling.
+- **Critical**: Single shared EventBus instance throughout application
+- See [EventBus System Design](docs/eventbus_design.md) for detailed documentation
 
-```typescript
-class EventBus {
-  private listeners: Map<string, EventCallback[]>;
-  
-  public subscribe(eventType: string, callback: EventCallback): void;
-  public unsubscribe(eventType: string, callback: EventCallback): void;
-  public emit(eventType: string, data: any = {}): void;
-}
-```
+### UI Architecture
 
-**Critical Implementation Note:** The application must use a single shared EventBus instance throughout all components to ensure proper communication.
-
-### Logging Strategy
-
-The application follows a centralized logging approach that leverages the EventBus for most logging needs:
-
-#### Core Principles
-
-1. **EventBus-Centric Logging** - Most game activity is logged through EventBus event emissions
-   - EventBus logs all events when debug mode is enabled
-   - Provides natural audit trail and event chains
-   - Reduces code clutter in individual systems
-
-2. **Direct Logger Usage** - Use Logger directly only for:
-   - System initialization/shutdown
-   - Error conditions not propagated via events
-   - Performance metrics not tied to events
-   - Debug-only logging during development
-   - Warnings about invalid states before they become events
-
-3. **Avoid Redundant Logging**
-   - Don't log event emissions in systems (EventBus handles this)
-   - Don't log event handling unless adding unique context
-   - Use event data for context rather than separate log statements
-
-#### Implementation Guidelines
-
-```typescript
-// GOOD: Let EventBus handle event logging
-this.eventBus.emit('research:completed', { nodeId, turn });
-
-// BAD: Redundant logging
-Logger.info('Research completed for node:', nodeId);
-this.eventBus.emit('research:completed', { nodeId, turn });
-
-// GOOD: Log initialization
-Logger.info('ResourceSystem initialized');
-
-// GOOD: Log errors not handled by events
-try {
-  // operation
-} catch (error) {
-  Logger.error('Failed to process data:', error);
-}
-
-// GOOD: Debug logging during development
-if (this.debugMode) {
-  Logger.debug('Complex calculation result:', result);
-}
-```
-
-#### Configuration
-
-- **Production**: EventBus debug mode disabled, minimal logging
-- **Development**: EventBus debug mode enabled, full event logging
-- **Testing**: Configurable logging levels per test suite
-
-See [EventBus System Design](./eventbus_design.md) for detailed logging and debugging features.
-
-## Data Flow
-
-1. **Input** - User interactions captured by DOM events
-2. **Actions** - Inputs translated to GameActions
-3. **State Changes** - Actions processed to produce new GameState
-4. **System Updates** - Systems react to state changes
-5. **UI Update** - DOM elements updated to reflect current state
-
-```
-User Input → DOM Events → Actions → GameState → Systems → UI Update
-                                        ↑                 |
-                                        └-----------------┘
-                                        (System-generated actions)
-```
-
-## Game Loop
-
-The game runs on a fixed-time-step loop:
-
-1. Handle user input via DOM events
-2. Process game actions
-3. Update game state
-4. Update systems
-5. Update UI components
-6. Repeat
-
-```typescript
-function gameLoop(timestamp: number) {
-  const deltaTime = timestamp - lastTimestamp;
-  
-  // Process any queued actions
-  const actions = actionQueue.getActions();
-  actions.forEach(action => {
-    gameState = reducer(gameState, action);
-  });
-  
-  // Update game systems
-  systems.forEach(system => {
-    const systemActions = system.update(deltaTime);
-    actionQueue.addActions(systemActions);
-  });
-  
-  // Update UI
-  uiManager.update(gameState);
-  
-  lastTimestamp = timestamp;
-  requestAnimationFrame(gameLoop);
-}
-```
-
-## UI Components
-
-The game uses various UI components to represent different aspects of gameplay:
-
-1. **ResourcePanel** - Displays and manages resources
-2. **TurnControls** - Controls for turn progression
-3. **ResearchTreeView** - Research tree visualization and interaction
-4. **DeploymentView** - Deployment management and global map
-5. **EventPanel** - Event notifications and resolution
-6. **WorldMapView** - Map visualization and regional influence
-7. **SettingsPanel** - Game configuration options
-
-Each component has:
-- A root DOM element
-- Event handlers for user interaction
-- Update method to reflect state changes
-- Template rendering logic
+DOM-based UI with component hierarchy:
+- Complex panels/views use UIComponent base class
+- Simple elements use plain HTML with CSS classes
+- See [UI Component System](docs/ui_component_system.md) for guidelines
 
 ## File Structure
 
@@ -341,196 +100,52 @@ Each component has:
     GameState.ts
     System.ts
     EventBus.ts
-    ActionTypes.ts
-    GameReducer.ts
-    GameStateManager.ts
-    TurnSystem.ts
+    /reducers         # Modular reducer structure
   
   /systems
     ResourceSystem.ts
-    /resources
-      index.ts
-      ComputingManager.ts
-      DataManager.ts
-      ResourceCalculations.ts
-      ResourceEffects.ts
-      ResourceOperations.ts
+    /resources        # Modularized resource subsystems
     ResearchSystem.ts
-    DeploymentSystem.ts
-    EventSystem.ts
-    WorldSystem.ts
-    CompetitorSystem.ts
-    TimeSystem.ts
+    # ... other systems
   
   /ui
     /components
-      UIComponent.ts
-      Panel.ts
-      Button.ts
-      ResourcePanel.ts
-      TurnControls.ts
-      ResearchTreeView.ts
-      DeploymentView.ts
-      EventPanel.ts
-      WorldMapView.ts
-      SettingsPanel.ts
+      UIComponent.ts  # Base class for complex components
+      # ... component implementations
     UIManager.ts
-      
+    
   /types
-    Resource.ts
-    Research.ts
-    Deployment.ts
-    Event.ts
-    World.ts
-    Competitor.ts
-    
-  /data
-    ResourceData.ts
-    ResearchData.ts
-    DeploymentData.ts
-    EventData.ts
-    WorldData.ts
-    CompetitorData.ts
-  
+  /data  
   /utils
-    Math.ts
-    Random.ts
-    Logger.ts
-    Storage.ts
-    
-  index.ts
-  index.html
-```
-
-## State Management
-
-The game uses an immutable state management approach with unidirectional data flow:
-
-1. **GameState** - Centralized, immutable state tree as single source of truth
-2. **Actions** - Plain objects describing intended state changes
-3. **Reducers** - Pure functions that compute new state from previous state and actions
-4. **GameStateManager** - Coordinates state updates and notifies systems of changes
-5. **TurnSystem** - Handles progression of game turns and phases
-6. **Selectors** - Extract and derive data from state for components
-
-For detailed information about the state management implementation, see [State Management Design](./state_management_design.md).
-
-```typescript
-// Core state manager
-class GameStateManager {
-  private state: GameState;
   
-  public getState(): Readonly<GameState>;
-  public dispatch(action: GameAction): void;
-  public subscribe(listener: StateChangeListener): () => void;
-}
-
-// Simplified reducer example
-function resourceReducer(state: ResourceState, action: GameAction): ResourceState {
-  switch (action.type) {
-    case 'ALLOCATE_COMPUTING':
-      return {
-        ...state,
-        computing: {
-          ...state.computing,
-          allocated: {
-            ...state.computing.allocated,
-            [action.payload.target]: (state.computing.allocated[action.payload.target] || 0) + action.payload.amount
-          }
-        }
-      };
-    default:
-      return state;
-  }
-}
+  index.ts
 ```
 
-## DOM Rendering Strategy
+## Key Patterns
 
-The rendering system uses a component-based approach:
+### Logging Strategy
 
-1. **Components** - Self-contained UI elements with HTML templates
-2. **Virtual DOM-like Updates** - Components only update when state changes
-3. **Event Delegation** - Events bubble up to parent components
-4. **Standardized Component System** - Reusable, consistent UI elements
-5. **CSS Architecture** - Component-specific CSS files with shared design tokens
-6. **Responsive Design** - Adapts to different screen sizes with CSS Grid and Flexbox
+EventBus-centric logging approach:
+1. Most activity logged through event emissions
+2. Direct Logger usage only for system init/shutdown, errors, performance metrics
+3. See [EventBus System Design](docs/eventbus_design.md) for complete strategy
 
-Key advantages:
-- **Accessibility** - Native DOM provides better accessibility
-- **Responsive Design** - Natural responsiveness without custom scaling
-- **Consistency** - Standardized components ensure a cohesive UI experience
-- **Easier Development** - Standard HTML/CSS development patterns with reusable components
-- **Better Interactivity** - Native event handling and form controls
-- **Testability** - Components can be tested in isolation
+### State Persistence
 
-For detailed information about the UI component system, see [UI Component System](./ui_component_system.md).
+Save/load system using JSON serialization to localStorage, following event-driven patterns detailed in [EventBus System Design](docs/eventbus_design.md).
 
-## Saving and Loading
+### Modularization Pattern
 
-Game state is serialized to JSON and stored in localStorage, following the event-driven architecture detailed in [EventBus System Design](./eventbus_design.md).
+Large modules split into focused subsystems when exceeding ~400 lines. Reference implementation: ResourceSystem → resources/ subsystems.
 
-The save/load system provides:
-
-1. **Automatic Saving** - During turn progression based on user settings
-2. **Manual Saving** - Through the SaveLoadPanel UI with custom naming
-3. **Loading** - Re-initializing game from saved states with proper event notifications
-4. **Migration** - Version tracking to handle loading from older save formats
-
-The process follows the event flow pattern:
-- UI components emit command events (`action:save`, `action:load`)
-- GameEngine processes these events and calls GameStateManager methods
-- GameStateManager performs the actual persistence operations
-- GameEngine emits state change events (`game:saved`, `game:loaded`)
-- UI components update in response to these events
-
-## Optimization Strategies
-
-1. **Selective Rendering** - Only update components when their data changes
-2. **Event Delegation** - Reduce number of event listeners
-3. **CSS Transitions** - Use CSS for animations where possible
-4. **Lazy Loading** - Load components as needed
-5. **Efficient DOM Updates** - Minimize DOM manipulation
-
-This approach follows our "Anti-maximization design" philosophy from PHILOSOPHY.md - we create multiple optimization strategies rather than over-optimizing a single approach, enhancing system resiliency.
-
-## Next Steps for UI Implementation
-
-1. Create base UIComponent class (completed)
-2. Develop core UI components (ResourcePanel, TurnControls) (in progress)
-3. Create UIManager to coordinate components (completed)
-4. Implement DOM event handling (completed)
-5. Add styling with CSS (in progress)
-6. Develop research tree visualization components
-
-For implementation details, see [Implementation Plan](./implementation_plan.md).
-
-## Architecture Refactoring Goals
-
-### UIComponent Architecture Clarification
-- Review and optimize UIComponent base class usage
-- Ensure consistent implementation across all UI components
-- Remove unused or redundant component code
-- Establish clear patterns for component lifecycle and state updates
+## Future Improvements
 
 ### Code Organization
-- Refactor large files (>300 lines) into smaller, focused modules
-- Identify files likely to grow significantly over time and preemptively split them
-- Maintain clear separation between system logic and UI concerns
-- Group related functionality into cohesive modules
-
-### Modular System Architecture
-- **ResourceSystem** has been refactored into specialized subsystems:
-  - `ComputingManager` - Handles computing resource allocation/deallocation
-  - `DataManager` - Manages data resources, tiers, and specialized sets
-  - `ResourceCalculations` - Calculates metrics and influence growth
-  - `ResourceEffects` - Manages effects from deployments and research
-  - `ResourceOperations` - Handles spending and affordability checks
-- This pattern should be applied to other large systems (ResearchSystem, GameReducer)
-- Improves maintainability, testability, and code organization
+- Refactor files >300 lines into focused modules
+- Apply ResourceSystem pattern to other large systems
+- Maintain clear separation between logic and UI
 
 ### CSS Architecture
 - Remove redundant styles and unused CSS
 - Ensure component-specific CSS is properly scoped
-- Maintain consistent naming conventions across stylesheets
-- Review and optimize CSS structure for long-term maintainability
+- Maintain consistent naming conventions
