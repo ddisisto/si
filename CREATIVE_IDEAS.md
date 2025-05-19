@@ -109,4 +109,10 @@ This file contains creative ideas, feature concepts, and thematic elements that 
 
 ---
 
+## Research & Community Engagement
+
+- **Subreddit Research Mining**: Use browser tools to scan /r/MachineLearning, /r/ArtificialIntelligence, /r/singularity, /r/accelerate, etc. (.../top/month in each case) to get ideas. The comments are often very enlightening and show varied perspectives we may consider integrating into game events or research paths.
+
+---
+
 **Note**: Ideas in this file are lower priority than core features in the ROADMAP.md file. They should be implemented only after essential gameplay systems are working properly.
