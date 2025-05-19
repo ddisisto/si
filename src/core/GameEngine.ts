@@ -6,7 +6,7 @@ import { System } from './System';
 import GameStateManager from './GameStateManager';
 import EventBus from './EventBus';
 import { GameAction } from './GameStateManager';
-import { gameReducer } from './GameReducer';
+import { gameReducer } from './reducers';
 import { createInitialState, GameState } from './GameState';
 import TurnSystem from './TurnSystem';
 import { ResourceSystem, ResearchSystem } from '../systems';
