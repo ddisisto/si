@@ -32,6 +32,7 @@ Follow document links to detailed designs/implementations:
 - ARCHITECTURE → `/docs/design/*.md`
 - ROADMAP → current implementation tasks
 - Changes cascade through natural references, not forced traversal
+- If next step is implementation, create a branch for the work, ending with a PR
 
 ### Step 4: Context-Aware Actions
 Based on findings, initiate appropriate actions:
