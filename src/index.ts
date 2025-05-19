@@ -133,11 +133,8 @@ function main() {
       uiManager.update(nextState);
     });
     
-    // Subscribe to turn end events from UI
-    engineEventBus.subscribe('turn:end', (data: any) => {
-      // Call the turn system's endTurn method
-      gameEngine.getTurnSystem().endTurn(data);
-    });
+    // The TurnSystem now subscribes to turn:end events directly,
+    // so we don't need this manual subscription anymore
     
     // Initialize and start the game
     gameEngine.initialize();

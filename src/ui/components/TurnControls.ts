@@ -3,6 +3,7 @@
  */
 
 import UIComponent from './UIComponent';
+import Logger from '../../utils/Logger';
 
 /**
  * Component for controlling turn progression
@@ -72,9 +73,6 @@ class TurnControls extends UIComponent {
       endTurnButton.removeEventListener('click', this.handleEndTurn);
       // Add the click handler
       endTurnButton.addEventListener('click', this.handleEndTurn);
-      console.log('End turn button event bound');
-    } else {
-      console.warn('End turn button not found in DOM');
     }
   }  
   

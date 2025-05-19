@@ -70,7 +70,7 @@ class TurnSystem extends BaseSystem {
   /**
    * End the current turn
    */
-  public endTurn(data: any = {}): void {
+  public endTurn(): void {
     const currentTurn = this.getCurrentTurn();
     
     this.setPhase('END');
