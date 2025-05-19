@@ -9,7 +9,7 @@ This roadmap is the authoritative source for development priorities. All develop
 1. Focus on completing the current (usually the deepest nested) phase before moving to the next
 2. Complete sections, or shift remaining items down to a more appropriate place if not urgent
 3. Complete tasks in the order they are listed within each phase, reorder with explicit approval
-4. Mark tasks as completed by changing `[ ]` to `[x]` when they are done
+4. Mark tasks as completed by changing `[ ]` to `[x]` when they are done, or [-] for deferred / won't do (with comment)
 5. Add new subtasks as needed, maintaining the overall structure
 6. Document implementation details and decisions in code and documentation
 7. Whether designing or coding, documenting or testing, try to embrace the philosophy of the project. The project's success rides on this more than you know.
@@ -25,25 +25,17 @@ The roadmap will be updated as development progresses to reflect new priorities,
   - [x] Design all research categories
   - [x] Create node structure
   - [x] Define dependency framework
-  - [ ] Balance research costs and effects
 - [x] Resource system design (docs/design/resource_system_design.md)
   - [x] Define resource types and mechanics
-  - [ ] Define resource generation rates
-  - [ ] Balance resource costs for research/deployment
-  - [ ] Define resource caps and scaling
 - [x] Game events design (docs/design/game_events_design.md)
   - [x] Create event categories and types
   - [x] Design event triggers and conditions
-  - [ ] Write event text and choices
-  - [ ] Balance event probability and impact
 - [x] Deployment system design (docs/design/deployment_system_design.md)
   - [x] Define deployment types
   - [x] Design deployment mechanics
-  - [ ] Balance deployment costs and effects
 - [x] Alignment system design (docs/design/alignment_system_design.md)
   - [x] Define alignment dimensions
   - [x] Design alignment mechanics
-  - [ ] Balance alignment costs and effects
 
 ### Technical Planning
 - [x] Technical architecture design (ARCHITECTURE.md)
@@ -121,30 +113,28 @@ The roadmap will be updated as development progresses to reflect new priorities,
 
 ## Phase 2: Core Gameplay Systems
 
-### 🚨 IMMEDIATE PRIORITY: Data Model Transition (1 week)
-**Rationale:** Must complete before other systems are built on consumption model  
-**Implementation Plan:** Data model transition is now complete
-- [x] Remove data consumption mechanics from codebase
-- [x] Update type definitions for persistent asset model
-- [x] Implement quality decay system
-- [x] Update access checking to use thresholds
-- [x] Modify UI to reflect "requirements" instead of "costs"
-- [x] Update GameReducer actions for new model
-- [x] Update documentation to reflect persistent model
-- [ ] Test concurrent data access functionality
-- [ ] Add research integration with data requirements
-
-### Code Refactoring - Immediate Priority (3 days)
-**Dependencies:** None
-**Rationale:** Prevent technical debt before building more complex systems
-- [x] Refactor ResearchTreeView.ts (1064 lines) into smaller components
-- [x] Split ResourceSystem.ts (802 lines) into smaller modules
-- [x] Break down GameReducer.ts (850 lines) into category-specific reducers
-- [x] Clarify UIComponent architecture and remove unused code
-- [ ] Audit and clean up CSS redundancy
+### 🚨 IMMEDIATE PRIORITY: EventBus & Logging Improvements (1 week)
+**Rationale:** Essential infrastructure before building more complex systems  
+**No dependencies - can start immediately**
+- [ ] Improve EventBus error handling and debugging
+  - [ ] Add comprehensive error context to event dispatches
+  - [ ] Implement event chain tracing for debugging
+  - [ ] Add development mode with verbose event logging
+  - [ ] Create EventBus health check tools
+- [ ] Consolidate logging approach
+  - [ ] Replace `console.log` with Logger consistently
+  - [ ] Add log levels to filter noise in production
+  - [ ] Create log configuration system
+  - [ ] Add performance timing to key operations
+  - [ ] Implement log persistence for debugging
+- [ ] Document event flows
+  - [ ] Create comprehensive EventBus flow diagrams
+  - [ ] Document all existing events in eventbus_design.md
+  - [ ] Add inline documentation to event emitters/listeners
+  - [ ] Create debugging guide for event-related issues
 
 ### Resource System Refinement (1 week)
-**Dependencies:** Data Model Transition (MUST be complete), Code Refactoring (for maintainability)  
+**Dependencies:** EventBus improvements (for better event handling)  
 **Implementation Plan:** See [Resource System Implementation Plan](docs/design/resource_system_implementation_plan.md) for detailed phases and tasks  
 - [ ] Create comprehensive resource generation system
 - [ ] Build resource allocation UI
@@ -230,19 +220,12 @@ The roadmap will be updated as development progresses to reflect new priorities,
   - [x] Standardize control styling across the application
   - [x] Create UI component documentation
   - [x] Review element classes for alignment with styling
-  - [x] Audit CSS for redundancy and unused styles
 - [ ] Custom research node positioning
 
 ### Audio Implementation (2 weeks)
 - [ ] Add sound effects
 - [ ] Implement background music
 - [ ] Create audio management system
-
-### Balancing and Tuning (3 weeks)
-- [ ] Playtest and gather feedback
-- [ ] Adjust game difficulty
-- [ ] Balance research progression
-- [ ] Fine-tune resource economy
 
 ### Tutorial and Help (2 weeks)
 - [ ] Create tutorial system
@@ -253,7 +236,10 @@ The roadmap will be updated as development progresses to reflect new priorities,
 ## Phase 5: Launch and Post-Launch
 
 ### Code Quality and Refactoring (1 week)
-- [ ] Refactor large files into smaller, modular components
+- [x] Refactor large files into smaller, modular components
+  - [x] Refactor ResearchTreeView.ts (1064 lines) into smaller components
+  - [x] Split ResourceSystem.ts (802 lines) into smaller modules
+  - [x] Break down GameReducer.ts (850 lines) into category-specific reducers
 - [ ] Identify and break down files likely to grow over time
 - [ ] Improve architectural clarity (e.g., proper UIComponent usage)
 - [ ] Remove unused code and redundant CSS
@@ -284,8 +270,38 @@ The roadmap will be updated as development progresses to reflect new priorities,
 - [ ] Implement small enhancements based on feedback
 - [ ] Plan for feature expansion
 
+## Deferred Balancing
+
+These tasks require functioning systems to balance properly and will be addressed after core systems are implemented:
+
+### Research Balancing
+- [ ] Balance research costs and effects
+- [ ] Test concurrent data access functionality
+- [ ] Add research integration with data requirements
+
+### Resource Balancing
+- [ ] Define resource generation rates
+- [ ] Balance resource costs for research/deployment
+- [ ] Define resource caps and scaling
+
+### Event Balancing
+- [ ] Write event text and choices
+- [ ] Balance event probability and impact
+
+### Deployment Balancing
+- [ ] Balance deployment costs and effects
+
+### Alignment Balancing
+- [ ] Balance alignment costs and effects
+
+### General Balancing (Phase 4)
+- [ ] Playtest and gather feedback
+- [ ] Adjust game difficulty
+- [ ] Balance research progression
+- [ ] Fine-tune resource economy
+
 ## Next Steps
-1. Complete the pre-implementation planning tasks
-2. Set up the development environment
-3. Implement the basic game loop and state management
-4. Begin work on the research tree visualization
+1. Start with EventBus improvements and logging consolidation
+2. Move to Resource System refinement after infrastructure improvements
+3. Build Deployment System foundation on improved resource system
+4. Implement Research System with full data type support
