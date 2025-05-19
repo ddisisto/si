@@ -112,7 +112,7 @@ The game is in active development with core systems being implemented:
 ### Development Setup
 ```bash
 npm install
-npm run dev  # Start development server
+npm run dev  # Start development server on port 8080
 ```
 
 ### Build Commands

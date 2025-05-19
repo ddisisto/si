@@ -39,7 +39,8 @@ See [README.md](README.md#current-development-status) for current status and [RO
 ## Build/Test Commands
 
 - Setup: `npm install`
-- Run dev server: `npm run dev` (instruct user to run in separate terminal)
+- Run dev server: `npm run dev` (runs on port 8080, instruct user to run in separate terminal)
+  - Dev server URL: `http://localhost:8080`
 - Typecheck: `npm run typecheck` (run after **all** significant code changes)
 - Test: `npm run test` (not yet implemented - add to ROADMAP?)
 
