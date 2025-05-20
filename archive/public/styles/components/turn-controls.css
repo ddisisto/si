@@ -1,0 +1,51 @@
+/**
+ * Turn Controls Styles for SuperInt++
+ * 
+ * This file contains styles for turn-related controls:
+ * - Turn display
+ * - Turn buttons
+ * - Phase display
+ */
+
+/* Turn Controls */
+.turn-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 0 var(--spacing-md);
+}
+
+.turn-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.turn-number {
+  font-size: var(--font-size-lg);
+  font-weight: bold;
+  color: var(--color-primary);
+}
+
+.turn-date {
+  color: var(--color-secondary);
+  font-weight: 500;
+  margin-top: var(--spacing-xs);
+}
+
+.time-scale {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  opacity: 0.9;
+}
+
+.turn-phase {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+  margin-top: var(--spacing-xs);
+}
+
+.turn-buttons {
+  display: flex;
+  gap: var(--spacing-sm);
+}
